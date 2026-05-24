@@ -1,0 +1,79 @@
+Okay, let's think this through from a UX designer's perspective for a Warehouse Management System (WMS) frontend, focusing on the web interface interacting with the `wms-saas-core-api` and potentially the `saas-core-lib` for user/tenant management features where applicable.
+
+**UX Designer Perspective & Plan for AI Prompts**
+
+Building a WMS frontend requires a deep understanding of the operational workflows within a warehouse. The UI needs to be intuitive for both administrative tasks (planning, monitoring, managing) and efficient for floor operations, even if the latter is primarily RF-based, the web UI supports it (e.g., viewing/assigning tasks, monitoring progress).
+
+**Core Principles:**
+1.  **Clarity & Efficiency:** Information density is crucial for planners and managers. Dashboards and lists must be scannable.
+2.  **Operational Flow:** Navigation and workflows should mirror the logical steps of warehouse operations (Inbound -> Inventory -> Outbound -> Transfers/Counts).
+3.  **Data Integrity & Traceability:** Given the importance of inventory accuracy, UI elements for adjustments, holds, and corrections need clear confirmation and audit trails.
+4.  **Role-Based Access:** Different users (Admin, Manager, Supervisor, Operator) need tailored views and controls.
+5.  **Contextual Actions:** Common actions should be readily available near relevant data points (e.g., actions on an order line within the order view).
+
+**Planned Menu Structure & Pages:**
+
+*   **Dashboard:** High-level KPIs (e.g., open orders, pending tasks, low stock alerts, recent activity).
+*   **Inbound:**
+    *   ASNs: List, create, view details, manage status.
+    *   Goods Receipts (GRNs): List, create (from ASN or ad-hoc), view details, manage receiving/QC/putaway progress.
+    *   Putaway Board: Visualize pending putaway tasks, filter by priority/assignee.
+*   **Outbound:**
+    *   Sales Orders: List, create, view details, manage status (release, allocate, pack, ship).
+    *   Allocations: View pending/soft/hard allocations, manage overrides.
+    *   Picking Waves: Create, manage, view progress.
+    *   Shipments: List, create (often tied to orders), view details, manage loading/dispatch.
+*   **Inventory:**
+    *   Stock Levels: Browse on-hand, reserved, allocated stock by product, location, lot.
+    *   Low Stock Alerts: List items below reorder/safety levels.
+    *   Adjustments: List, create (draft -> submit -> approve/reject workflow).
+    *   Holds: List active holds on inventory, apply/remove holds.
+    *   Policies: Set reorder points, safety stock levels.
+    *   Transactions: View detailed history of inventory movements.
+*   **Items & Locations:**
+    *   Products: List, create, update, manage categories, barcodes, attributes.
+    *   Warehouses/Facilities: List, manage zones, locations (hierarchical view/edit).
+*   **Transfers:**
+    *   Inventory Transfers: List, create, dispatch, manage receiving.
+*   **Counts:**
+    *   Cycle Counts: List, schedule (manual, ABC-driven, etc.), manage execution status.
+*   **Reporting:**
+    *   Reports: Request various reports (SOH, Movement, Velocity, Aging, KPIs), track status, download results.
+*   **Admin/Configuration:**
+    *   Users (via SaaS Core): List, onboard, assign roles (potentially limited to WMS-specific roles mapped by SaaS Core).
+    *   Settings: System settings specific to WMS operations (e.g., default UOMs, location codes).
+    *   Customization Engine (Advanced): Define state machines, rules, BPMN processes (likely for system admins).
+    *   Approvals: View and manage pending approvals (e.g., for adjustments).
+    *   Notifications (Logs): View notification logs (admin/auditing).
+
+**API Integration Strategy:**
+The Orval-generated client (`all_wms_lib.txt`) provides the hooks. Each prompt will specify which hooks to use for data fetching (queries), creation (mutations), updates (mutations), etc. We'll leverage TanStack Query for state management and caching.
+
+**Dialogs & Modals:**
+Standardized modals/dialogs will be used for critical actions like confirming deletions, submitting adjustments, applying holds, creating new entities (where a dedicated page isn't necessary), and viewing detailed read-only information (e.g., transaction details).
+
+**Notifications & Feedback:**
+Use toast notifications (`sonner`) for success/error messages related to background operations (saving, deleting, API errors). Ensure form validation feedback is clear. Use loading states for async operations.
+
+**Plan for AI Prompts:**
+
+I will create a series of prompts covering the following areas, building upon each other:
+
+1.  **Prompt 01: Project Initialization & API Client Integration:** Set up the base `nest-wms-ui` project using the `shadcn-admin` template, integrate the generated API client, configure environment, path aliases, and clean up initial demo content.
+2.  **Prompt 02: Authentication Context & Login Page:** Implement the authentication logic (using JWT stored in localStorage, handling tenant code, potential refresh tokens), create the login page using the generated auth API hooks.
+3.  **Prompt 03: Navigation Sidebar & Layout:** Customize the `shadcn-admin` sidebar navigation to reflect the planned menu structure (Dashboard, Inbound, Outbound, Inventory, Items, Transfers, Counts, Reporting, Admin).
+4.  **Prompt 04: Dashboard Page:** Build the main dashboard page displaying key metrics and quick links, integrating relevant API calls for data aggregation (if direct endpoints exist, otherwise mock initially).
+5.  **Prompt 05: User Management Page (SaaS Core Integration):** Create a page to list, invite, and potentially manage roles for users within the current tenant, utilizing the SaaS Core user management API hooks.
+6.  **Prompt 06: Product Management Pages:** Create pages for listing, creating, and editing products, integrating the generated product API hooks (CRUD).
+7.  **Prompt 07: Location Management Pages:** Create pages for managing warehouses, zones, and locations (hierarchical view/edit), integrating the generated location API hooks.
+8.  **Prompt 08: Inventory Views (Stock, Low Stock, Transactions):** Build pages to view current stock levels, low stock alerts, and detailed transaction history, using relevant inventory API hooks.
+9.  **Prompt 09: Inbound Operations Pages (ASNs, GRNs, Putaway Board):** Develop pages for managing ASNs, GRNs, and the putaway task board, integrating the respective inbound API hooks.
+10. **Prompt 10: Outbound Operations Pages (Orders, Allocations, Shipments):** Create pages for managing sales orders, allocations, and shipments, using the outbound API hooks.
+11. **Prompt 11: Inventory Adjustments & Holds:** Build pages for creating, submitting, approving/rejecting adjustments, and managing inventory holds, integrating the approval workflow APIs.
+12. **Prompt 12: Reporting Page:** Implement the reporting interface for requesting, tracking, and downloading reports, using the generated report API hooks.
+13. **Prompt 13: Transfers & Counts Pages:** Create pages for managing inventory transfers and scheduling/monitoring cycle counts, integrating the relevant API hooks.
+14. **Prompt 14: Forms, Dialogs, and Global Components:** Standardize common form elements (e.g., date pickers, selects) and dialog structures for actions like deletion confirmation, using `shadcn/ui` components and integrating API mutations within them.
+15. **Prompt 15: Error Handling, Loading States, and Theming Consistency:** Ensure consistent loading spinners, error boundaries, toast notifications, and adherence to the `shadcn-admin` theme throughout the application.
+16. **Prompt 16: Final Integration Checks & Polish:** Perform a final review, test API interactions, fix any remaining issues, and polish the UI/UX based on the overall flow.
+
+These prompts will guide the AI in building the frontend structure, integrating with the APIs, and implementing the necessary UI components for a functional WMS web application.

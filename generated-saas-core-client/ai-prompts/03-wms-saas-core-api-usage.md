@@ -1,0 +1,21 @@
+# wms-saas-core-api API Usage
+
+## Generated Files
+- **API Client**: `./generated-client/lib/api/wms-saas-core-api`
+- **Types**: `./generated-client/lib/types/wms-saas-core-api/`
+
+## Available Hooks
+Check the generated file at `./generated-client/lib/api/wms-saas-core-api` for all available hooks.
+
+### Typical Pattern
+```typescript
+import { useGetAllTenants, useCreateTenant } from './generated-client/lib/api/wms-saas-core-api';
+
+const { data, isLoading, error } = useGetAllTenants();
+const createMutation = useCreateTenant();
+
+createMutation.mutate(newData, {
+  onSuccess: () => { toast({ title: 'Success!' }); },
+  onError: (error) => { toast({ title: 'Error', variant: 'destructive' }); },
+});
+```
