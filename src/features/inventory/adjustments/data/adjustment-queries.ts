@@ -44,7 +44,9 @@ export interface Adjustment {
   [key: string]: any
 }
 
-export function useAdjustments(params: Partial<InventoryWebControllerListAdjustmentsParams> = {}) {
+export function useAdjustments(
+  params: Partial<InventoryWebControllerListAdjustmentsParams> = {}
+) {
   const queryParams: InventoryWebControllerListAdjustmentsParams = {
     status: params.status || '',
     facilityId: params.facilityId || '',
@@ -55,7 +57,9 @@ export function useAdjustments(params: Partial<InventoryWebControllerListAdjustm
   return useQuery({
     queryKey: ['wms', 'inventory', 'adjustments', queryParams],
     queryFn: async () => {
-      const res = await InventoryWebController_listAdjustments(queryParams as any)
+      const res = await InventoryWebController_listAdjustments(
+        queryParams as any
+      )
       return res as unknown
     },
     select: (data) => ({
@@ -69,9 +73,12 @@ export function useAdjustments(params: Partial<InventoryWebControllerListAdjustm
 export function useCreateAdjustment() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (dto: CreateAdjustmentDto) => InventoryWebController_createAdjustment(dto),
+    mutationFn: async (dto: CreateAdjustmentDto) =>
+      InventoryWebController_createAdjustment(dto),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wms', 'inventory', 'adjustments'] })
+      queryClient.invalidateQueries({
+        queryKey: ['wms', 'inventory', 'adjustments'],
+      })
     },
   })
 }
@@ -79,9 +86,12 @@ export function useCreateAdjustment() {
 export function useSubmitAdjustment() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (id: string) => InventoryWebController_submitAdjustment(id),
+    mutationFn: async (id: string) =>
+      InventoryWebController_submitAdjustment(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wms', 'inventory', 'adjustments'] })
+      queryClient.invalidateQueries({
+        queryKey: ['wms', 'inventory', 'adjustments'],
+      })
     },
   })
 }
@@ -89,9 +99,12 @@ export function useSubmitAdjustment() {
 export function useApproveAdjustment() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (id: string) => InventoryWebController_approveAdjustment(id),
+    mutationFn: async (id: string) =>
+      InventoryWebController_approveAdjustment(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wms', 'inventory', 'adjustments'] })
+      queryClient.invalidateQueries({
+        queryKey: ['wms', 'inventory', 'adjustments'],
+      })
     },
   })
 }
