@@ -7,6 +7,6 @@
  */
 
 export interface SealContainerDto {
-  containerId: string
-  weight?: number
+  containerId: string;
+  weight?: number;
 }

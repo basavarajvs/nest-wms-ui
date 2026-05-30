@@ -7,5 +7,5 @@
  */
 
 export type WarehouseZoneControllerFindAllWebParams = {
-  facilityId: string
-}
+facilityId: string;
+};

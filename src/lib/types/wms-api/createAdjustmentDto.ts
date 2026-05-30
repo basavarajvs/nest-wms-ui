@@ -7,7 +7,7 @@
  */
 
 export interface CreateAdjustmentDto {
-  facilityId: string
-  notes?: string
-  reasonCode: string
+  facilityId: string;
+  notes?: string;
+  reasonCode: string;
 }

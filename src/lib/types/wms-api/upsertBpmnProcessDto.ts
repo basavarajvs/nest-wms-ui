@@ -7,6 +7,6 @@
  */
 
 export interface UpsertBpmnProcessDto {
-  bpmnXml: string
-  processKey: string
+  bpmnXml: string;
+  processKey: string;
 }

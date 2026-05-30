@@ -7,9 +7,9 @@
  */
 
 export type OutboundWebControllerListOrdersParams = {
-  status: string
-  clientCode: string
-  facilityId: string
-  page: number
-  limit: number
-}
+status: string;
+clientCode: string;
+facilityId: string;
+page: number;
+limit: number;
+};

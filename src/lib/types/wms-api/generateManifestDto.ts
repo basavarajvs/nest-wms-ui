@@ -7,6 +7,6 @@
  */
 
 export interface GenerateManifestDto {
-  carrierCode?: string
-  shipmentId: string
+  carrierCode?: string;
+  shipmentId: string;
 }

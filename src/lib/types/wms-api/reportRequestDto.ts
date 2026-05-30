@@ -5,9 +5,9 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { ReportParamsDto } from './reportParamsDto.js'
+import type { ReportParamsDto } from './reportParamsDto.js';
 
 export interface ReportRequestDto {
-  parameters?: ReportParamsDto
-  reportType: string
+  parameters?: ReportParamsDto;
+  reportType: string;
 }

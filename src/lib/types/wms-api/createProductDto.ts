@@ -7,13 +7,13 @@
  */
 
 export interface CreateProductDto {
-  baseUomId: string
-  categoryId: string
-  description?: string
-  name: string
-  productCode: string
-  trackExpiry?: boolean
-  trackLot?: boolean
-  trackSerial?: boolean
-  velocityClass?: string
+  baseUomId: string;
+  categoryId: string;
+  description?: string;
+  name: string;
+  productCode: string;
+  trackExpiry?: boolean;
+  trackLot?: boolean;
+  trackSerial?: boolean;
+  velocityClass?: string;
 }

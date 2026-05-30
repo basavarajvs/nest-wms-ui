@@ -5,11 +5,11 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { ExecuteTransitionDtoContext } from './executeTransitionDtoContext.js'
+import type { ExecuteTransitionDtoContext } from './executeTransitionDtoContext.js';
 
 export interface ExecuteTransitionDto {
-  context?: ExecuteTransitionDtoContext
-  entityId: string
-  entityType: string
-  event: string
+  context?: ExecuteTransitionDtoContext;
+  entityId: string;
+  entityType: string;
+  event: string;
 }

@@ -7,7 +7,7 @@
  */
 
 export interface ScanLpnToContainerDto {
-  containerCode: string
-  lpnId: string
-  sessionId: string
+  containerCode: string;
+  lpnId: string;
+  sessionId: string;
 }

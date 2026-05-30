@@ -5,16 +5,22 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import { useQuery } from '@tanstack/react-query'
+import {
+  useQuery
+} from '@tanstack/react-query';
 import type {
   QueryFunction,
   QueryKey,
   UseQueryOptions,
-  UseQueryResult,
-} from '@tanstack/react-query'
-import { customInstance } from '../../../httpClient'
+  UseQueryResult
+} from '@tanstack/react-query';
 
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
+import { customInstance } from '../../../httpClient';
+
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+
 
 export type WebhooksController_shopifyWebhookResponse202 = {
   data: void
@@ -36,23 +42,20 @@ export type WebhooksController_shopifyWebhookResponse429 = {
   status: 429
 }
 
-export type WebhooksController_shopifyWebhookResponseSuccess =
-  WebhooksController_shopifyWebhookResponse202 & {
-    headers: Headers
-  }
-export type WebhooksController_shopifyWebhookResponseError = (
-  | WebhooksController_shopifyWebhookResponse400
-  | WebhooksController_shopifyWebhookResponse401
-  | WebhooksController_shopifyWebhookResponse429
-) & {
-  headers: Headers
-}
+export type WebhooksController_shopifyWebhookResponseSuccess = (WebhooksController_shopifyWebhookResponse202) & {
+  headers: Headers;
+};
+export type WebhooksController_shopifyWebhookResponseError = (WebhooksController_shopifyWebhookResponse400 | WebhooksController_shopifyWebhookResponse401 | WebhooksController_shopifyWebhookResponse429) & {
+  headers: Headers;
+};
 
-export type WebhooksController_shopifyWebhookResponse =
-  | WebhooksController_shopifyWebhookResponseSuccess
-  | WebhooksController_shopifyWebhookResponseError
+export type WebhooksController_shopifyWebhookResponse = (WebhooksController_shopifyWebhookResponseSuccess | WebhooksController_shopifyWebhookResponseError)
 
-export const getWebhooksControllerShopifyWebhookUrl = (tenantCode: string) => {
+export const getWebhooksControllerShopifyWebhookUrl = (tenantCode: string,) => {
+
+
+
+
   return `/api/v1/wms/webhooks/shopify/${tenantCode}`
 }
 
@@ -60,96 +63,70 @@ export const getWebhooksControllerShopifyWebhookUrl = (tenantCode: string) => {
  * Receives Shopify order/product webhooks with HMAC verification, SHA256 dedup, and PendingOrderBuffer for out-of-order events
  * @summary Shopify webhook receiver
  */
-export const WebhooksController_shopifyWebhook = async (
-  tenantCode: string,
-  options?: RequestInit
-): Promise<WebhooksController_shopifyWebhookResponse> => {
-  return customInstance<WebhooksController_shopifyWebhookResponse>(
-    getWebhooksControllerShopifyWebhookUrl(tenantCode),
-    {
-      ...options,
-      method: 'POST',
-    }
-  )
-}
+export const WebhooksController_shopifyWebhook = async (tenantCode: string, options?: RequestInit): Promise<WebhooksController_shopifyWebhookResponse> => {
 
-export const getWebhooksControllerShopifyWebhookQueryKey = (
-  tenantCode: string
-) => {
-  return ['POST', `/api/v1/wms/webhooks/shopify/${tenantCode}`] as const
-}
+  return customInstance<WebhooksController_shopifyWebhookResponse>(getWebhooksControllerShopifyWebhookUrl(tenantCode),
+  {
+    ...options,
+    method: 'POST'
 
-export const getWebhooksControllerShopifyWebhookQueryOptions = <
-  TData = Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>,
-  TError = void,
->(
-  tenantCode: string,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>,
-      TError,
-      TData
-    >
-    request?: SecondParameter<typeof customInstance>
+
   }
+);}
+
+
+
+
+
+export const getWebhooksControllerShopifyWebhookQueryKey = (tenantCode: string,) => {
+    return [
+    'POST', `/api/v1/wms/webhooks/shopify/${tenantCode}`
+    ] as const;
+    }
+
+
+export const getWebhooksControllerShopifyWebhookQueryOptions = <TData = Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>, TError = void>(tenantCode: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
 ) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey =
-    queryOptions?.queryKey ??
-    getWebhooksControllerShopifyWebhookQueryKey(tenantCode)
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>
-  > = ({ signal }) =>
-    WebhooksController_shopifyWebhook(tenantCode, { signal, ...requestOptions })
+  const queryKey =  queryOptions?.queryKey ?? getWebhooksControllerShopifyWebhookQueryKey(tenantCode);
 
-  return {
-    queryKey,
-    queryFn,
-    enabled: tenantCode !== null && tenantCode !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>> = ({ signal }) => WebhooksController_shopifyWebhook(tenantCode, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: tenantCode !== null && tenantCode !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>, TError, TData> & { queryKey: QueryKey }
 }
 
-export type WebhooksControllerShopifyWebhookQueryResult = NonNullable<
-  Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>
->
+export type WebhooksControllerShopifyWebhookQueryResult = NonNullable<Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>>
 export type WebhooksControllerShopifyWebhookQueryError = void
+
 
 /**
  * @summary Shopify webhook receiver
  */
 
-export function useWebhooksControllerShopifyWebhook<
-  TData = Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>,
-  TError = void,
->(
-  tenantCode: string,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>,
-      TError,
-      TData
-    >
-    request?: SecondParameter<typeof customInstance>
-  }
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getWebhooksControllerShopifyWebhookQueryOptions(
-    tenantCode,
-    options
-  )
+export function useWebhooksControllerShopifyWebhook<TData = Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>, TError = void>(
+ tenantCode: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WebhooksController_shopifyWebhook>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: QueryKey
-  }
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
-  return { ...query, queryKey: queryOptions.queryKey }
+  const queryOptions = getWebhooksControllerShopifyWebhookQueryOptions(tenantCode,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
 
 export type WebhooksController_wooCommerceWebhookResponse202 = {
   data: void
@@ -171,25 +148,20 @@ export type WebhooksController_wooCommerceWebhookResponse429 = {
   status: 429
 }
 
-export type WebhooksController_wooCommerceWebhookResponseSuccess =
-  WebhooksController_wooCommerceWebhookResponse202 & {
-    headers: Headers
-  }
-export type WebhooksController_wooCommerceWebhookResponseError = (
-  | WebhooksController_wooCommerceWebhookResponse400
-  | WebhooksController_wooCommerceWebhookResponse401
-  | WebhooksController_wooCommerceWebhookResponse429
-) & {
-  headers: Headers
-}
+export type WebhooksController_wooCommerceWebhookResponseSuccess = (WebhooksController_wooCommerceWebhookResponse202) & {
+  headers: Headers;
+};
+export type WebhooksController_wooCommerceWebhookResponseError = (WebhooksController_wooCommerceWebhookResponse400 | WebhooksController_wooCommerceWebhookResponse401 | WebhooksController_wooCommerceWebhookResponse429) & {
+  headers: Headers;
+};
 
-export type WebhooksController_wooCommerceWebhookResponse =
-  | WebhooksController_wooCommerceWebhookResponseSuccess
-  | WebhooksController_wooCommerceWebhookResponseError
+export type WebhooksController_wooCommerceWebhookResponse = (WebhooksController_wooCommerceWebhookResponseSuccess | WebhooksController_wooCommerceWebhookResponseError)
 
-export const getWebhooksControllerWooCommerceWebhookUrl = (
-  tenantCode: string
-) => {
+export const getWebhooksControllerWooCommerceWebhookUrl = (tenantCode: string,) => {
+
+
+
+
   return `/api/v1/wms/webhooks/woocommerce/${tenantCode}`
 }
 
@@ -197,96 +169,68 @@ export const getWebhooksControllerWooCommerceWebhookUrl = (
  * Receives WooCommerce order/product webhooks with HMAC verification and SHA256 dedup
  * @summary WooCommerce webhook receiver
  */
-export const WebhooksController_wooCommerceWebhook = async (
-  tenantCode: string,
-  options?: RequestInit
-): Promise<WebhooksController_wooCommerceWebhookResponse> => {
-  return customInstance<WebhooksController_wooCommerceWebhookResponse>(
-    getWebhooksControllerWooCommerceWebhookUrl(tenantCode),
-    {
-      ...options,
-      method: 'POST',
-    }
-  )
-}
+export const WebhooksController_wooCommerceWebhook = async (tenantCode: string, options?: RequestInit): Promise<WebhooksController_wooCommerceWebhookResponse> => {
 
-export const getWebhooksControllerWooCommerceWebhookQueryKey = (
-  tenantCode: string
-) => {
-  return ['POST', `/api/v1/wms/webhooks/woocommerce/${tenantCode}`] as const
-}
+  return customInstance<WebhooksController_wooCommerceWebhookResponse>(getWebhooksControllerWooCommerceWebhookUrl(tenantCode),
+  {
+    ...options,
+    method: 'POST'
 
-export const getWebhooksControllerWooCommerceWebhookQueryOptions = <
-  TData = Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>,
-  TError = void,
->(
-  tenantCode: string,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>,
-      TError,
-      TData
-    >
-    request?: SecondParameter<typeof customInstance>
+
   }
+);}
+
+
+
+
+
+export const getWebhooksControllerWooCommerceWebhookQueryKey = (tenantCode: string,) => {
+    return [
+    'POST', `/api/v1/wms/webhooks/woocommerce/${tenantCode}`
+    ] as const;
+    }
+
+
+export const getWebhooksControllerWooCommerceWebhookQueryOptions = <TData = Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>, TError = void>(tenantCode: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
 ) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey =
-    queryOptions?.queryKey ??
-    getWebhooksControllerWooCommerceWebhookQueryKey(tenantCode)
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>
-  > = ({ signal }) =>
-    WebhooksController_wooCommerceWebhook(tenantCode, {
-      signal,
-      ...requestOptions,
-    })
+  const queryKey =  queryOptions?.queryKey ?? getWebhooksControllerWooCommerceWebhookQueryKey(tenantCode);
 
-  return {
-    queryKey,
-    queryFn,
-    enabled: tenantCode !== null && tenantCode !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>> = ({ signal }) => WebhooksController_wooCommerceWebhook(tenantCode, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: tenantCode !== null && tenantCode !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>, TError, TData> & { queryKey: QueryKey }
 }
 
-export type WebhooksControllerWooCommerceWebhookQueryResult = NonNullable<
-  Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>
->
+export type WebhooksControllerWooCommerceWebhookQueryResult = NonNullable<Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>>
 export type WebhooksControllerWooCommerceWebhookQueryError = void
+
 
 /**
  * @summary WooCommerce webhook receiver
  */
 
-export function useWebhooksControllerWooCommerceWebhook<
-  TData = Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>,
-  TError = void,
->(
-  tenantCode: string,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>,
-      TError,
-      TData
-    >
-    request?: SecondParameter<typeof customInstance>
-  }
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getWebhooksControllerWooCommerceWebhookQueryOptions(
-    tenantCode,
-    options
-  )
+export function useWebhooksControllerWooCommerceWebhook<TData = Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>, TError = void>(
+ tenantCode: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WebhooksController_wooCommerceWebhook>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: QueryKey
-  }
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
-  return { ...query, queryKey: queryOptions.queryKey }
+  const queryOptions = getWebhooksControllerWooCommerceWebhookQueryOptions(tenantCode,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
+

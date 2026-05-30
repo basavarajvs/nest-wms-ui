@@ -7,11 +7,11 @@
  */
 
 export interface CreateAsnDto {
-  carrierName?: string
-  expectedArrivalDate?: string
-  facilityId: string
-  notes?: string
-  poNumber?: string
-  trackingNumber?: string
-  vendorId?: string
+  carrierName?: string;
+  expectedArrivalDate?: string;
+  facilityId: string;
+  notes?: string;
+  poNumber?: string;
+  trackingNumber?: string;
+  vendorId?: string;
 }

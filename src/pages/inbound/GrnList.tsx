@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,6 +28,12 @@ import {
   useCreateGrnFromAsn,
   useCreateGrnAdHoc,
   useGrnProgress,
+  useMarkGrnArrived,
+  useStartReceiving,
+  useMarkGrnReceived,
+  useStartInspection,
+  useCompleteInspection,
+  useCancelGrn,
 } from '@/features/inbound/goods-receipt/data/grn-queries'
 import { useFacility } from '@/hooks/useFacility'
 
@@ -54,6 +60,43 @@ export function GrnList() {
   const createAdHoc = useCreateGrnAdHoc()
   const { data: progressData, isLoading: progressLoading, isError: progressError, error: progressErr, refetch: refetchProgress } = useGrnProgress(activeProgressId)
   const { selectedFacility } = useFacility()
+
+  const markArrived = useMarkGrnArrived()
+  const startReceiving = useStartReceiving()
+  const markReceived = useMarkGrnReceived()
+  const startInspection = useStartInspection()
+  const completeInspection = useCompleteInspection()
+  const cancelGrn = useCancelGrn()
+
+  useEffect(() => {
+    if (markArrived.isSuccess) { toast.success('GRN marked as arrived'); refetchProgress() }
+    if (markArrived.isError) { toast.error('Failed: ' + ((markArrived.error as any)?.message || 'Unknown')) }
+  }, [markArrived.isSuccess, markArrived.isError, refetchProgress])
+
+  useEffect(() => {
+    if (startReceiving.isSuccess) { toast.success('Started receiving'); refetchProgress() }
+    if (startReceiving.isError) { toast.error('Failed: ' + ((startReceiving.error as any)?.message || 'Unknown')) }
+  }, [startReceiving.isSuccess, startReceiving.isError, refetchProgress])
+
+  useEffect(() => {
+    if (markReceived.isSuccess) { toast.success('GRN marked as received'); refetchProgress() }
+    if (markReceived.isError) { toast.error('Failed: ' + ((markReceived.error as any)?.message || 'Unknown')) }
+  }, [markReceived.isSuccess, markReceived.isError, refetchProgress])
+
+  useEffect(() => {
+    if (startInspection.isSuccess) { toast.success('Inspection started'); refetchProgress() }
+    if (startInspection.isError) { toast.error('Failed: ' + ((startInspection.error as any)?.message || 'Unknown')) }
+  }, [startInspection.isSuccess, startInspection.isError, refetchProgress])
+
+  useEffect(() => {
+    if (completeInspection.isSuccess) { toast.success('Inspection completed'); refetchProgress() }
+    if (completeInspection.isError) { toast.error('Failed: ' + ((completeInspection.error as any)?.message || 'Unknown')) }
+  }, [completeInspection.isSuccess, completeInspection.isError, refetchProgress])
+
+  useEffect(() => {
+    if (cancelGrn.isSuccess) { toast.success('GRN cancelled'); refetchProgress() }
+    if (cancelGrn.isError) { toast.error('Failed: ' + ((cancelGrn.error as any)?.message || 'Unknown')) }
+  }, [cancelGrn.isSuccess, cancelGrn.isError, refetchProgress])
 
   const fromAsnForm = useForm<GrnFromAsnForm>({
     resolver: zodResolver(grnFromAsnSchema),
@@ -279,6 +322,79 @@ export function GrnList() {
                 <pre className="max-h-80 overflow-auto rounded-md bg-muted p-4 text-xs font-mono">
                   {JSON.stringify(progressData, null, 2)}
                 </pre>
+
+                {/* GRN Status Actions */}
+                <div className="border-t pt-4 mt-4">
+                  <h4 className="text-sm font-medium mb-3">Status Transitions</h4>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
+                        markArrived.mutate({ receiptNumber: progressInput.trim(), dto: {} })
+                      }}
+                      disabled={!activeProgressId || markArrived.isPending}
+                    >
+                      Mark Arrived
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
+                        startReceiving.mutate(progressInput.trim())
+                      }}
+                      disabled={!activeProgressId || startReceiving.isPending}
+                    >
+                      Start Receiving
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
+                        markReceived.mutate(progressInput.trim())
+                      }}
+                      disabled={!activeProgressId || markReceived.isPending}
+                    >
+                      Mark Received
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
+                        startInspection.mutate(progressInput.trim())
+                      }}
+                      disabled={!activeProgressId || startInspection.isPending}
+                    >
+                      Start Inspection
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
+                        completeInspection.mutate({ receiptNumber: progressInput.trim(), dto: { disposition: 'PASS' } })
+                      }}
+                      disabled={!activeProgressId || completeInspection.isPending}
+                    >
+                      Complete Inspection
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
+                        cancelGrn.mutate(progressInput.trim())
+                      }}
+                      disabled={!activeProgressId || cancelGrn.isPending}
+                    >
+                      Cancel GRN
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           )}

@@ -5,7 +5,10 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import { useMutation, useQuery } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQuery
+} from '@tanstack/react-query';
 import type {
   MutationFunction,
   QueryFunction,
@@ -13,1213 +16,1633 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult,
-} from '@tanstack/react-query'
-import { customInstance } from '../../../httpClient'
+  UseQueryResult
+} from '@tanstack/react-query';
+
 import type {
+  CreateFacilityDto,
   CreateLocationDto,
+  CreateZoneDto,
   StorageLocationControllerFindByCodeRfParams,
   StorageLocationControllerFindByCodeWebParams,
+  UpdateFacilityDto,
   UpdateLocationDto,
+  UpdateZoneDto,
   WarehouseZoneControllerFindAllRfParams,
-  WarehouseZoneControllerFindAllWebParams,
-} from '../../../types/wms-api'
+  WarehouseZoneControllerFindAllWebParams
+} from '../../../types/wms-api';
 
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
+import { customInstance } from '../../../httpClient';
+
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+
 
 export type StorageLocationController_findAllWebResponse200 = {
   data: void
   status: 200
 }
 
-export type StorageLocationController_findAllWebResponseSuccess =
-  StorageLocationController_findAllWebResponse200 & {
-    headers: Headers
-  }
-export type StorageLocationController_findAllWebResponse =
-  StorageLocationController_findAllWebResponseSuccess
+export type StorageLocationController_findAllWebResponseSuccess = (StorageLocationController_findAllWebResponse200) & {
+  headers: Headers;
+};
+;
+
+export type StorageLocationController_findAllWebResponse = (StorageLocationController_findAllWebResponseSuccess)
 
 export const getStorageLocationControllerFindAllWebUrl = () => {
+
+
+
+
   return `/api/v1/wms/web`
 }
 
-export const StorageLocationController_findAllWeb = async (
-  options?: RequestInit
-): Promise<StorageLocationController_findAllWebResponse> => {
-  return customInstance<StorageLocationController_findAllWebResponse>(
-    getStorageLocationControllerFindAllWebUrl(),
-    {
-      ...options,
-      method: 'GET',
-    }
-  )
-}
+export const StorageLocationController_findAllWeb = async ( options?: RequestInit): Promise<StorageLocationController_findAllWebResponse> => {
 
-export const getStorageLocationControllerFindAllWebMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>,
-    TError,
-    void,
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>,
-  TError,
-  void,
-  TContext
-> => {
-  const mutationKey = ['storageLocationControllerFindAllWeb']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
+  return customInstance<StorageLocationController_findAllWebResponse>(getStorageLocationControllerFindAllWebUrl(),
+  {
+    ...options,
+    method: 'GET'
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>,
-    void
-  > = () => {
-    return StorageLocationController_findAllWeb(requestOptions)
+
   }
+);}
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type StorageLocationControllerFindAllWebMutationResult = NonNullable<
-  Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>
->
 
-export type StorageLocationControllerFindAllWebMutationError = unknown
 
-export const useStorageLocationControllerFindAllWeb = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>,
-    TError,
-    void,
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>,
-  TError,
-  void,
-  TContext
-> => {
-  return useMutation(
-    getStorageLocationControllerFindAllWebMutationOptions(options)
-  )
-}
-export type StorageLocationController_createWebResponse201 = {
+export const getStorageLocationControllerFindAllWebMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>, TError,void, TContext> => {
+
+const mutationKey = ['storageLocationControllerFindAllWeb'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>, void> = () => {
+
+
+          return  StorageLocationController_findAllWeb(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type StorageLocationControllerFindAllWebMutationResult = NonNullable<Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>>
+
+    export type StorageLocationControllerFindAllWebMutationError = unknown
+
+    export const useStorageLocationControllerFindAllWeb = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof StorageLocationController_findAllWeb>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getStorageLocationControllerFindAllWebMutationOptions(options));
+    }
+    export type StorageLocationController_createWebResponse201 = {
   data: void
   status: 201
 }
 
-export type StorageLocationController_createWebResponseSuccess =
-  StorageLocationController_createWebResponse201 & {
-    headers: Headers
-  }
-export type StorageLocationController_createWebResponse =
-  StorageLocationController_createWebResponseSuccess
+export type StorageLocationController_createWebResponseSuccess = (StorageLocationController_createWebResponse201) & {
+  headers: Headers;
+};
+;
+
+export type StorageLocationController_createWebResponse = (StorageLocationController_createWebResponseSuccess)
 
 export const getStorageLocationControllerCreateWebUrl = () => {
+
+
+
+
   return `/api/v1/wms/web`
 }
 
-export const StorageLocationController_createWeb = async (
-  createLocationDto: CreateLocationDto,
-  options?: RequestInit
-): Promise<StorageLocationController_createWebResponse> => {
-  return customInstance<StorageLocationController_createWebResponse>(
-    getStorageLocationControllerCreateWebUrl(),
-    {
-      ...options,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...options?.headers },
-      body: JSON.stringify(createLocationDto),
-    }
-  )
-}
+export const StorageLocationController_createWeb = async (createLocationDto: CreateLocationDto, options?: RequestInit): Promise<StorageLocationController_createWebResponse> => {
 
-export const getStorageLocationControllerCreateWebQueryKey = (
-  createLocationDto?: CreateLocationDto
-) => {
-  return ['POST', `/api/v1/wms/web`, createLocationDto] as const
-}
-
-export const getStorageLocationControllerCreateWebQueryOptions = <
-  TData = Awaited<ReturnType<typeof StorageLocationController_createWeb>>,
-  TError = unknown,
->(
-  createLocationDto: CreateLocationDto,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof StorageLocationController_createWeb>>,
-      TError,
-      TData
-    >
-    request?: SecondParameter<typeof customInstance>
+  return customInstance<StorageLocationController_createWebResponse>(getStorageLocationControllerCreateWebUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createLocationDto)
   }
+);}
+
+
+
+
+
+export const getStorageLocationControllerCreateWebQueryKey = (createLocationDto?: CreateLocationDto,) => {
+    return [
+    'POST', `/api/v1/wms/web`, createLocationDto
+    ] as const;
+    }
+
+
+export const getStorageLocationControllerCreateWebQueryOptions = <TData = Awaited<ReturnType<typeof StorageLocationController_createWeb>>, TError = unknown>(createLocationDto: CreateLocationDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof StorageLocationController_createWeb>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
 ) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey =
-    queryOptions?.queryKey ??
-    getStorageLocationControllerCreateWebQueryKey(createLocationDto)
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof StorageLocationController_createWeb>>
-  > = ({ signal }) =>
-    StorageLocationController_createWeb(createLocationDto, {
-      signal,
-      ...requestOptions,
-    })
+  const queryKey =  queryOptions?.queryKey ?? getStorageLocationControllerCreateWebQueryKey(createLocationDto);
 
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof StorageLocationController_createWeb>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof StorageLocationController_createWeb>>> = ({ signal }) => StorageLocationController_createWeb(createLocationDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof StorageLocationController_createWeb>>, TError, TData> & { queryKey: QueryKey }
 }
 
-export type StorageLocationControllerCreateWebQueryResult = NonNullable<
-  Awaited<ReturnType<typeof StorageLocationController_createWeb>>
->
+export type StorageLocationControllerCreateWebQueryResult = NonNullable<Awaited<ReturnType<typeof StorageLocationController_createWeb>>>
 export type StorageLocationControllerCreateWebQueryError = unknown
 
-export function useStorageLocationControllerCreateWeb<
-  TData = Awaited<ReturnType<typeof StorageLocationController_createWeb>>,
-  TError = unknown,
->(
-  createLocationDto: CreateLocationDto,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof StorageLocationController_createWeb>>,
-      TError,
-      TData
-    >
-    request?: SecondParameter<typeof customInstance>
-  }
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getStorageLocationControllerCreateWebQueryOptions(
-    createLocationDto,
-    options
-  )
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: QueryKey
-  }
 
-  return { ...query, queryKey: queryOptions.queryKey }
+export function useStorageLocationControllerCreateWeb<TData = Awaited<ReturnType<typeof StorageLocationController_createWeb>>, TError = unknown>(
+ createLocationDto: CreateLocationDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof StorageLocationController_createWeb>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getStorageLocationControllerCreateWebQueryOptions(createLocationDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
 
 export type StorageLocationController_findByCodeWebResponse200 = {
   data: void
   status: 200
 }
 
-export type StorageLocationController_findByCodeWebResponseSuccess =
-  StorageLocationController_findByCodeWebResponse200 & {
-    headers: Headers
-  }
-export type StorageLocationController_findByCodeWebResponse =
-  StorageLocationController_findByCodeWebResponseSuccess
+export type StorageLocationController_findByCodeWebResponseSuccess = (StorageLocationController_findByCodeWebResponse200) & {
+  headers: Headers;
+};
+;
 
-export const getStorageLocationControllerFindByCodeWebUrl = (
-  code: string,
-  params: StorageLocationControllerFindByCodeWebParams
-) => {
-  const normalizedParams = new URLSearchParams()
+export type StorageLocationController_findByCodeWebResponse = (StorageLocationController_findByCodeWebResponseSuccess)
+
+export const getStorageLocationControllerFindByCodeWebUrl = (code: string,
+    params: StorageLocationControllerFindByCodeWebParams,) => {
+  const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
     }
-  })
+  });
 
-  const stringifiedParams = normalizedParams.toString()
+  const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0
-    ? `/api/v1/wms/web/by-code/${code}?${stringifiedParams}`
-    : `/api/v1/wms/web/by-code/${code}`
+  return stringifiedParams.length > 0 ? `/api/v1/wms/web/by-code/${code}?${stringifiedParams}` : `/api/v1/wms/web/by-code/${code}`
 }
 
-export const StorageLocationController_findByCodeWeb = async (
-  code: string,
-  params: StorageLocationControllerFindByCodeWebParams,
-  options?: RequestInit
-): Promise<StorageLocationController_findByCodeWebResponse> => {
-  return customInstance<StorageLocationController_findByCodeWebResponse>(
-    getStorageLocationControllerFindByCodeWebUrl(code, params),
-    {
-      ...options,
-      method: 'GET',
-    }
-  )
-}
+export const StorageLocationController_findByCodeWeb = async (code: string,
+    params: StorageLocationControllerFindByCodeWebParams, options?: RequestInit): Promise<StorageLocationController_findByCodeWebResponse> => {
 
-export const getStorageLocationControllerFindByCodeWebMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>,
-    TError,
-    { code: string; params: StorageLocationControllerFindByCodeWebParams },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>,
-  TError,
-  { code: string; params: StorageLocationControllerFindByCodeWebParams },
-  TContext
-> => {
-  const mutationKey = ['storageLocationControllerFindByCodeWeb']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
+  return customInstance<StorageLocationController_findByCodeWebResponse>(getStorageLocationControllerFindByCodeWebUrl(code,params),
+  {
+    ...options,
+    method: 'GET'
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>,
-    { code: string; params: StorageLocationControllerFindByCodeWebParams }
-  > = (props) => {
-    const { code, params } = props ?? {}
 
-    return StorageLocationController_findByCodeWeb(code, params, requestOptions)
   }
+);}
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type StorageLocationControllerFindByCodeWebMutationResult = NonNullable<
-  Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>
->
 
-export type StorageLocationControllerFindByCodeWebMutationError = unknown
 
-export const useStorageLocationControllerFindByCodeWeb = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>,
-    TError,
-    { code: string; params: StorageLocationControllerFindByCodeWebParams },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>,
-  TError,
-  { code: string; params: StorageLocationControllerFindByCodeWebParams },
-  TContext
-> => {
-  return useMutation(
-    getStorageLocationControllerFindByCodeWebMutationOptions(options)
-  )
-}
-export type StorageLocationController_updateWebResponse200 = {
+export const getStorageLocationControllerFindByCodeWebMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>, TError,{code: string;params: StorageLocationControllerFindByCodeWebParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>, TError,{code: string;params: StorageLocationControllerFindByCodeWebParams}, TContext> => {
+
+const mutationKey = ['storageLocationControllerFindByCodeWeb'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>, {code: string;params: StorageLocationControllerFindByCodeWebParams}> = (props) => {
+          const {code,params} = props ?? {};
+
+          return  StorageLocationController_findByCodeWeb(code,params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type StorageLocationControllerFindByCodeWebMutationResult = NonNullable<Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>>
+
+    export type StorageLocationControllerFindByCodeWebMutationError = unknown
+
+    export const useStorageLocationControllerFindByCodeWeb = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>, TError,{code: string;params: StorageLocationControllerFindByCodeWebParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof StorageLocationController_findByCodeWeb>>,
+        TError,
+        {code: string;params: StorageLocationControllerFindByCodeWebParams},
+        TContext
+      > => {
+      return useMutation(getStorageLocationControllerFindByCodeWebMutationOptions(options));
+    }
+    export type StorageLocationController_updateWebResponse200 = {
   data: void
   status: 200
 }
 
-export type StorageLocationController_updateWebResponseSuccess =
-  StorageLocationController_updateWebResponse200 & {
-    headers: Headers
-  }
-export type StorageLocationController_updateWebResponse =
-  StorageLocationController_updateWebResponseSuccess
+export type StorageLocationController_updateWebResponseSuccess = (StorageLocationController_updateWebResponse200) & {
+  headers: Headers;
+};
+;
 
-export const getStorageLocationControllerUpdateWebUrl = (id: string) => {
+export type StorageLocationController_updateWebResponse = (StorageLocationController_updateWebResponseSuccess)
+
+export const getStorageLocationControllerUpdateWebUrl = (id: string,) => {
+
+
+
+
   return `/api/v1/wms/web/${id}`
 }
 
-export const StorageLocationController_updateWeb = async (
-  id: string,
-  updateLocationDto: UpdateLocationDto,
-  options?: RequestInit
-): Promise<StorageLocationController_updateWebResponse> => {
-  return customInstance<StorageLocationController_updateWebResponse>(
-    getStorageLocationControllerUpdateWebUrl(id),
-    {
-      ...options,
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', ...options?.headers },
-      body: JSON.stringify(updateLocationDto),
-    }
-  )
-}
+export const StorageLocationController_updateWeb = async (id: string,
+    updateLocationDto: UpdateLocationDto, options?: RequestInit): Promise<StorageLocationController_updateWebResponse> => {
 
-export const getStorageLocationControllerUpdateWebQueryKey = (
-  id: string,
-  updateLocationDto?: UpdateLocationDto
-) => {
-  return ['PATCH', `/api/v1/wms/web/${id}`, updateLocationDto] as const
-}
-
-export const getStorageLocationControllerUpdateWebQueryOptions = <
-  TData = Awaited<ReturnType<typeof StorageLocationController_updateWeb>>,
-  TError = unknown,
->(
-  id: string,
-  updateLocationDto: UpdateLocationDto,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof StorageLocationController_updateWeb>>,
-      TError,
-      TData
-    >
-    request?: SecondParameter<typeof customInstance>
+  return customInstance<StorageLocationController_updateWebResponse>(getStorageLocationControllerUpdateWebUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(updateLocationDto)
   }
+);}
+
+
+
+
+
+export const getStorageLocationControllerUpdateWebQueryKey = (id: string,
+    updateLocationDto?: UpdateLocationDto,) => {
+    return [
+    'PATCH', `/api/v1/wms/web/${id}`, updateLocationDto
+    ] as const;
+    }
+
+
+export const getStorageLocationControllerUpdateWebQueryOptions = <TData = Awaited<ReturnType<typeof StorageLocationController_updateWeb>>, TError = unknown>(id: string,
+    updateLocationDto: UpdateLocationDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof StorageLocationController_updateWeb>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
 ) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey =
-    queryOptions?.queryKey ??
-    getStorageLocationControllerUpdateWebQueryKey(id, updateLocationDto)
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof StorageLocationController_updateWeb>>
-  > = ({ signal }) =>
-    StorageLocationController_updateWeb(id, updateLocationDto, {
-      signal,
-      ...requestOptions,
-    })
+  const queryKey =  queryOptions?.queryKey ?? getStorageLocationControllerUpdateWebQueryKey(id,updateLocationDto);
 
-  return {
-    queryKey,
-    queryFn,
-    enabled: id !== null && id !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof StorageLocationController_updateWeb>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof StorageLocationController_updateWeb>>> = ({ signal }) => StorageLocationController_updateWeb(id,updateLocationDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof StorageLocationController_updateWeb>>, TError, TData> & { queryKey: QueryKey }
 }
 
-export type StorageLocationControllerUpdateWebQueryResult = NonNullable<
-  Awaited<ReturnType<typeof StorageLocationController_updateWeb>>
->
+export type StorageLocationControllerUpdateWebQueryResult = NonNullable<Awaited<ReturnType<typeof StorageLocationController_updateWeb>>>
 export type StorageLocationControllerUpdateWebQueryError = unknown
 
-export function useStorageLocationControllerUpdateWeb<
-  TData = Awaited<ReturnType<typeof StorageLocationController_updateWeb>>,
-  TError = unknown,
->(
-  id: string,
-  updateLocationDto: UpdateLocationDto,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof StorageLocationController_updateWeb>>,
-      TError,
-      TData
-    >
-    request?: SecondParameter<typeof customInstance>
-  }
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getStorageLocationControllerUpdateWebQueryOptions(
-    id,
-    updateLocationDto,
-    options
-  )
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: QueryKey
-  }
 
-  return { ...query, queryKey: queryOptions.queryKey }
+export function useStorageLocationControllerUpdateWeb<TData = Awaited<ReturnType<typeof StorageLocationController_updateWeb>>, TError = unknown>(
+ id: string,
+    updateLocationDto: UpdateLocationDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof StorageLocationController_updateWeb>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getStorageLocationControllerUpdateWebQueryOptions(id,updateLocationDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
 
 export type StorageLocationController_getChildrenWebResponse200 = {
   data: void
   status: 200
 }
 
-export type StorageLocationController_getChildrenWebResponseSuccess =
-  StorageLocationController_getChildrenWebResponse200 & {
-    headers: Headers
-  }
-export type StorageLocationController_getChildrenWebResponse =
-  StorageLocationController_getChildrenWebResponseSuccess
+export type StorageLocationController_getChildrenWebResponseSuccess = (StorageLocationController_getChildrenWebResponse200) & {
+  headers: Headers;
+};
+;
 
-export const getStorageLocationControllerGetChildrenWebUrl = (id: string) => {
+export type StorageLocationController_getChildrenWebResponse = (StorageLocationController_getChildrenWebResponseSuccess)
+
+export const getStorageLocationControllerGetChildrenWebUrl = (id: string,) => {
+
+
+
+
   return `/api/v1/wms/web/${id}/children`
 }
 
-export const StorageLocationController_getChildrenWeb = async (
-  id: string,
-  options?: RequestInit
-): Promise<StorageLocationController_getChildrenWebResponse> => {
-  return customInstance<StorageLocationController_getChildrenWebResponse>(
-    getStorageLocationControllerGetChildrenWebUrl(id),
-    {
-      ...options,
-      method: 'GET',
-    }
-  )
-}
+export const StorageLocationController_getChildrenWeb = async (id: string, options?: RequestInit): Promise<StorageLocationController_getChildrenWebResponse> => {
 
-export const getStorageLocationControllerGetChildrenWebMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>,
-    TError,
-    { id: string },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>,
-  TError,
-  { id: string },
-  TContext
-> => {
-  const mutationKey = ['storageLocationControllerGetChildrenWeb']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
+  return customInstance<StorageLocationController_getChildrenWebResponse>(getStorageLocationControllerGetChildrenWebUrl(id),
+  {
+    ...options,
+    method: 'GET'
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>,
-    { id: string }
-  > = (props) => {
-    const { id } = props ?? {}
 
-    return StorageLocationController_getChildrenWeb(id, requestOptions)
   }
+);}
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type StorageLocationControllerGetChildrenWebMutationResult = NonNullable<
-  Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>
->
 
-export type StorageLocationControllerGetChildrenWebMutationError = unknown
 
-export const useStorageLocationControllerGetChildrenWeb = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>,
-    TError,
-    { id: string },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>,
-  TError,
-  { id: string },
-  TContext
-> => {
-  return useMutation(
-    getStorageLocationControllerGetChildrenWebMutationOptions(options)
-  )
-}
-export type StorageLocationController_migrateCodesResponse201 = {
+export const getStorageLocationControllerGetChildrenWebMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['storageLocationControllerGetChildrenWeb'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  StorageLocationController_getChildrenWeb(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type StorageLocationControllerGetChildrenWebMutationResult = NonNullable<Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>>
+
+    export type StorageLocationControllerGetChildrenWebMutationError = unknown
+
+    export const useStorageLocationControllerGetChildrenWeb = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof StorageLocationController_getChildrenWeb>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getStorageLocationControllerGetChildrenWebMutationOptions(options));
+    }
+    export type StorageLocationController_migrateCodesResponse201 = {
   data: void
   status: 201
 }
 
-export type StorageLocationController_migrateCodesResponseSuccess =
-  StorageLocationController_migrateCodesResponse201 & {
-    headers: Headers
-  }
-export type StorageLocationController_migrateCodesResponse =
-  StorageLocationController_migrateCodesResponseSuccess
+export type StorageLocationController_migrateCodesResponseSuccess = (StorageLocationController_migrateCodesResponse201) & {
+  headers: Headers;
+};
+;
+
+export type StorageLocationController_migrateCodesResponse = (StorageLocationController_migrateCodesResponseSuccess)
 
 export const getStorageLocationControllerMigrateCodesUrl = () => {
+
+
+
+
   return `/api/v1/wms/web/code-migrate`
 }
 
-export const StorageLocationController_migrateCodes = async (
-  options?: RequestInit
-): Promise<StorageLocationController_migrateCodesResponse> => {
-  return customInstance<StorageLocationController_migrateCodesResponse>(
-    getStorageLocationControllerMigrateCodesUrl(),
-    {
-      ...options,
-      method: 'POST',
-    }
-  )
-}
+export const StorageLocationController_migrateCodes = async ( options?: RequestInit): Promise<StorageLocationController_migrateCodesResponse> => {
+
+  return customInstance<StorageLocationController_migrateCodesResponse>(getStorageLocationControllerMigrateCodesUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
 
 export const getStorageLocationControllerMigrateCodesQueryKey = () => {
-  return ['POST', `/api/v1/wms/web/code-migrate`] as const
+    return [
+    'POST', `/api/v1/wms/web/code-migrate`
+    ] as const;
+    }
+
+
+export const getStorageLocationControllerMigrateCodesQueryOptions = <TData = Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>, TError = unknown>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getStorageLocationControllerMigrateCodesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>> = ({ signal }) => StorageLocationController_migrateCodes({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>, TError, TData> & { queryKey: QueryKey }
 }
 
-export const getStorageLocationControllerMigrateCodesQueryOptions = <
-  TData = Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>,
-  TError = unknown,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>,
-    TError,
-    TData
-  >
-  request?: SecondParameter<typeof customInstance>
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
-
-  const queryKey =
-    queryOptions?.queryKey ?? getStorageLocationControllerMigrateCodesQueryKey()
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>
-  > = ({ signal }) =>
-    StorageLocationController_migrateCodes({ signal, ...requestOptions })
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
-}
-
-export type StorageLocationControllerMigrateCodesQueryResult = NonNullable<
-  Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>
->
+export type StorageLocationControllerMigrateCodesQueryResult = NonNullable<Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>>
 export type StorageLocationControllerMigrateCodesQueryError = unknown
 
-export function useStorageLocationControllerMigrateCodes<
-  TData = Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>,
-  TError = unknown,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>,
-    TError,
-    TData
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions =
-    getStorageLocationControllerMigrateCodesQueryOptions(options)
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: QueryKey
-  }
 
-  return { ...query, queryKey: queryOptions.queryKey }
+export function useStorageLocationControllerMigrateCodes<TData = Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>, TError = unknown>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof StorageLocationController_migrateCodes>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getStorageLocationControllerMigrateCodesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
 
 export type StorageLocationController_findAllRfResponse200 = {
   data: void
   status: 200
 }
 
-export type StorageLocationController_findAllRfResponseSuccess =
-  StorageLocationController_findAllRfResponse200 & {
-    headers: Headers
-  }
-export type StorageLocationController_findAllRfResponse =
-  StorageLocationController_findAllRfResponseSuccess
+export type StorageLocationController_findAllRfResponseSuccess = (StorageLocationController_findAllRfResponse200) & {
+  headers: Headers;
+};
+;
+
+export type StorageLocationController_findAllRfResponse = (StorageLocationController_findAllRfResponseSuccess)
 
 export const getStorageLocationControllerFindAllRfUrl = () => {
+
+
+
+
   return `/api/v1/wms/rf`
 }
 
-export const StorageLocationController_findAllRf = async (
-  options?: RequestInit
-): Promise<StorageLocationController_findAllRfResponse> => {
-  return customInstance<StorageLocationController_findAllRfResponse>(
-    getStorageLocationControllerFindAllRfUrl(),
-    {
-      ...options,
-      method: 'GET',
-    }
-  )
-}
+export const StorageLocationController_findAllRf = async ( options?: RequestInit): Promise<StorageLocationController_findAllRfResponse> => {
 
-export const getStorageLocationControllerFindAllRfMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_findAllRf>>,
-    TError,
-    void,
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof StorageLocationController_findAllRf>>,
-  TError,
-  void,
-  TContext
-> => {
-  const mutationKey = ['storageLocationControllerFindAllRf']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
+  return customInstance<StorageLocationController_findAllRfResponse>(getStorageLocationControllerFindAllRfUrl(),
+  {
+    ...options,
+    method: 'GET'
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof StorageLocationController_findAllRf>>,
-    void
-  > = () => {
-    return StorageLocationController_findAllRf(requestOptions)
+
   }
+);}
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type StorageLocationControllerFindAllRfMutationResult = NonNullable<
-  Awaited<ReturnType<typeof StorageLocationController_findAllRf>>
->
 
-export type StorageLocationControllerFindAllRfMutationError = unknown
 
-export const useStorageLocationControllerFindAllRf = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_findAllRf>>,
-    TError,
-    void,
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof StorageLocationController_findAllRf>>,
-  TError,
-  void,
-  TContext
-> => {
-  return useMutation(
-    getStorageLocationControllerFindAllRfMutationOptions(options)
-  )
-}
-export type StorageLocationController_findByCodeRfResponse200 = {
+export const getStorageLocationControllerFindAllRfMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findAllRf>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findAllRf>>, TError,void, TContext> => {
+
+const mutationKey = ['storageLocationControllerFindAllRf'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof StorageLocationController_findAllRf>>, void> = () => {
+
+
+          return  StorageLocationController_findAllRf(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type StorageLocationControllerFindAllRfMutationResult = NonNullable<Awaited<ReturnType<typeof StorageLocationController_findAllRf>>>
+
+    export type StorageLocationControllerFindAllRfMutationError = unknown
+
+    export const useStorageLocationControllerFindAllRf = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findAllRf>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof StorageLocationController_findAllRf>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getStorageLocationControllerFindAllRfMutationOptions(options));
+    }
+    export type StorageLocationController_findByCodeRfResponse200 = {
   data: void
   status: 200
 }
 
-export type StorageLocationController_findByCodeRfResponseSuccess =
-  StorageLocationController_findByCodeRfResponse200 & {
-    headers: Headers
-  }
-export type StorageLocationController_findByCodeRfResponse =
-  StorageLocationController_findByCodeRfResponseSuccess
+export type StorageLocationController_findByCodeRfResponseSuccess = (StorageLocationController_findByCodeRfResponse200) & {
+  headers: Headers;
+};
+;
 
-export const getStorageLocationControllerFindByCodeRfUrl = (
-  code: string,
-  params: StorageLocationControllerFindByCodeRfParams
-) => {
-  const normalizedParams = new URLSearchParams()
+export type StorageLocationController_findByCodeRfResponse = (StorageLocationController_findByCodeRfResponseSuccess)
+
+export const getStorageLocationControllerFindByCodeRfUrl = (code: string,
+    params: StorageLocationControllerFindByCodeRfParams,) => {
+  const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
     }
-  })
+  });
 
-  const stringifiedParams = normalizedParams.toString()
+  const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0
-    ? `/api/v1/wms/rf/by-code/${code}?${stringifiedParams}`
-    : `/api/v1/wms/rf/by-code/${code}`
+  return stringifiedParams.length > 0 ? `/api/v1/wms/rf/by-code/${code}?${stringifiedParams}` : `/api/v1/wms/rf/by-code/${code}`
 }
 
-export const StorageLocationController_findByCodeRf = async (
-  code: string,
-  params: StorageLocationControllerFindByCodeRfParams,
-  options?: RequestInit
-): Promise<StorageLocationController_findByCodeRfResponse> => {
-  return customInstance<StorageLocationController_findByCodeRfResponse>(
-    getStorageLocationControllerFindByCodeRfUrl(code, params),
-    {
-      ...options,
-      method: 'GET',
-    }
-  )
-}
+export const StorageLocationController_findByCodeRf = async (code: string,
+    params: StorageLocationControllerFindByCodeRfParams, options?: RequestInit): Promise<StorageLocationController_findByCodeRfResponse> => {
 
-export const getStorageLocationControllerFindByCodeRfMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>,
-    TError,
-    { code: string; params: StorageLocationControllerFindByCodeRfParams },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>,
-  TError,
-  { code: string; params: StorageLocationControllerFindByCodeRfParams },
-  TContext
-> => {
-  const mutationKey = ['storageLocationControllerFindByCodeRf']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
+  return customInstance<StorageLocationController_findByCodeRfResponse>(getStorageLocationControllerFindByCodeRfUrl(code,params),
+  {
+    ...options,
+    method: 'GET'
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>,
-    { code: string; params: StorageLocationControllerFindByCodeRfParams }
-  > = (props) => {
-    const { code, params } = props ?? {}
 
-    return StorageLocationController_findByCodeRf(code, params, requestOptions)
   }
+);}
 
-  return { mutationFn, ...mutationOptions }
+
+
+
+export const getStorageLocationControllerFindByCodeRfMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>, TError,{code: string;params: StorageLocationControllerFindByCodeRfParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>, TError,{code: string;params: StorageLocationControllerFindByCodeRfParams}, TContext> => {
+
+const mutationKey = ['storageLocationControllerFindByCodeRf'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>, {code: string;params: StorageLocationControllerFindByCodeRfParams}> = (props) => {
+          const {code,params} = props ?? {};
+
+          return  StorageLocationController_findByCodeRf(code,params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type StorageLocationControllerFindByCodeRfMutationResult = NonNullable<Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>>
+
+    export type StorageLocationControllerFindByCodeRfMutationError = unknown
+
+    export const useStorageLocationControllerFindByCodeRf = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>, TError,{code: string;params: StorageLocationControllerFindByCodeRfParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>,
+        TError,
+        {code: string;params: StorageLocationControllerFindByCodeRfParams},
+        TContext
+      > => {
+      return useMutation(getStorageLocationControllerFindByCodeRfMutationOptions(options));
+    }
+    export type WarehouseFacilityController_createResponse201 = {
+  data: void
+  status: 201
 }
 
-export type StorageLocationControllerFindByCodeRfMutationResult = NonNullable<
-  Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>
->
+export type WarehouseFacilityController_createResponseSuccess = (WarehouseFacilityController_createResponse201) & {
+  headers: Headers;
+};
+;
 
-export type StorageLocationControllerFindByCodeRfMutationError = unknown
+export type WarehouseFacilityController_createResponse = (WarehouseFacilityController_createResponseSuccess)
 
-export const useStorageLocationControllerFindByCodeRf = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>,
-    TError,
-    { code: string; params: StorageLocationControllerFindByCodeRfParams },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof StorageLocationController_findByCodeRf>>,
-  TError,
-  { code: string; params: StorageLocationControllerFindByCodeRfParams },
-  TContext
-> => {
-  return useMutation(
-    getStorageLocationControllerFindByCodeRfMutationOptions(options)
-  )
+export const getWarehouseFacilityControllerCreateUrl = () => {
+
+
+
+
+  return `/api/v1/wms/web/facilities`
 }
+
+export const WarehouseFacilityController_create = async (createFacilityDto: CreateFacilityDto, options?: RequestInit): Promise<WarehouseFacilityController_createResponse> => {
+
+  return customInstance<WarehouseFacilityController_createResponse>(getWarehouseFacilityControllerCreateUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createFacilityDto)
+  }
+);}
+
+
+
+
+
+export const getWarehouseFacilityControllerCreateQueryKey = (createFacilityDto?: CreateFacilityDto,) => {
+    return [
+    'POST', `/api/v1/wms/web/facilities`, createFacilityDto
+    ] as const;
+    }
+
+
+export const getWarehouseFacilityControllerCreateQueryOptions = <TData = Awaited<ReturnType<typeof WarehouseFacilityController_create>>, TError = unknown>(createFacilityDto: CreateFacilityDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseFacilityController_create>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWarehouseFacilityControllerCreateQueryKey(createFacilityDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WarehouseFacilityController_create>>> = ({ signal }) => WarehouseFacilityController_create(createFacilityDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WarehouseFacilityController_create>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type WarehouseFacilityControllerCreateQueryResult = NonNullable<Awaited<ReturnType<typeof WarehouseFacilityController_create>>>
+export type WarehouseFacilityControllerCreateQueryError = unknown
+
+
+
+export function useWarehouseFacilityControllerCreate<TData = Awaited<ReturnType<typeof WarehouseFacilityController_create>>, TError = unknown>(
+ createFacilityDto: CreateFacilityDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseFacilityController_create>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getWarehouseFacilityControllerCreateQueryOptions(createFacilityDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 export type WarehouseFacilityController_findAllWebResponse200 = {
   data: void
   status: 200
 }
 
-export type WarehouseFacilityController_findAllWebResponseSuccess =
-  WarehouseFacilityController_findAllWebResponse200 & {
-    headers: Headers
-  }
-export type WarehouseFacilityController_findAllWebResponse =
-  WarehouseFacilityController_findAllWebResponseSuccess
+export type WarehouseFacilityController_findAllWebResponseSuccess = (WarehouseFacilityController_findAllWebResponse200) & {
+  headers: Headers;
+};
+;
+
+export type WarehouseFacilityController_findAllWebResponse = (WarehouseFacilityController_findAllWebResponseSuccess)
 
 export const getWarehouseFacilityControllerFindAllWebUrl = () => {
+
+
+
+
   return `/api/v1/wms/web/facilities`
 }
 
-export const WarehouseFacilityController_findAllWeb = async (
-  options?: RequestInit
-): Promise<WarehouseFacilityController_findAllWebResponse> => {
-  return customInstance<WarehouseFacilityController_findAllWebResponse>(
-    getWarehouseFacilityControllerFindAllWebUrl(),
-    {
-      ...options,
-      method: 'GET',
-    }
-  )
-}
+export const WarehouseFacilityController_findAllWeb = async ( options?: RequestInit): Promise<WarehouseFacilityController_findAllWebResponse> => {
 
-export const getWarehouseFacilityControllerFindAllWebMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>,
-    TError,
-    void,
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>,
-  TError,
-  void,
-  TContext
-> => {
-  const mutationKey = ['warehouseFacilityControllerFindAllWeb']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
+  return customInstance<WarehouseFacilityController_findAllWebResponse>(getWarehouseFacilityControllerFindAllWebUrl(),
+  {
+    ...options,
+    method: 'GET'
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>,
-    void
-  > = () => {
-    return WarehouseFacilityController_findAllWeb(requestOptions)
+
   }
+);}
 
-  return { mutationFn, ...mutationOptions }
+
+
+
+export const getWarehouseFacilityControllerFindAllWebMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>, TError,void, TContext> => {
+
+const mutationKey = ['warehouseFacilityControllerFindAllWeb'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>, void> = () => {
+
+
+          return  WarehouseFacilityController_findAllWeb(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type WarehouseFacilityControllerFindAllWebMutationResult = NonNullable<Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>>
+
+    export type WarehouseFacilityControllerFindAllWebMutationError = unknown
+
+    export const useWarehouseFacilityControllerFindAllWeb = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getWarehouseFacilityControllerFindAllWebMutationOptions(options));
+    }
+    export type WarehouseFacilityController_findByIdResponse200 = {
+  data: void
+  status: 200
 }
 
-export type WarehouseFacilityControllerFindAllWebMutationResult = NonNullable<
-  Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>
->
+export type WarehouseFacilityController_findByIdResponseSuccess = (WarehouseFacilityController_findByIdResponse200) & {
+  headers: Headers;
+};
+;
 
-export type WarehouseFacilityControllerFindAllWebMutationError = unknown
+export type WarehouseFacilityController_findByIdResponse = (WarehouseFacilityController_findByIdResponseSuccess)
 
-export const useWarehouseFacilityControllerFindAllWeb = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>,
-    TError,
-    void,
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof WarehouseFacilityController_findAllWeb>>,
-  TError,
-  void,
-  TContext
-> => {
-  return useMutation(
-    getWarehouseFacilityControllerFindAllWebMutationOptions(options)
-  )
+export const getWarehouseFacilityControllerFindByIdUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/web/facilities/${id}`
 }
+
+export const WarehouseFacilityController_findById = async (id: string, options?: RequestInit): Promise<WarehouseFacilityController_findByIdResponse> => {
+
+  return customInstance<WarehouseFacilityController_findByIdResponse>(getWarehouseFacilityControllerFindByIdUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+export const getWarehouseFacilityControllerFindByIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseFacilityController_findById>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof WarehouseFacilityController_findById>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['warehouseFacilityControllerFindById'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof WarehouseFacilityController_findById>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  WarehouseFacilityController_findById(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type WarehouseFacilityControllerFindByIdMutationResult = NonNullable<Awaited<ReturnType<typeof WarehouseFacilityController_findById>>>
+
+    export type WarehouseFacilityControllerFindByIdMutationError = unknown
+
+    export const useWarehouseFacilityControllerFindById = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseFacilityController_findById>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof WarehouseFacilityController_findById>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getWarehouseFacilityControllerFindByIdMutationOptions(options));
+    }
+    export type WarehouseFacilityController_updateResponse200 = {
+  data: void
+  status: 200
+}
+
+export type WarehouseFacilityController_updateResponseSuccess = (WarehouseFacilityController_updateResponse200) & {
+  headers: Headers;
+};
+;
+
+export type WarehouseFacilityController_updateResponse = (WarehouseFacilityController_updateResponseSuccess)
+
+export const getWarehouseFacilityControllerUpdateUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/web/facilities/${id}`
+}
+
+export const WarehouseFacilityController_update = async (id: string,
+    updateFacilityDto: UpdateFacilityDto, options?: RequestInit): Promise<WarehouseFacilityController_updateResponse> => {
+
+  return customInstance<WarehouseFacilityController_updateResponse>(getWarehouseFacilityControllerUpdateUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(updateFacilityDto)
+  }
+);}
+
+
+
+
+
+export const getWarehouseFacilityControllerUpdateQueryKey = (id: string,
+    updateFacilityDto?: UpdateFacilityDto,) => {
+    return [
+    'PATCH', `/api/v1/wms/web/facilities/${id}`, updateFacilityDto
+    ] as const;
+    }
+
+
+export const getWarehouseFacilityControllerUpdateQueryOptions = <TData = Awaited<ReturnType<typeof WarehouseFacilityController_update>>, TError = unknown>(id: string,
+    updateFacilityDto: UpdateFacilityDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseFacilityController_update>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWarehouseFacilityControllerUpdateQueryKey(id,updateFacilityDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WarehouseFacilityController_update>>> = ({ signal }) => WarehouseFacilityController_update(id,updateFacilityDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WarehouseFacilityController_update>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type WarehouseFacilityControllerUpdateQueryResult = NonNullable<Awaited<ReturnType<typeof WarehouseFacilityController_update>>>
+export type WarehouseFacilityControllerUpdateQueryError = unknown
+
+
+
+export function useWarehouseFacilityControllerUpdate<TData = Awaited<ReturnType<typeof WarehouseFacilityController_update>>, TError = unknown>(
+ id: string,
+    updateFacilityDto: UpdateFacilityDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseFacilityController_update>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getWarehouseFacilityControllerUpdateQueryOptions(id,updateFacilityDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+export type WarehouseFacilityController_deleteResponse200 = {
+  data: void
+  status: 200
+}
+
+export type WarehouseFacilityController_deleteResponseSuccess = (WarehouseFacilityController_deleteResponse200) & {
+  headers: Headers;
+};
+;
+
+export type WarehouseFacilityController_deleteResponse = (WarehouseFacilityController_deleteResponseSuccess)
+
+export const getWarehouseFacilityControllerDeleteUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/web/facilities/${id}`
+}
+
+export const WarehouseFacilityController_delete = async (id: string, options?: RequestInit): Promise<WarehouseFacilityController_deleteResponse> => {
+
+  return customInstance<WarehouseFacilityController_deleteResponse>(getWarehouseFacilityControllerDeleteUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getWarehouseFacilityControllerDeleteQueryKey = (id: string,) => {
+    return [
+    'DELETE', `/api/v1/wms/web/facilities/${id}`
+    ] as const;
+    }
+
+
+export const getWarehouseFacilityControllerDeleteQueryOptions = <TData = Awaited<ReturnType<typeof WarehouseFacilityController_delete>>, TError = unknown>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseFacilityController_delete>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWarehouseFacilityControllerDeleteQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WarehouseFacilityController_delete>>> = ({ signal }) => WarehouseFacilityController_delete(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WarehouseFacilityController_delete>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type WarehouseFacilityControllerDeleteQueryResult = NonNullable<Awaited<ReturnType<typeof WarehouseFacilityController_delete>>>
+export type WarehouseFacilityControllerDeleteQueryError = unknown
+
+
+
+export function useWarehouseFacilityControllerDelete<TData = Awaited<ReturnType<typeof WarehouseFacilityController_delete>>, TError = unknown>(
+ id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseFacilityController_delete>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getWarehouseFacilityControllerDeleteQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 export type WarehouseFacilityController_findAllRfResponse200 = {
   data: void
   status: 200
 }
 
-export type WarehouseFacilityController_findAllRfResponseSuccess =
-  WarehouseFacilityController_findAllRfResponse200 & {
-    headers: Headers
-  }
-export type WarehouseFacilityController_findAllRfResponse =
-  WarehouseFacilityController_findAllRfResponseSuccess
+export type WarehouseFacilityController_findAllRfResponseSuccess = (WarehouseFacilityController_findAllRfResponse200) & {
+  headers: Headers;
+};
+;
+
+export type WarehouseFacilityController_findAllRfResponse = (WarehouseFacilityController_findAllRfResponseSuccess)
 
 export const getWarehouseFacilityControllerFindAllRfUrl = () => {
+
+
+
+
   return `/api/v1/wms/rf/facilities`
 }
 
-export const WarehouseFacilityController_findAllRf = async (
-  options?: RequestInit
-): Promise<WarehouseFacilityController_findAllRfResponse> => {
-  return customInstance<WarehouseFacilityController_findAllRfResponse>(
-    getWarehouseFacilityControllerFindAllRfUrl(),
-    {
-      ...options,
-      method: 'GET',
-    }
-  )
-}
+export const WarehouseFacilityController_findAllRf = async ( options?: RequestInit): Promise<WarehouseFacilityController_findAllRfResponse> => {
 
-export const getWarehouseFacilityControllerFindAllRfMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>,
-    TError,
-    void,
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>,
-  TError,
-  void,
-  TContext
-> => {
-  const mutationKey = ['warehouseFacilityControllerFindAllRf']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
+  return customInstance<WarehouseFacilityController_findAllRfResponse>(getWarehouseFacilityControllerFindAllRfUrl(),
+  {
+    ...options,
+    method: 'GET'
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>,
-    void
-  > = () => {
-    return WarehouseFacilityController_findAllRf(requestOptions)
+
   }
+);}
 
-  return { mutationFn, ...mutationOptions }
+
+
+
+export const getWarehouseFacilityControllerFindAllRfMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>, TError,void, TContext> => {
+
+const mutationKey = ['warehouseFacilityControllerFindAllRf'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>, void> = () => {
+
+
+          return  WarehouseFacilityController_findAllRf(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type WarehouseFacilityControllerFindAllRfMutationResult = NonNullable<Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>>
+
+    export type WarehouseFacilityControllerFindAllRfMutationError = unknown
+
+    export const useWarehouseFacilityControllerFindAllRf = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getWarehouseFacilityControllerFindAllRfMutationOptions(options));
+    }
+    export type WarehouseZoneController_createResponse201 = {
+  data: void
+  status: 201
 }
 
-export type WarehouseFacilityControllerFindAllRfMutationResult = NonNullable<
-  Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>
->
+export type WarehouseZoneController_createResponseSuccess = (WarehouseZoneController_createResponse201) & {
+  headers: Headers;
+};
+;
 
-export type WarehouseFacilityControllerFindAllRfMutationError = unknown
+export type WarehouseZoneController_createResponse = (WarehouseZoneController_createResponseSuccess)
 
-export const useWarehouseFacilityControllerFindAllRf = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>,
-    TError,
-    void,
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof WarehouseFacilityController_findAllRf>>,
-  TError,
-  void,
-  TContext
-> => {
-  return useMutation(
-    getWarehouseFacilityControllerFindAllRfMutationOptions(options)
-  )
+export const getWarehouseZoneControllerCreateUrl = () => {
+
+
+
+
+  return `/api/v1/wms/web/zones`
 }
+
+export const WarehouseZoneController_create = async (createZoneDto: CreateZoneDto, options?: RequestInit): Promise<WarehouseZoneController_createResponse> => {
+
+  return customInstance<WarehouseZoneController_createResponse>(getWarehouseZoneControllerCreateUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createZoneDto)
+  }
+);}
+
+
+
+
+
+export const getWarehouseZoneControllerCreateQueryKey = (createZoneDto?: CreateZoneDto,) => {
+    return [
+    'POST', `/api/v1/wms/web/zones`, createZoneDto
+    ] as const;
+    }
+
+
+export const getWarehouseZoneControllerCreateQueryOptions = <TData = Awaited<ReturnType<typeof WarehouseZoneController_create>>, TError = unknown>(createZoneDto: CreateZoneDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseZoneController_create>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWarehouseZoneControllerCreateQueryKey(createZoneDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WarehouseZoneController_create>>> = ({ signal }) => WarehouseZoneController_create(createZoneDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WarehouseZoneController_create>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type WarehouseZoneControllerCreateQueryResult = NonNullable<Awaited<ReturnType<typeof WarehouseZoneController_create>>>
+export type WarehouseZoneControllerCreateQueryError = unknown
+
+
+
+export function useWarehouseZoneControllerCreate<TData = Awaited<ReturnType<typeof WarehouseZoneController_create>>, TError = unknown>(
+ createZoneDto: CreateZoneDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseZoneController_create>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getWarehouseZoneControllerCreateQueryOptions(createZoneDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 export type WarehouseZoneController_findAllWebResponse200 = {
   data: void
   status: 200
 }
 
-export type WarehouseZoneController_findAllWebResponseSuccess =
-  WarehouseZoneController_findAllWebResponse200 & {
-    headers: Headers
-  }
-export type WarehouseZoneController_findAllWebResponse =
-  WarehouseZoneController_findAllWebResponseSuccess
+export type WarehouseZoneController_findAllWebResponseSuccess = (WarehouseZoneController_findAllWebResponse200) & {
+  headers: Headers;
+};
+;
 
-export const getWarehouseZoneControllerFindAllWebUrl = (
-  params: WarehouseZoneControllerFindAllWebParams
-) => {
-  const normalizedParams = new URLSearchParams()
+export type WarehouseZoneController_findAllWebResponse = (WarehouseZoneController_findAllWebResponseSuccess)
+
+export const getWarehouseZoneControllerFindAllWebUrl = (params: WarehouseZoneControllerFindAllWebParams,) => {
+  const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
     }
-  })
+  });
 
-  const stringifiedParams = normalizedParams.toString()
+  const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0
-    ? `/api/v1/wms/web/zones?${stringifiedParams}`
-    : `/api/v1/wms/web/zones`
+  return stringifiedParams.length > 0 ? `/api/v1/wms/web/zones?${stringifiedParams}` : `/api/v1/wms/web/zones`
 }
 
-export const WarehouseZoneController_findAllWeb = async (
-  params: WarehouseZoneControllerFindAllWebParams,
-  options?: RequestInit
-): Promise<WarehouseZoneController_findAllWebResponse> => {
-  return customInstance<WarehouseZoneController_findAllWebResponse>(
-    getWarehouseZoneControllerFindAllWebUrl(params),
-    {
-      ...options,
-      method: 'GET',
-    }
-  )
-}
+export const WarehouseZoneController_findAllWeb = async (params: WarehouseZoneControllerFindAllWebParams, options?: RequestInit): Promise<WarehouseZoneController_findAllWebResponse> => {
 
-export const getWarehouseZoneControllerFindAllWebMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>,
-    TError,
-    { params: WarehouseZoneControllerFindAllWebParams },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>,
-  TError,
-  { params: WarehouseZoneControllerFindAllWebParams },
-  TContext
-> => {
-  const mutationKey = ['warehouseZoneControllerFindAllWeb']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
+  return customInstance<WarehouseZoneController_findAllWebResponse>(getWarehouseZoneControllerFindAllWebUrl(params),
+  {
+    ...options,
+    method: 'GET'
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>,
-    { params: WarehouseZoneControllerFindAllWebParams }
-  > = (props) => {
-    const { params } = props ?? {}
 
-    return WarehouseZoneController_findAllWeb(params, requestOptions)
   }
+);}
 
-  return { mutationFn, ...mutationOptions }
+
+
+
+export const getWarehouseZoneControllerFindAllWebMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>, TError,{params: WarehouseZoneControllerFindAllWebParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>, TError,{params: WarehouseZoneControllerFindAllWebParams}, TContext> => {
+
+const mutationKey = ['warehouseZoneControllerFindAllWeb'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>, {params: WarehouseZoneControllerFindAllWebParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  WarehouseZoneController_findAllWeb(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type WarehouseZoneControllerFindAllWebMutationResult = NonNullable<Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>>
+
+    export type WarehouseZoneControllerFindAllWebMutationError = unknown
+
+    export const useWarehouseZoneControllerFindAllWeb = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>, TError,{params: WarehouseZoneControllerFindAllWebParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>,
+        TError,
+        {params: WarehouseZoneControllerFindAllWebParams},
+        TContext
+      > => {
+      return useMutation(getWarehouseZoneControllerFindAllWebMutationOptions(options));
+    }
+    export type WarehouseZoneController_findByIdResponse200 = {
+  data: void
+  status: 200
 }
 
-export type WarehouseZoneControllerFindAllWebMutationResult = NonNullable<
-  Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>
->
+export type WarehouseZoneController_findByIdResponseSuccess = (WarehouseZoneController_findByIdResponse200) & {
+  headers: Headers;
+};
+;
 
-export type WarehouseZoneControllerFindAllWebMutationError = unknown
+export type WarehouseZoneController_findByIdResponse = (WarehouseZoneController_findByIdResponseSuccess)
 
-export const useWarehouseZoneControllerFindAllWeb = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>,
-    TError,
-    { params: WarehouseZoneControllerFindAllWebParams },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof WarehouseZoneController_findAllWeb>>,
-  TError,
-  { params: WarehouseZoneControllerFindAllWebParams },
-  TContext
-> => {
-  return useMutation(
-    getWarehouseZoneControllerFindAllWebMutationOptions(options)
-  )
+export const getWarehouseZoneControllerFindByIdUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/web/zones/${id}`
 }
+
+export const WarehouseZoneController_findById = async (id: string, options?: RequestInit): Promise<WarehouseZoneController_findByIdResponse> => {
+
+  return customInstance<WarehouseZoneController_findByIdResponse>(getWarehouseZoneControllerFindByIdUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+export const getWarehouseZoneControllerFindByIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseZoneController_findById>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof WarehouseZoneController_findById>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['warehouseZoneControllerFindById'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof WarehouseZoneController_findById>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  WarehouseZoneController_findById(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type WarehouseZoneControllerFindByIdMutationResult = NonNullable<Awaited<ReturnType<typeof WarehouseZoneController_findById>>>
+
+    export type WarehouseZoneControllerFindByIdMutationError = unknown
+
+    export const useWarehouseZoneControllerFindById = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseZoneController_findById>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof WarehouseZoneController_findById>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getWarehouseZoneControllerFindByIdMutationOptions(options));
+    }
+    export type WarehouseZoneController_updateResponse200 = {
+  data: void
+  status: 200
+}
+
+export type WarehouseZoneController_updateResponseSuccess = (WarehouseZoneController_updateResponse200) & {
+  headers: Headers;
+};
+;
+
+export type WarehouseZoneController_updateResponse = (WarehouseZoneController_updateResponseSuccess)
+
+export const getWarehouseZoneControllerUpdateUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/web/zones/${id}`
+}
+
+export const WarehouseZoneController_update = async (id: string,
+    updateZoneDto: UpdateZoneDto, options?: RequestInit): Promise<WarehouseZoneController_updateResponse> => {
+
+  return customInstance<WarehouseZoneController_updateResponse>(getWarehouseZoneControllerUpdateUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(updateZoneDto)
+  }
+);}
+
+
+
+
+
+export const getWarehouseZoneControllerUpdateQueryKey = (id: string,
+    updateZoneDto?: UpdateZoneDto,) => {
+    return [
+    'PATCH', `/api/v1/wms/web/zones/${id}`, updateZoneDto
+    ] as const;
+    }
+
+
+export const getWarehouseZoneControllerUpdateQueryOptions = <TData = Awaited<ReturnType<typeof WarehouseZoneController_update>>, TError = unknown>(id: string,
+    updateZoneDto: UpdateZoneDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseZoneController_update>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWarehouseZoneControllerUpdateQueryKey(id,updateZoneDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WarehouseZoneController_update>>> = ({ signal }) => WarehouseZoneController_update(id,updateZoneDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WarehouseZoneController_update>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type WarehouseZoneControllerUpdateQueryResult = NonNullable<Awaited<ReturnType<typeof WarehouseZoneController_update>>>
+export type WarehouseZoneControllerUpdateQueryError = unknown
+
+
+
+export function useWarehouseZoneControllerUpdate<TData = Awaited<ReturnType<typeof WarehouseZoneController_update>>, TError = unknown>(
+ id: string,
+    updateZoneDto: UpdateZoneDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseZoneController_update>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getWarehouseZoneControllerUpdateQueryOptions(id,updateZoneDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+export type WarehouseZoneController_deleteResponse200 = {
+  data: void
+  status: 200
+}
+
+export type WarehouseZoneController_deleteResponseSuccess = (WarehouseZoneController_deleteResponse200) & {
+  headers: Headers;
+};
+;
+
+export type WarehouseZoneController_deleteResponse = (WarehouseZoneController_deleteResponseSuccess)
+
+export const getWarehouseZoneControllerDeleteUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/web/zones/${id}`
+}
+
+export const WarehouseZoneController_delete = async (id: string, options?: RequestInit): Promise<WarehouseZoneController_deleteResponse> => {
+
+  return customInstance<WarehouseZoneController_deleteResponse>(getWarehouseZoneControllerDeleteUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getWarehouseZoneControllerDeleteQueryKey = (id: string,) => {
+    return [
+    'DELETE', `/api/v1/wms/web/zones/${id}`
+    ] as const;
+    }
+
+
+export const getWarehouseZoneControllerDeleteQueryOptions = <TData = Awaited<ReturnType<typeof WarehouseZoneController_delete>>, TError = unknown>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseZoneController_delete>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWarehouseZoneControllerDeleteQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WarehouseZoneController_delete>>> = ({ signal }) => WarehouseZoneController_delete(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WarehouseZoneController_delete>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type WarehouseZoneControllerDeleteQueryResult = NonNullable<Awaited<ReturnType<typeof WarehouseZoneController_delete>>>
+export type WarehouseZoneControllerDeleteQueryError = unknown
+
+
+
+export function useWarehouseZoneControllerDelete<TData = Awaited<ReturnType<typeof WarehouseZoneController_delete>>, TError = unknown>(
+ id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WarehouseZoneController_delete>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getWarehouseZoneControllerDeleteQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 export type WarehouseZoneController_findAllRfResponse200 = {
   data: void
   status: 200
 }
 
-export type WarehouseZoneController_findAllRfResponseSuccess =
-  WarehouseZoneController_findAllRfResponse200 & {
-    headers: Headers
-  }
-export type WarehouseZoneController_findAllRfResponse =
-  WarehouseZoneController_findAllRfResponseSuccess
+export type WarehouseZoneController_findAllRfResponseSuccess = (WarehouseZoneController_findAllRfResponse200) & {
+  headers: Headers;
+};
+;
 
-export const getWarehouseZoneControllerFindAllRfUrl = (
-  params: WarehouseZoneControllerFindAllRfParams
-) => {
-  const normalizedParams = new URLSearchParams()
+export type WarehouseZoneController_findAllRfResponse = (WarehouseZoneController_findAllRfResponseSuccess)
+
+export const getWarehouseZoneControllerFindAllRfUrl = (params: WarehouseZoneControllerFindAllRfParams,) => {
+  const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
     }
-  })
+  });
 
-  const stringifiedParams = normalizedParams.toString()
+  const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0
-    ? `/api/v1/wms/rf/zones?${stringifiedParams}`
-    : `/api/v1/wms/rf/zones`
+  return stringifiedParams.length > 0 ? `/api/v1/wms/rf/zones?${stringifiedParams}` : `/api/v1/wms/rf/zones`
 }
 
-export const WarehouseZoneController_findAllRf = async (
-  params: WarehouseZoneControllerFindAllRfParams,
-  options?: RequestInit
-): Promise<WarehouseZoneController_findAllRfResponse> => {
-  return customInstance<WarehouseZoneController_findAllRfResponse>(
-    getWarehouseZoneControllerFindAllRfUrl(params),
-    {
-      ...options,
-      method: 'GET',
-    }
-  )
-}
+export const WarehouseZoneController_findAllRf = async (params: WarehouseZoneControllerFindAllRfParams, options?: RequestInit): Promise<WarehouseZoneController_findAllRfResponse> => {
 
-export const getWarehouseZoneControllerFindAllRfMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>,
-    TError,
-    { params: WarehouseZoneControllerFindAllRfParams },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>,
-  TError,
-  { params: WarehouseZoneControllerFindAllRfParams },
-  TContext
-> => {
-  const mutationKey = ['warehouseZoneControllerFindAllRf']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
+  return customInstance<WarehouseZoneController_findAllRfResponse>(getWarehouseZoneControllerFindAllRfUrl(params),
+  {
+    ...options,
+    method: 'GET'
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>,
-    { params: WarehouseZoneControllerFindAllRfParams }
-  > = (props) => {
-    const { params } = props ?? {}
 
-    return WarehouseZoneController_findAllRf(params, requestOptions)
   }
+);}
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type WarehouseZoneControllerFindAllRfMutationResult = NonNullable<
-  Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>
->
 
-export type WarehouseZoneControllerFindAllRfMutationError = unknown
 
-export const useWarehouseZoneControllerFindAllRf = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>,
-    TError,
-    { params: WarehouseZoneControllerFindAllRfParams },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>,
-  TError,
-  { params: WarehouseZoneControllerFindAllRfParams },
-  TContext
-> => {
-  return useMutation(
-    getWarehouseZoneControllerFindAllRfMutationOptions(options)
-  )
-}
+export const getWarehouseZoneControllerFindAllRfMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>, TError,{params: WarehouseZoneControllerFindAllRfParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>, TError,{params: WarehouseZoneControllerFindAllRfParams}, TContext> => {
+
+const mutationKey = ['warehouseZoneControllerFindAllRf'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>, {params: WarehouseZoneControllerFindAllRfParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  WarehouseZoneController_findAllRf(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type WarehouseZoneControllerFindAllRfMutationResult = NonNullable<Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>>
+
+    export type WarehouseZoneControllerFindAllRfMutationError = unknown
+
+    export const useWarehouseZoneControllerFindAllRf = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>, TError,{params: WarehouseZoneControllerFindAllRfParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof WarehouseZoneController_findAllRf>>,
+        TError,
+        {params: WarehouseZoneControllerFindAllRfParams},
+        TContext
+      > => {
+      return useMutation(getWarehouseZoneControllerFindAllRfMutationOptions(options));
+    }

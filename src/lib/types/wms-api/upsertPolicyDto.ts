@@ -7,8 +7,8 @@
  */
 
 export interface UpsertPolicyDto {
-  facilityId: string
-  isActive?: boolean
-  locationId?: string
-  productId: string
+  facilityId: string;
+  isActive?: boolean;
+  locationId?: string;
+  productId: string;
 }

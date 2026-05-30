@@ -7,5 +7,5 @@
  */
 
 export type OutboundWebControllerGetPendingAllocationsParams = {
-  facilityId: string
-}
+facilityId: string;
+};

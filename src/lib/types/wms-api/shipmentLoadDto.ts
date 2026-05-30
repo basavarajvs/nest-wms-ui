@@ -7,7 +7,7 @@
  */
 
 export interface ShipmentLoadDto {
-  dockDoorCode: string
-  loadId: string
-  shipmentId: string
+  dockDoorCode: string;
+  loadId: string;
+  shipmentId: string;
 }

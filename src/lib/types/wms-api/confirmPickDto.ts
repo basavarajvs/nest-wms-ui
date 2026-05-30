@@ -7,7 +7,7 @@
  */
 
 export interface ConfirmPickDto {
-  exceptionNotes?: string
-  lotNumber?: string
-  taskId: string
+  exceptionNotes?: string;
+  lotNumber?: string;
+  taskId: string;
 }

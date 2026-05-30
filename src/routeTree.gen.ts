@@ -11,7 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedVendorsRouteImport } from './routes/_authenticated/vendors'
 import { Route as AuthenticatedTransfersRouteImport } from './routes/_authenticated/transfers'
+import { Route as AuthenticatedLpnsRouteImport } from './routes/_authenticated/lpns'
+import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
+import { Route as AuthenticatedCarriersRouteImport } from './routes/_authenticated/carriers'
+import { Route as AuthenticatedBrandsRouteImport } from './routes/_authenticated/brands'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
@@ -37,26 +42,40 @@ import { Route as AuthenticatedOutboundIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedInventoryIndexRouteImport } from './routes/_authenticated/inventory/index'
 import { Route as AuthenticatedInboundIndexRouteImport } from './routes/_authenticated/inbound/index'
 import { Route as AuthenticatedWarehouseZonesRouteImport } from './routes/_authenticated/warehouse/zones'
+import { Route as AuthenticatedWarehousePackingStationsRouteImport } from './routes/_authenticated/warehouse/packing-stations'
 import { Route as AuthenticatedWarehouseLocationsRouteImport } from './routes/_authenticated/warehouse/locations'
+import { Route as AuthenticatedWarehouseLoadingDocksRouteImport } from './routes/_authenticated/warehouse/loading-docks'
 import { Route as AuthenticatedWarehouseFacilitiesRouteImport } from './routes/_authenticated/warehouse/facilities'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedOutboundWavesRouteImport } from './routes/_authenticated/outbound/waves'
+import { Route as AuthenticatedOutboundVasExecutionRouteImport } from './routes/_authenticated/outbound/vas-execution'
+import { Route as AuthenticatedOutboundShippingLabelsRouteImport } from './routes/_authenticated/outbound/shipping-labels'
 import { Route as AuthenticatedOutboundShipmentsRouteImport } from './routes/_authenticated/outbound/shipments'
 import { Route as AuthenticatedOutboundOrdersRouteImport } from './routes/_authenticated/outbound/orders'
+import { Route as AuthenticatedOutboundLoadsRouteImport } from './routes/_authenticated/outbound/loads'
+import { Route as AuthenticatedOutboundCarrierRatesRouteImport } from './routes/_authenticated/outbound/carrier-rates'
 import { Route as AuthenticatedOutboundAllocationsRouteImport } from './routes/_authenticated/outbound/allocations'
 import { Route as AuthenticatedItemsProductsRouteImport } from './routes/_authenticated/items/products'
+import { Route as AuthenticatedItemsProductSuppliersRouteImport } from './routes/_authenticated/items/product-suppliers'
+import { Route as AuthenticatedItemsProductPackagingRouteImport } from './routes/_authenticated/items/product-packaging'
+import { Route as AuthenticatedItemsProductClientAssignmentsRouteImport } from './routes/_authenticated/items/product-client-assignments'
 import { Route as AuthenticatedItemsCategoriesRouteImport } from './routes/_authenticated/items/categories'
 import { Route as AuthenticatedInventoryTransactionsRouteImport } from './routes/_authenticated/inventory/transactions'
 import { Route as AuthenticatedInventoryStockRouteImport } from './routes/_authenticated/inventory/stock'
+import { Route as AuthenticatedInventoryReservationsRouteImport } from './routes/_authenticated/inventory/reservations'
 import { Route as AuthenticatedInventoryPoliciesRouteImport } from './routes/_authenticated/inventory/policies'
+import { Route as AuthenticatedInventoryNcrRouteImport } from './routes/_authenticated/inventory/ncr'
 import { Route as AuthenticatedInventoryLowStockRouteImport } from './routes/_authenticated/inventory/low-stock'
 import { Route as AuthenticatedInventoryHoldsRouteImport } from './routes/_authenticated/inventory/holds'
+import { Route as AuthenticatedInventoryExceptionsRouteImport } from './routes/_authenticated/inventory/exceptions'
 import { Route as AuthenticatedInventoryAdjustmentsRouteImport } from './routes/_authenticated/inventory/adjustments'
 import { Route as AuthenticatedInboundPutawayBoardRouteImport } from './routes/_authenticated/inbound/putaway-board'
+import { Route as AuthenticatedInboundPurchaseOrdersRouteImport } from './routes/_authenticated/inbound/purchase-orders'
 import { Route as AuthenticatedInboundGoodsReceiptRouteImport } from './routes/_authenticated/inbound/goods-receipt'
+import { Route as AuthenticatedInboundCustomerReturnsRouteImport } from './routes/_authenticated/inbound/customer-returns'
 import { Route as AuthenticatedInboundAsnsRouteImport } from './routes/_authenticated/inbound/asns'
 import { Route as AuthenticatedCountsScheduleRouteImport } from './routes/_authenticated/counts/schedule'
 import { Route as AuthenticatedCountsCycleRouteImport } from './routes/_authenticated/counts/cycle'
@@ -77,9 +96,34 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVendorsRoute = AuthenticatedVendorsRouteImport.update({
+  id: '/vendors',
+  path: '/vendors',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTransfersRoute = AuthenticatedTransfersRouteImport.update({
   id: '/transfers',
   path: '/transfers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLpnsRoute = AuthenticatedLpnsRouteImport.update({
+  id: '/lpns',
+  path: '/lpns',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedClientsRoute = AuthenticatedClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCarriersRoute = AuthenticatedCarriersRouteImport.update({
+  id: '/carriers',
+  path: '/carriers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBrandsRoute = AuthenticatedBrandsRouteImport.update({
+  id: '/brands',
+  path: '/brands',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const errors503Route = errors503RouteImport.update({
@@ -219,10 +263,22 @@ const AuthenticatedWarehouseZonesRoute =
     path: '/zones',
     getParentRoute: () => AuthenticatedWarehouseRouteRoute,
   } as any)
+const AuthenticatedWarehousePackingStationsRoute =
+  AuthenticatedWarehousePackingStationsRouteImport.update({
+    id: '/packing-stations',
+    path: '/packing-stations',
+    getParentRoute: () => AuthenticatedWarehouseRouteRoute,
+  } as any)
 const AuthenticatedWarehouseLocationsRoute =
   AuthenticatedWarehouseLocationsRouteImport.update({
     id: '/locations',
     path: '/locations',
+    getParentRoute: () => AuthenticatedWarehouseRouteRoute,
+  } as any)
+const AuthenticatedWarehouseLoadingDocksRoute =
+  AuthenticatedWarehouseLoadingDocksRouteImport.update({
+    id: '/loading-docks',
+    path: '/loading-docks',
     getParentRoute: () => AuthenticatedWarehouseRouteRoute,
   } as any)
 const AuthenticatedWarehouseFacilitiesRoute =
@@ -261,6 +317,18 @@ const AuthenticatedOutboundWavesRoute =
     path: '/waves',
     getParentRoute: () => AuthenticatedOutboundRouteRoute,
   } as any)
+const AuthenticatedOutboundVasExecutionRoute =
+  AuthenticatedOutboundVasExecutionRouteImport.update({
+    id: '/vas-execution',
+    path: '/vas-execution',
+    getParentRoute: () => AuthenticatedOutboundRouteRoute,
+  } as any)
+const AuthenticatedOutboundShippingLabelsRoute =
+  AuthenticatedOutboundShippingLabelsRouteImport.update({
+    id: '/shipping-labels',
+    path: '/shipping-labels',
+    getParentRoute: () => AuthenticatedOutboundRouteRoute,
+  } as any)
 const AuthenticatedOutboundShipmentsRoute =
   AuthenticatedOutboundShipmentsRouteImport.update({
     id: '/shipments',
@@ -273,6 +341,18 @@ const AuthenticatedOutboundOrdersRoute =
     path: '/orders',
     getParentRoute: () => AuthenticatedOutboundRouteRoute,
   } as any)
+const AuthenticatedOutboundLoadsRoute =
+  AuthenticatedOutboundLoadsRouteImport.update({
+    id: '/loads',
+    path: '/loads',
+    getParentRoute: () => AuthenticatedOutboundRouteRoute,
+  } as any)
+const AuthenticatedOutboundCarrierRatesRoute =
+  AuthenticatedOutboundCarrierRatesRouteImport.update({
+    id: '/carrier-rates',
+    path: '/carrier-rates',
+    getParentRoute: () => AuthenticatedOutboundRouteRoute,
+  } as any)
 const AuthenticatedOutboundAllocationsRoute =
   AuthenticatedOutboundAllocationsRouteImport.update({
     id: '/allocations',
@@ -283,6 +363,24 @@ const AuthenticatedItemsProductsRoute =
   AuthenticatedItemsProductsRouteImport.update({
     id: '/products',
     path: '/products',
+    getParentRoute: () => AuthenticatedItemsRouteRoute,
+  } as any)
+const AuthenticatedItemsProductSuppliersRoute =
+  AuthenticatedItemsProductSuppliersRouteImport.update({
+    id: '/product-suppliers',
+    path: '/product-suppliers',
+    getParentRoute: () => AuthenticatedItemsRouteRoute,
+  } as any)
+const AuthenticatedItemsProductPackagingRoute =
+  AuthenticatedItemsProductPackagingRouteImport.update({
+    id: '/product-packaging',
+    path: '/product-packaging',
+    getParentRoute: () => AuthenticatedItemsRouteRoute,
+  } as any)
+const AuthenticatedItemsProductClientAssignmentsRoute =
+  AuthenticatedItemsProductClientAssignmentsRouteImport.update({
+    id: '/product-client-assignments',
+    path: '/product-client-assignments',
     getParentRoute: () => AuthenticatedItemsRouteRoute,
   } as any)
 const AuthenticatedItemsCategoriesRoute =
@@ -303,10 +401,22 @@ const AuthenticatedInventoryStockRoute =
     path: '/stock',
     getParentRoute: () => AuthenticatedInventoryRouteRoute,
   } as any)
+const AuthenticatedInventoryReservationsRoute =
+  AuthenticatedInventoryReservationsRouteImport.update({
+    id: '/reservations',
+    path: '/reservations',
+    getParentRoute: () => AuthenticatedInventoryRouteRoute,
+  } as any)
 const AuthenticatedInventoryPoliciesRoute =
   AuthenticatedInventoryPoliciesRouteImport.update({
     id: '/policies',
     path: '/policies',
+    getParentRoute: () => AuthenticatedInventoryRouteRoute,
+  } as any)
+const AuthenticatedInventoryNcrRoute =
+  AuthenticatedInventoryNcrRouteImport.update({
+    id: '/ncr',
+    path: '/ncr',
     getParentRoute: () => AuthenticatedInventoryRouteRoute,
   } as any)
 const AuthenticatedInventoryLowStockRoute =
@@ -321,6 +431,12 @@ const AuthenticatedInventoryHoldsRoute =
     path: '/holds',
     getParentRoute: () => AuthenticatedInventoryRouteRoute,
   } as any)
+const AuthenticatedInventoryExceptionsRoute =
+  AuthenticatedInventoryExceptionsRouteImport.update({
+    id: '/exceptions',
+    path: '/exceptions',
+    getParentRoute: () => AuthenticatedInventoryRouteRoute,
+  } as any)
 const AuthenticatedInventoryAdjustmentsRoute =
   AuthenticatedInventoryAdjustmentsRouteImport.update({
     id: '/adjustments',
@@ -333,10 +449,22 @@ const AuthenticatedInboundPutawayBoardRoute =
     path: '/putaway-board',
     getParentRoute: () => AuthenticatedInboundRouteRoute,
   } as any)
+const AuthenticatedInboundPurchaseOrdersRoute =
+  AuthenticatedInboundPurchaseOrdersRouteImport.update({
+    id: '/purchase-orders',
+    path: '/purchase-orders',
+    getParentRoute: () => AuthenticatedInboundRouteRoute,
+  } as any)
 const AuthenticatedInboundGoodsReceiptRoute =
   AuthenticatedInboundGoodsReceiptRouteImport.update({
     id: '/goods-receipt',
     path: '/goods-receipt',
+    getParentRoute: () => AuthenticatedInboundRouteRoute,
+  } as any)
+const AuthenticatedInboundCustomerReturnsRoute =
+  AuthenticatedInboundCustomerReturnsRouteImport.update({
+    id: '/customer-returns',
+    path: '/customer-returns',
     getParentRoute: () => AuthenticatedInboundRouteRoute,
   } as any)
 const AuthenticatedInboundAsnsRoute =
@@ -420,7 +548,12 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/brands': typeof AuthenticatedBrandsRoute
+  '/carriers': typeof AuthenticatedCarriersRoute
+  '/clients': typeof AuthenticatedClientsRoute
+  '/lpns': typeof AuthenticatedLpnsRoute
   '/transfers': typeof AuthenticatedTransfersRoute
+  '/vendors': typeof AuthenticatedVendorsRoute
   '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
   '/admin/customization': typeof AuthenticatedAdminCustomizationRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
@@ -429,26 +562,40 @@ export interface FileRoutesByFullPath {
   '/counts/cycle': typeof AuthenticatedCountsCycleRoute
   '/counts/schedule': typeof AuthenticatedCountsScheduleRoute
   '/inbound/asns': typeof AuthenticatedInboundAsnsRoute
+  '/inbound/customer-returns': typeof AuthenticatedInboundCustomerReturnsRoute
   '/inbound/goods-receipt': typeof AuthenticatedInboundGoodsReceiptRoute
+  '/inbound/purchase-orders': typeof AuthenticatedInboundPurchaseOrdersRoute
   '/inbound/putaway-board': typeof AuthenticatedInboundPutawayBoardRoute
   '/inventory/adjustments': typeof AuthenticatedInventoryAdjustmentsRoute
+  '/inventory/exceptions': typeof AuthenticatedInventoryExceptionsRoute
   '/inventory/holds': typeof AuthenticatedInventoryHoldsRoute
   '/inventory/low-stock': typeof AuthenticatedInventoryLowStockRoute
+  '/inventory/ncr': typeof AuthenticatedInventoryNcrRoute
   '/inventory/policies': typeof AuthenticatedInventoryPoliciesRoute
+  '/inventory/reservations': typeof AuthenticatedInventoryReservationsRoute
   '/inventory/stock': typeof AuthenticatedInventoryStockRoute
   '/inventory/transactions': typeof AuthenticatedInventoryTransactionsRoute
   '/items/categories': typeof AuthenticatedItemsCategoriesRoute
+  '/items/product-client-assignments': typeof AuthenticatedItemsProductClientAssignmentsRoute
+  '/items/product-packaging': typeof AuthenticatedItemsProductPackagingRoute
+  '/items/product-suppliers': typeof AuthenticatedItemsProductSuppliersRoute
   '/items/products': typeof AuthenticatedItemsProductsRouteWithChildren
   '/outbound/allocations': typeof AuthenticatedOutboundAllocationsRoute
+  '/outbound/carrier-rates': typeof AuthenticatedOutboundCarrierRatesRoute
+  '/outbound/loads': typeof AuthenticatedOutboundLoadsRoute
   '/outbound/orders': typeof AuthenticatedOutboundOrdersRoute
   '/outbound/shipments': typeof AuthenticatedOutboundShipmentsRoute
+  '/outbound/shipping-labels': typeof AuthenticatedOutboundShippingLabelsRoute
+  '/outbound/vas-execution': typeof AuthenticatedOutboundVasExecutionRoute
   '/outbound/waves': typeof AuthenticatedOutboundWavesRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/warehouse/facilities': typeof AuthenticatedWarehouseFacilitiesRoute
+  '/warehouse/loading-docks': typeof AuthenticatedWarehouseLoadingDocksRoute
   '/warehouse/locations': typeof AuthenticatedWarehouseLocationsRoute
+  '/warehouse/packing-stations': typeof AuthenticatedWarehousePackingStationsRoute
   '/warehouse/zones': typeof AuthenticatedWarehouseZonesRoute
   '/inbound/': typeof AuthenticatedInboundIndexRoute
   '/inventory/': typeof AuthenticatedInventoryIndexRoute
@@ -473,7 +620,12 @@ export interface FileRoutesByTo {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/brands': typeof AuthenticatedBrandsRoute
+  '/carriers': typeof AuthenticatedCarriersRoute
+  '/clients': typeof AuthenticatedClientsRoute
+  '/lpns': typeof AuthenticatedLpnsRoute
   '/transfers': typeof AuthenticatedTransfersRoute
+  '/vendors': typeof AuthenticatedVendorsRoute
   '/': typeof AuthenticatedIndexRoute
   '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
   '/admin/customization': typeof AuthenticatedAdminCustomizationRoute
@@ -483,26 +635,40 @@ export interface FileRoutesByTo {
   '/counts/cycle': typeof AuthenticatedCountsCycleRoute
   '/counts/schedule': typeof AuthenticatedCountsScheduleRoute
   '/inbound/asns': typeof AuthenticatedInboundAsnsRoute
+  '/inbound/customer-returns': typeof AuthenticatedInboundCustomerReturnsRoute
   '/inbound/goods-receipt': typeof AuthenticatedInboundGoodsReceiptRoute
+  '/inbound/purchase-orders': typeof AuthenticatedInboundPurchaseOrdersRoute
   '/inbound/putaway-board': typeof AuthenticatedInboundPutawayBoardRoute
   '/inventory/adjustments': typeof AuthenticatedInventoryAdjustmentsRoute
+  '/inventory/exceptions': typeof AuthenticatedInventoryExceptionsRoute
   '/inventory/holds': typeof AuthenticatedInventoryHoldsRoute
   '/inventory/low-stock': typeof AuthenticatedInventoryLowStockRoute
+  '/inventory/ncr': typeof AuthenticatedInventoryNcrRoute
   '/inventory/policies': typeof AuthenticatedInventoryPoliciesRoute
+  '/inventory/reservations': typeof AuthenticatedInventoryReservationsRoute
   '/inventory/stock': typeof AuthenticatedInventoryStockRoute
   '/inventory/transactions': typeof AuthenticatedInventoryTransactionsRoute
   '/items/categories': typeof AuthenticatedItemsCategoriesRoute
+  '/items/product-client-assignments': typeof AuthenticatedItemsProductClientAssignmentsRoute
+  '/items/product-packaging': typeof AuthenticatedItemsProductPackagingRoute
+  '/items/product-suppliers': typeof AuthenticatedItemsProductSuppliersRoute
   '/items/products': typeof AuthenticatedItemsProductsRouteWithChildren
   '/outbound/allocations': typeof AuthenticatedOutboundAllocationsRoute
+  '/outbound/carrier-rates': typeof AuthenticatedOutboundCarrierRatesRoute
+  '/outbound/loads': typeof AuthenticatedOutboundLoadsRoute
   '/outbound/orders': typeof AuthenticatedOutboundOrdersRoute
   '/outbound/shipments': typeof AuthenticatedOutboundShipmentsRoute
+  '/outbound/shipping-labels': typeof AuthenticatedOutboundShippingLabelsRoute
+  '/outbound/vas-execution': typeof AuthenticatedOutboundVasExecutionRoute
   '/outbound/waves': typeof AuthenticatedOutboundWavesRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/warehouse/facilities': typeof AuthenticatedWarehouseFacilitiesRoute
+  '/warehouse/loading-docks': typeof AuthenticatedWarehouseLoadingDocksRoute
   '/warehouse/locations': typeof AuthenticatedWarehouseLocationsRoute
+  '/warehouse/packing-stations': typeof AuthenticatedWarehousePackingStationsRoute
   '/warehouse/zones': typeof AuthenticatedWarehouseZonesRoute
   '/inbound': typeof AuthenticatedInboundIndexRoute
   '/inventory': typeof AuthenticatedInventoryIndexRoute
@@ -534,7 +700,12 @@ export interface FileRoutesById {
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
+  '/_authenticated/brands': typeof AuthenticatedBrandsRoute
+  '/_authenticated/carriers': typeof AuthenticatedCarriersRoute
+  '/_authenticated/clients': typeof AuthenticatedClientsRoute
+  '/_authenticated/lpns': typeof AuthenticatedLpnsRoute
   '/_authenticated/transfers': typeof AuthenticatedTransfersRoute
+  '/_authenticated/vendors': typeof AuthenticatedVendorsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
   '/_authenticated/admin/customization': typeof AuthenticatedAdminCustomizationRoute
@@ -544,26 +715,40 @@ export interface FileRoutesById {
   '/_authenticated/counts/cycle': typeof AuthenticatedCountsCycleRoute
   '/_authenticated/counts/schedule': typeof AuthenticatedCountsScheduleRoute
   '/_authenticated/inbound/asns': typeof AuthenticatedInboundAsnsRoute
+  '/_authenticated/inbound/customer-returns': typeof AuthenticatedInboundCustomerReturnsRoute
   '/_authenticated/inbound/goods-receipt': typeof AuthenticatedInboundGoodsReceiptRoute
+  '/_authenticated/inbound/purchase-orders': typeof AuthenticatedInboundPurchaseOrdersRoute
   '/_authenticated/inbound/putaway-board': typeof AuthenticatedInboundPutawayBoardRoute
   '/_authenticated/inventory/adjustments': typeof AuthenticatedInventoryAdjustmentsRoute
+  '/_authenticated/inventory/exceptions': typeof AuthenticatedInventoryExceptionsRoute
   '/_authenticated/inventory/holds': typeof AuthenticatedInventoryHoldsRoute
   '/_authenticated/inventory/low-stock': typeof AuthenticatedInventoryLowStockRoute
+  '/_authenticated/inventory/ncr': typeof AuthenticatedInventoryNcrRoute
   '/_authenticated/inventory/policies': typeof AuthenticatedInventoryPoliciesRoute
+  '/_authenticated/inventory/reservations': typeof AuthenticatedInventoryReservationsRoute
   '/_authenticated/inventory/stock': typeof AuthenticatedInventoryStockRoute
   '/_authenticated/inventory/transactions': typeof AuthenticatedInventoryTransactionsRoute
   '/_authenticated/items/categories': typeof AuthenticatedItemsCategoriesRoute
+  '/_authenticated/items/product-client-assignments': typeof AuthenticatedItemsProductClientAssignmentsRoute
+  '/_authenticated/items/product-packaging': typeof AuthenticatedItemsProductPackagingRoute
+  '/_authenticated/items/product-suppliers': typeof AuthenticatedItemsProductSuppliersRoute
   '/_authenticated/items/products': typeof AuthenticatedItemsProductsRouteWithChildren
   '/_authenticated/outbound/allocations': typeof AuthenticatedOutboundAllocationsRoute
+  '/_authenticated/outbound/carrier-rates': typeof AuthenticatedOutboundCarrierRatesRoute
+  '/_authenticated/outbound/loads': typeof AuthenticatedOutboundLoadsRoute
   '/_authenticated/outbound/orders': typeof AuthenticatedOutboundOrdersRoute
   '/_authenticated/outbound/shipments': typeof AuthenticatedOutboundShipmentsRoute
+  '/_authenticated/outbound/shipping-labels': typeof AuthenticatedOutboundShippingLabelsRoute
+  '/_authenticated/outbound/vas-execution': typeof AuthenticatedOutboundVasExecutionRoute
   '/_authenticated/outbound/waves': typeof AuthenticatedOutboundWavesRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/warehouse/facilities': typeof AuthenticatedWarehouseFacilitiesRoute
+  '/_authenticated/warehouse/loading-docks': typeof AuthenticatedWarehouseLoadingDocksRoute
   '/_authenticated/warehouse/locations': typeof AuthenticatedWarehouseLocationsRoute
+  '/_authenticated/warehouse/packing-stations': typeof AuthenticatedWarehousePackingStationsRoute
   '/_authenticated/warehouse/zones': typeof AuthenticatedWarehouseZonesRoute
   '/_authenticated/inbound/': typeof AuthenticatedInboundIndexRoute
   '/_authenticated/inventory/': typeof AuthenticatedInventoryIndexRoute
@@ -596,7 +781,12 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/brands'
+    | '/carriers'
+    | '/clients'
+    | '/lpns'
     | '/transfers'
+    | '/vendors'
     | '/admin/approvals'
     | '/admin/customization'
     | '/admin/notifications'
@@ -605,26 +795,40 @@ export interface FileRouteTypes {
     | '/counts/cycle'
     | '/counts/schedule'
     | '/inbound/asns'
+    | '/inbound/customer-returns'
     | '/inbound/goods-receipt'
+    | '/inbound/purchase-orders'
     | '/inbound/putaway-board'
     | '/inventory/adjustments'
+    | '/inventory/exceptions'
     | '/inventory/holds'
     | '/inventory/low-stock'
+    | '/inventory/ncr'
     | '/inventory/policies'
+    | '/inventory/reservations'
     | '/inventory/stock'
     | '/inventory/transactions'
     | '/items/categories'
+    | '/items/product-client-assignments'
+    | '/items/product-packaging'
+    | '/items/product-suppliers'
     | '/items/products'
     | '/outbound/allocations'
+    | '/outbound/carrier-rates'
+    | '/outbound/loads'
     | '/outbound/orders'
     | '/outbound/shipments'
+    | '/outbound/shipping-labels'
+    | '/outbound/vas-execution'
     | '/outbound/waves'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
     | '/warehouse/facilities'
+    | '/warehouse/loading-docks'
     | '/warehouse/locations'
+    | '/warehouse/packing-stations'
     | '/warehouse/zones'
     | '/inbound/'
     | '/inventory/'
@@ -649,7 +853,12 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/brands'
+    | '/carriers'
+    | '/clients'
+    | '/lpns'
     | '/transfers'
+    | '/vendors'
     | '/'
     | '/admin/approvals'
     | '/admin/customization'
@@ -659,26 +868,40 @@ export interface FileRouteTypes {
     | '/counts/cycle'
     | '/counts/schedule'
     | '/inbound/asns'
+    | '/inbound/customer-returns'
     | '/inbound/goods-receipt'
+    | '/inbound/purchase-orders'
     | '/inbound/putaway-board'
     | '/inventory/adjustments'
+    | '/inventory/exceptions'
     | '/inventory/holds'
     | '/inventory/low-stock'
+    | '/inventory/ncr'
     | '/inventory/policies'
+    | '/inventory/reservations'
     | '/inventory/stock'
     | '/inventory/transactions'
     | '/items/categories'
+    | '/items/product-client-assignments'
+    | '/items/product-packaging'
+    | '/items/product-suppliers'
     | '/items/products'
     | '/outbound/allocations'
+    | '/outbound/carrier-rates'
+    | '/outbound/loads'
     | '/outbound/orders'
     | '/outbound/shipments'
+    | '/outbound/shipping-labels'
+    | '/outbound/vas-execution'
     | '/outbound/waves'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
     | '/warehouse/facilities'
+    | '/warehouse/loading-docks'
     | '/warehouse/locations'
+    | '/warehouse/packing-stations'
     | '/warehouse/zones'
     | '/inbound'
     | '/inventory'
@@ -709,7 +932,12 @@ export interface FileRouteTypes {
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
+    | '/_authenticated/brands'
+    | '/_authenticated/carriers'
+    | '/_authenticated/clients'
+    | '/_authenticated/lpns'
     | '/_authenticated/transfers'
+    | '/_authenticated/vendors'
     | '/_authenticated/'
     | '/_authenticated/admin/approvals'
     | '/_authenticated/admin/customization'
@@ -719,26 +947,40 @@ export interface FileRouteTypes {
     | '/_authenticated/counts/cycle'
     | '/_authenticated/counts/schedule'
     | '/_authenticated/inbound/asns'
+    | '/_authenticated/inbound/customer-returns'
     | '/_authenticated/inbound/goods-receipt'
+    | '/_authenticated/inbound/purchase-orders'
     | '/_authenticated/inbound/putaway-board'
     | '/_authenticated/inventory/adjustments'
+    | '/_authenticated/inventory/exceptions'
     | '/_authenticated/inventory/holds'
     | '/_authenticated/inventory/low-stock'
+    | '/_authenticated/inventory/ncr'
     | '/_authenticated/inventory/policies'
+    | '/_authenticated/inventory/reservations'
     | '/_authenticated/inventory/stock'
     | '/_authenticated/inventory/transactions'
     | '/_authenticated/items/categories'
+    | '/_authenticated/items/product-client-assignments'
+    | '/_authenticated/items/product-packaging'
+    | '/_authenticated/items/product-suppliers'
     | '/_authenticated/items/products'
     | '/_authenticated/outbound/allocations'
+    | '/_authenticated/outbound/carrier-rates'
+    | '/_authenticated/outbound/loads'
     | '/_authenticated/outbound/orders'
     | '/_authenticated/outbound/shipments'
+    | '/_authenticated/outbound/shipping-labels'
+    | '/_authenticated/outbound/vas-execution'
     | '/_authenticated/outbound/waves'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/warehouse/facilities'
+    | '/_authenticated/warehouse/loading-docks'
     | '/_authenticated/warehouse/locations'
+    | '/_authenticated/warehouse/packing-stations'
     | '/_authenticated/warehouse/zones'
     | '/_authenticated/inbound/'
     | '/_authenticated/inventory/'
@@ -780,11 +1022,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/vendors': {
+      id: '/_authenticated/vendors'
+      path: '/vendors'
+      fullPath: '/vendors'
+      preLoaderRoute: typeof AuthenticatedVendorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/transfers': {
       id: '/_authenticated/transfers'
       path: '/transfers'
       fullPath: '/transfers'
       preLoaderRoute: typeof AuthenticatedTransfersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lpns': {
+      id: '/_authenticated/lpns'
+      path: '/lpns'
+      fullPath: '/lpns'
+      preLoaderRoute: typeof AuthenticatedLpnsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/clients': {
+      id: '/_authenticated/clients'
+      path: '/clients'
+      fullPath: '/clients'
+      preLoaderRoute: typeof AuthenticatedClientsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/carriers': {
+      id: '/_authenticated/carriers'
+      path: '/carriers'
+      fullPath: '/carriers'
+      preLoaderRoute: typeof AuthenticatedCarriersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/brands': {
+      id: '/_authenticated/brands'
+      path: '/brands'
+      fullPath: '/brands'
+      preLoaderRoute: typeof AuthenticatedBrandsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/(errors)/503': {
@@ -962,11 +1239,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWarehouseZonesRouteImport
       parentRoute: typeof AuthenticatedWarehouseRouteRoute
     }
+    '/_authenticated/warehouse/packing-stations': {
+      id: '/_authenticated/warehouse/packing-stations'
+      path: '/packing-stations'
+      fullPath: '/warehouse/packing-stations'
+      preLoaderRoute: typeof AuthenticatedWarehousePackingStationsRouteImport
+      parentRoute: typeof AuthenticatedWarehouseRouteRoute
+    }
     '/_authenticated/warehouse/locations': {
       id: '/_authenticated/warehouse/locations'
       path: '/locations'
       fullPath: '/warehouse/locations'
       preLoaderRoute: typeof AuthenticatedWarehouseLocationsRouteImport
+      parentRoute: typeof AuthenticatedWarehouseRouteRoute
+    }
+    '/_authenticated/warehouse/loading-docks': {
+      id: '/_authenticated/warehouse/loading-docks'
+      path: '/loading-docks'
+      fullPath: '/warehouse/loading-docks'
+      preLoaderRoute: typeof AuthenticatedWarehouseLoadingDocksRouteImport
       parentRoute: typeof AuthenticatedWarehouseRouteRoute
     }
     '/_authenticated/warehouse/facilities': {
@@ -1011,6 +1302,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOutboundWavesRouteImport
       parentRoute: typeof AuthenticatedOutboundRouteRoute
     }
+    '/_authenticated/outbound/vas-execution': {
+      id: '/_authenticated/outbound/vas-execution'
+      path: '/vas-execution'
+      fullPath: '/outbound/vas-execution'
+      preLoaderRoute: typeof AuthenticatedOutboundVasExecutionRouteImport
+      parentRoute: typeof AuthenticatedOutboundRouteRoute
+    }
+    '/_authenticated/outbound/shipping-labels': {
+      id: '/_authenticated/outbound/shipping-labels'
+      path: '/shipping-labels'
+      fullPath: '/outbound/shipping-labels'
+      preLoaderRoute: typeof AuthenticatedOutboundShippingLabelsRouteImport
+      parentRoute: typeof AuthenticatedOutboundRouteRoute
+    }
     '/_authenticated/outbound/shipments': {
       id: '/_authenticated/outbound/shipments'
       path: '/shipments'
@@ -1025,6 +1330,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOutboundOrdersRouteImport
       parentRoute: typeof AuthenticatedOutboundRouteRoute
     }
+    '/_authenticated/outbound/loads': {
+      id: '/_authenticated/outbound/loads'
+      path: '/loads'
+      fullPath: '/outbound/loads'
+      preLoaderRoute: typeof AuthenticatedOutboundLoadsRouteImport
+      parentRoute: typeof AuthenticatedOutboundRouteRoute
+    }
+    '/_authenticated/outbound/carrier-rates': {
+      id: '/_authenticated/outbound/carrier-rates'
+      path: '/carrier-rates'
+      fullPath: '/outbound/carrier-rates'
+      preLoaderRoute: typeof AuthenticatedOutboundCarrierRatesRouteImport
+      parentRoute: typeof AuthenticatedOutboundRouteRoute
+    }
     '/_authenticated/outbound/allocations': {
       id: '/_authenticated/outbound/allocations'
       path: '/allocations'
@@ -1037,6 +1356,27 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/items/products'
       preLoaderRoute: typeof AuthenticatedItemsProductsRouteImport
+      parentRoute: typeof AuthenticatedItemsRouteRoute
+    }
+    '/_authenticated/items/product-suppliers': {
+      id: '/_authenticated/items/product-suppliers'
+      path: '/product-suppliers'
+      fullPath: '/items/product-suppliers'
+      preLoaderRoute: typeof AuthenticatedItemsProductSuppliersRouteImport
+      parentRoute: typeof AuthenticatedItemsRouteRoute
+    }
+    '/_authenticated/items/product-packaging': {
+      id: '/_authenticated/items/product-packaging'
+      path: '/product-packaging'
+      fullPath: '/items/product-packaging'
+      preLoaderRoute: typeof AuthenticatedItemsProductPackagingRouteImport
+      parentRoute: typeof AuthenticatedItemsRouteRoute
+    }
+    '/_authenticated/items/product-client-assignments': {
+      id: '/_authenticated/items/product-client-assignments'
+      path: '/product-client-assignments'
+      fullPath: '/items/product-client-assignments'
+      preLoaderRoute: typeof AuthenticatedItemsProductClientAssignmentsRouteImport
       parentRoute: typeof AuthenticatedItemsRouteRoute
     }
     '/_authenticated/items/categories': {
@@ -1060,11 +1400,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryStockRouteImport
       parentRoute: typeof AuthenticatedInventoryRouteRoute
     }
+    '/_authenticated/inventory/reservations': {
+      id: '/_authenticated/inventory/reservations'
+      path: '/reservations'
+      fullPath: '/inventory/reservations'
+      preLoaderRoute: typeof AuthenticatedInventoryReservationsRouteImport
+      parentRoute: typeof AuthenticatedInventoryRouteRoute
+    }
     '/_authenticated/inventory/policies': {
       id: '/_authenticated/inventory/policies'
       path: '/policies'
       fullPath: '/inventory/policies'
       preLoaderRoute: typeof AuthenticatedInventoryPoliciesRouteImport
+      parentRoute: typeof AuthenticatedInventoryRouteRoute
+    }
+    '/_authenticated/inventory/ncr': {
+      id: '/_authenticated/inventory/ncr'
+      path: '/ncr'
+      fullPath: '/inventory/ncr'
+      preLoaderRoute: typeof AuthenticatedInventoryNcrRouteImport
       parentRoute: typeof AuthenticatedInventoryRouteRoute
     }
     '/_authenticated/inventory/low-stock': {
@@ -1081,6 +1435,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryHoldsRouteImport
       parentRoute: typeof AuthenticatedInventoryRouteRoute
     }
+    '/_authenticated/inventory/exceptions': {
+      id: '/_authenticated/inventory/exceptions'
+      path: '/exceptions'
+      fullPath: '/inventory/exceptions'
+      preLoaderRoute: typeof AuthenticatedInventoryExceptionsRouteImport
+      parentRoute: typeof AuthenticatedInventoryRouteRoute
+    }
     '/_authenticated/inventory/adjustments': {
       id: '/_authenticated/inventory/adjustments'
       path: '/adjustments'
@@ -1095,11 +1456,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInboundPutawayBoardRouteImport
       parentRoute: typeof AuthenticatedInboundRouteRoute
     }
+    '/_authenticated/inbound/purchase-orders': {
+      id: '/_authenticated/inbound/purchase-orders'
+      path: '/purchase-orders'
+      fullPath: '/inbound/purchase-orders'
+      preLoaderRoute: typeof AuthenticatedInboundPurchaseOrdersRouteImport
+      parentRoute: typeof AuthenticatedInboundRouteRoute
+    }
     '/_authenticated/inbound/goods-receipt': {
       id: '/_authenticated/inbound/goods-receipt'
       path: '/goods-receipt'
       fullPath: '/inbound/goods-receipt'
       preLoaderRoute: typeof AuthenticatedInboundGoodsReceiptRouteImport
+      parentRoute: typeof AuthenticatedInboundRouteRoute
+    }
+    '/_authenticated/inbound/customer-returns': {
+      id: '/_authenticated/inbound/customer-returns'
+      path: '/customer-returns'
+      fullPath: '/inbound/customer-returns'
+      preLoaderRoute: typeof AuthenticatedInboundCustomerReturnsRouteImport
       parentRoute: typeof AuthenticatedInboundRouteRoute
     }
     '/_authenticated/inbound/asns': {
@@ -1199,7 +1574,9 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedInboundRouteRouteChildren {
   AuthenticatedInboundAsnsRoute: typeof AuthenticatedInboundAsnsRoute
+  AuthenticatedInboundCustomerReturnsRoute: typeof AuthenticatedInboundCustomerReturnsRoute
   AuthenticatedInboundGoodsReceiptRoute: typeof AuthenticatedInboundGoodsReceiptRoute
+  AuthenticatedInboundPurchaseOrdersRoute: typeof AuthenticatedInboundPurchaseOrdersRoute
   AuthenticatedInboundPutawayBoardRoute: typeof AuthenticatedInboundPutawayBoardRoute
   AuthenticatedInboundIndexRoute: typeof AuthenticatedInboundIndexRoute
 }
@@ -1207,8 +1584,12 @@ interface AuthenticatedInboundRouteRouteChildren {
 const AuthenticatedInboundRouteRouteChildren: AuthenticatedInboundRouteRouteChildren =
   {
     AuthenticatedInboundAsnsRoute: AuthenticatedInboundAsnsRoute,
+    AuthenticatedInboundCustomerReturnsRoute:
+      AuthenticatedInboundCustomerReturnsRoute,
     AuthenticatedInboundGoodsReceiptRoute:
       AuthenticatedInboundGoodsReceiptRoute,
+    AuthenticatedInboundPurchaseOrdersRoute:
+      AuthenticatedInboundPurchaseOrdersRoute,
     AuthenticatedInboundPutawayBoardRoute:
       AuthenticatedInboundPutawayBoardRoute,
     AuthenticatedInboundIndexRoute: AuthenticatedInboundIndexRoute,
@@ -1221,9 +1602,12 @@ const AuthenticatedInboundRouteRouteWithChildren =
 
 interface AuthenticatedInventoryRouteRouteChildren {
   AuthenticatedInventoryAdjustmentsRoute: typeof AuthenticatedInventoryAdjustmentsRoute
+  AuthenticatedInventoryExceptionsRoute: typeof AuthenticatedInventoryExceptionsRoute
   AuthenticatedInventoryHoldsRoute: typeof AuthenticatedInventoryHoldsRoute
   AuthenticatedInventoryLowStockRoute: typeof AuthenticatedInventoryLowStockRoute
+  AuthenticatedInventoryNcrRoute: typeof AuthenticatedInventoryNcrRoute
   AuthenticatedInventoryPoliciesRoute: typeof AuthenticatedInventoryPoliciesRoute
+  AuthenticatedInventoryReservationsRoute: typeof AuthenticatedInventoryReservationsRoute
   AuthenticatedInventoryStockRoute: typeof AuthenticatedInventoryStockRoute
   AuthenticatedInventoryTransactionsRoute: typeof AuthenticatedInventoryTransactionsRoute
   AuthenticatedInventoryIndexRoute: typeof AuthenticatedInventoryIndexRoute
@@ -1233,9 +1617,14 @@ const AuthenticatedInventoryRouteRouteChildren: AuthenticatedInventoryRouteRoute
   {
     AuthenticatedInventoryAdjustmentsRoute:
       AuthenticatedInventoryAdjustmentsRoute,
+    AuthenticatedInventoryExceptionsRoute:
+      AuthenticatedInventoryExceptionsRoute,
     AuthenticatedInventoryHoldsRoute: AuthenticatedInventoryHoldsRoute,
     AuthenticatedInventoryLowStockRoute: AuthenticatedInventoryLowStockRoute,
+    AuthenticatedInventoryNcrRoute: AuthenticatedInventoryNcrRoute,
     AuthenticatedInventoryPoliciesRoute: AuthenticatedInventoryPoliciesRoute,
+    AuthenticatedInventoryReservationsRoute:
+      AuthenticatedInventoryReservationsRoute,
     AuthenticatedInventoryStockRoute: AuthenticatedInventoryStockRoute,
     AuthenticatedInventoryTransactionsRoute:
       AuthenticatedInventoryTransactionsRoute,
@@ -1266,12 +1655,21 @@ const AuthenticatedItemsProductsRouteWithChildren =
 
 interface AuthenticatedItemsRouteRouteChildren {
   AuthenticatedItemsCategoriesRoute: typeof AuthenticatedItemsCategoriesRoute
+  AuthenticatedItemsProductClientAssignmentsRoute: typeof AuthenticatedItemsProductClientAssignmentsRoute
+  AuthenticatedItemsProductPackagingRoute: typeof AuthenticatedItemsProductPackagingRoute
+  AuthenticatedItemsProductSuppliersRoute: typeof AuthenticatedItemsProductSuppliersRoute
   AuthenticatedItemsProductsRoute: typeof AuthenticatedItemsProductsRouteWithChildren
 }
 
 const AuthenticatedItemsRouteRouteChildren: AuthenticatedItemsRouteRouteChildren =
   {
     AuthenticatedItemsCategoriesRoute: AuthenticatedItemsCategoriesRoute,
+    AuthenticatedItemsProductClientAssignmentsRoute:
+      AuthenticatedItemsProductClientAssignmentsRoute,
+    AuthenticatedItemsProductPackagingRoute:
+      AuthenticatedItemsProductPackagingRoute,
+    AuthenticatedItemsProductSuppliersRoute:
+      AuthenticatedItemsProductSuppliersRoute,
     AuthenticatedItemsProductsRoute:
       AuthenticatedItemsProductsRouteWithChildren,
   }
@@ -1283,8 +1681,12 @@ const AuthenticatedItemsRouteRouteWithChildren =
 
 interface AuthenticatedOutboundRouteRouteChildren {
   AuthenticatedOutboundAllocationsRoute: typeof AuthenticatedOutboundAllocationsRoute
+  AuthenticatedOutboundCarrierRatesRoute: typeof AuthenticatedOutboundCarrierRatesRoute
+  AuthenticatedOutboundLoadsRoute: typeof AuthenticatedOutboundLoadsRoute
   AuthenticatedOutboundOrdersRoute: typeof AuthenticatedOutboundOrdersRoute
   AuthenticatedOutboundShipmentsRoute: typeof AuthenticatedOutboundShipmentsRoute
+  AuthenticatedOutboundShippingLabelsRoute: typeof AuthenticatedOutboundShippingLabelsRoute
+  AuthenticatedOutboundVasExecutionRoute: typeof AuthenticatedOutboundVasExecutionRoute
   AuthenticatedOutboundWavesRoute: typeof AuthenticatedOutboundWavesRoute
   AuthenticatedOutboundIndexRoute: typeof AuthenticatedOutboundIndexRoute
 }
@@ -1293,8 +1695,15 @@ const AuthenticatedOutboundRouteRouteChildren: AuthenticatedOutboundRouteRouteCh
   {
     AuthenticatedOutboundAllocationsRoute:
       AuthenticatedOutboundAllocationsRoute,
+    AuthenticatedOutboundCarrierRatesRoute:
+      AuthenticatedOutboundCarrierRatesRoute,
+    AuthenticatedOutboundLoadsRoute: AuthenticatedOutboundLoadsRoute,
     AuthenticatedOutboundOrdersRoute: AuthenticatedOutboundOrdersRoute,
     AuthenticatedOutboundShipmentsRoute: AuthenticatedOutboundShipmentsRoute,
+    AuthenticatedOutboundShippingLabelsRoute:
+      AuthenticatedOutboundShippingLabelsRoute,
+    AuthenticatedOutboundVasExecutionRoute:
+      AuthenticatedOutboundVasExecutionRoute,
     AuthenticatedOutboundWavesRoute: AuthenticatedOutboundWavesRoute,
     AuthenticatedOutboundIndexRoute: AuthenticatedOutboundIndexRoute,
   }
@@ -1343,7 +1752,9 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 
 interface AuthenticatedWarehouseRouteRouteChildren {
   AuthenticatedWarehouseFacilitiesRoute: typeof AuthenticatedWarehouseFacilitiesRoute
+  AuthenticatedWarehouseLoadingDocksRoute: typeof AuthenticatedWarehouseLoadingDocksRoute
   AuthenticatedWarehouseLocationsRoute: typeof AuthenticatedWarehouseLocationsRoute
+  AuthenticatedWarehousePackingStationsRoute: typeof AuthenticatedWarehousePackingStationsRoute
   AuthenticatedWarehouseZonesRoute: typeof AuthenticatedWarehouseZonesRoute
 }
 
@@ -1351,7 +1762,11 @@ const AuthenticatedWarehouseRouteRouteChildren: AuthenticatedWarehouseRouteRoute
   {
     AuthenticatedWarehouseFacilitiesRoute:
       AuthenticatedWarehouseFacilitiesRoute,
+    AuthenticatedWarehouseLoadingDocksRoute:
+      AuthenticatedWarehouseLoadingDocksRoute,
     AuthenticatedWarehouseLocationsRoute: AuthenticatedWarehouseLocationsRoute,
+    AuthenticatedWarehousePackingStationsRoute:
+      AuthenticatedWarehousePackingStationsRoute,
     AuthenticatedWarehouseZonesRoute: AuthenticatedWarehouseZonesRoute,
   }
 
@@ -1369,7 +1784,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsRouteRoute: typeof AuthenticatedReportsRouteRouteWithChildren
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedWarehouseRouteRoute: typeof AuthenticatedWarehouseRouteRouteWithChildren
+  AuthenticatedBrandsRoute: typeof AuthenticatedBrandsRoute
+  AuthenticatedCarriersRoute: typeof AuthenticatedCarriersRoute
+  AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
+  AuthenticatedLpnsRoute: typeof AuthenticatedLpnsRoute
   AuthenticatedTransfersRoute: typeof AuthenticatedTransfersRoute
+  AuthenticatedVendorsRoute: typeof AuthenticatedVendorsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedCountsCycleRoute: typeof AuthenticatedCountsCycleRoute
   AuthenticatedCountsScheduleRoute: typeof AuthenticatedCountsScheduleRoute
@@ -1386,7 +1806,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedWarehouseRouteRoute:
     AuthenticatedWarehouseRouteRouteWithChildren,
+  AuthenticatedBrandsRoute: AuthenticatedBrandsRoute,
+  AuthenticatedCarriersRoute: AuthenticatedCarriersRoute,
+  AuthenticatedClientsRoute: AuthenticatedClientsRoute,
+  AuthenticatedLpnsRoute: AuthenticatedLpnsRoute,
   AuthenticatedTransfersRoute: AuthenticatedTransfersRoute,
+  AuthenticatedVendorsRoute: AuthenticatedVendorsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedCountsCycleRoute: AuthenticatedCountsCycleRoute,
   AuthenticatedCountsScheduleRoute: AuthenticatedCountsScheduleRoute,

@@ -5,9 +5,9 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { EvaluateRuleDtoInputData } from './evaluateRuleDtoInputData.js'
+import type { EvaluateRuleDtoInputData } from './evaluateRuleDtoInputData.js';
 
 export interface EvaluateRuleDto {
-  contextKeys?: string
-  inputData: EvaluateRuleDtoInputData
+  contextKeys?: string;
+  inputData: EvaluateRuleDtoInputData;
 }

@@ -7,8 +7,8 @@
  */
 
 export interface ConfirmPutawayDto {
-  scannedLocationCode?: string
-  scannedLocationId: string
-  supervisorPinOverride?: string
-  taskId: string
+  scannedLocationCode?: string;
+  scannedLocationId: string;
+  supervisorPinOverride?: string;
+  taskId: string;
 }

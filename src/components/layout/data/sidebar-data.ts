@@ -14,6 +14,24 @@ import {
   FileText,
   Building2,
   Command,
+  Briefcase,
+  Truck,
+  Tag,
+  Warehouse,
+  StickyNote,
+  AlertTriangle,
+  Ban,
+  Layers,
+  Container,
+  Dock,
+  PackagePlus,
+  ShoppingCart,
+  RotateCcw,
+  QrCode,
+  FileSpreadsheet,
+  Printer,
+  Wrench,
+  DollarSign,
 } from 'lucide-react'
 import type { SidebarData } from '../types'
 
@@ -51,6 +69,8 @@ export const sidebarData: SidebarData = {
             { title: 'ASNs', url: '/inbound/asns' },
             { title: 'Goods Receipt', url: '/inbound/goods-receipt' },
             { title: 'Putaway Board', url: '/inbound/putaway-board' },
+            { title: 'Purchase Orders', url: '/inbound/purchase-orders' },
+            { title: 'Customer Returns', url: '/inbound/customer-returns' },
           ],
         },
         {
@@ -61,6 +81,10 @@ export const sidebarData: SidebarData = {
             { title: 'Allocations', url: '/outbound/allocations' },
             { title: 'Picking Waves', url: '/outbound/waves' },
             { title: 'Shipments', url: '/outbound/shipments' },
+            { title: 'Loads', url: '/outbound/loads' },
+            { title: 'Shipping Labels', url: '/outbound/shipping-labels' },
+            { title: 'VAS Execution', url: '/outbound/vas-execution' },
+            { title: 'Carrier Rates', url: '/outbound/carrier-rates' },
           ],
         },
         {
@@ -73,6 +97,9 @@ export const sidebarData: SidebarData = {
             { title: 'Holds', url: '/inventory/holds' },
             { title: 'Policies', url: '/inventory/policies' },
             { title: 'Transactions', url: '/inventory/transactions' },
+            { title: 'Reservations', url: '/inventory/reservations' },
+            { title: 'Exceptions', url: '/inventory/exceptions' },
+            { title: 'NCRs', url: '/inventory/ncr' },
           ],
         },
         {
@@ -102,6 +129,22 @@ export const sidebarData: SidebarData = {
           title: 'Categories',
           url: '/items/categories',
         },
+        {
+          title: 'Brands',
+          url: '/brands',
+        },
+        {
+          title: 'Product Packaging',
+          url: '/items/product-packaging',
+        },
+        {
+          title: 'Product Suppliers',
+          url: '/items/product-suppliers',
+        },
+        {
+          title: 'Product-Client Assignments',
+          url: '/items/product-client-assignments',
+        },
       ],
     },
     {
@@ -114,7 +157,34 @@ export const sidebarData: SidebarData = {
             { title: 'Facilities', url: '/warehouse/facilities' },
             { title: 'Zones', url: '/warehouse/zones' },
             { title: 'Locations', url: '/warehouse/locations' },
+            { title: 'Packing Stations', url: '/warehouse/packing-stations' },
+            { title: 'Loading Docks', url: '/warehouse/loading-docks' },
           ],
+        },
+      ],
+    },
+    {
+      title: 'Master Data',
+      items: [
+        {
+          title: 'Clients',
+          url: '/clients',
+          icon: Briefcase,
+        },
+        {
+          title: 'Vendors',
+          url: '/vendors',
+          icon: Truck,
+        },
+        {
+          title: 'Carriers',
+          url: '/carriers',
+          icon: Truck,
+        },
+        {
+          title: 'LPNs',
+          url: '/lpns',
+          icon: QrCode,
         },
       ],
     },

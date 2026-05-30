@@ -7,5 +7,5 @@
  */
 
 export type InventoryWebControllerGetLowStockParams = {
-  facilityId: string
-}
+facilityId: string;
+};

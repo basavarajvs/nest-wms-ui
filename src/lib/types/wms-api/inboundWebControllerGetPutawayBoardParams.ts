@@ -7,9 +7,9 @@
  */
 
 export type InboundWebControllerGetPutawayBoardParams = {
-  status: string
-  assignedToUserId: string
-  priority: number
-  page: number
-  limit: number
-}
+status: string;
+assignedToUserId: string;
+priority: number;
+page: number;
+limit: number;
+};

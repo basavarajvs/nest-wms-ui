@@ -7,10 +7,10 @@
  */
 
 export interface ScheduleCountDto {
-  autoAdjust?: boolean
-  countMethod: string
-  facilityId: string
-  frequencyType?: string
-  scopeIdentifier?: string
-  scopeType: string
+  autoAdjust?: boolean;
+  countMethod: string;
+  facilityId: string;
+  frequencyType?: string;
+  scopeIdentifier?: string;
+  scopeType: string;
 }

@@ -7,8 +7,8 @@
  */
 
 export interface CreateGrnAdHocDto {
-  facilityId: string
-  poNumber?: string
-  qcRequired?: boolean
-  vendorId?: string
+  facilityId: string;
+  poNumber?: string;
+  qcRequired?: boolean;
+  vendorId?: string;
 }

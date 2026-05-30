@@ -7,13 +7,13 @@
  */
 
 export type ReportsControllerDownloadLiveParams = {
-  reportType: string
-  dateFrom: string
-  dateTo: string
-  facilityId: string
-  zoneId: string
-  productClass: string
-  format: string
-  timezone: string
-  liveQuery: string
-}
+reportType: string;
+dateFrom: string;
+dateTo: string;
+facilityId: string;
+zoneId: string;
+productClass: string;
+format: string;
+timezone: string;
+liveQuery: string;
+};

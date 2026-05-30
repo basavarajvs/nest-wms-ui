@@ -7,6 +7,6 @@
  */
 
 export interface ReceiveLpnTransferDto {
-  lpnNumber: string
-  transferId: string
+  lpnNumber: string;
+  transferId: string;
 }

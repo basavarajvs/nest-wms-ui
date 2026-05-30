@@ -7,5 +7,5 @@
  */
 
 export type WmsStateMachineControllerListParams = {
-  entityType: string
-}
+entityType: string;
+};

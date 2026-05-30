@@ -5,10 +5,10 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { UpsertRuleDtoDefinitionJson } from './upsertRuleDtoDefinitionJson.js'
+import type { UpsertRuleDtoDefinitionJson } from './upsertRuleDtoDefinitionJson.js';
 
 export interface UpsertRuleDto {
-  definitionJson: UpsertRuleDtoDefinitionJson
-  ruleKey: string
-  ruleType: string
+  definitionJson: UpsertRuleDtoDefinitionJson;
+  ruleKey: string;
+  ruleType: string;
 }

@@ -7,13 +7,13 @@
  */
 
 export interface UpdateProductDto {
-  baseUomId?: string
-  categoryId?: string
-  description?: string
-  isActive?: boolean
-  name?: string
-  trackExpiry?: boolean
-  trackLot?: boolean
-  trackSerial?: boolean
-  velocityClass?: string
+  baseUomId?: string;
+  categoryId?: string;
+  description?: string;
+  isActive?: boolean;
+  name?: string;
+  trackExpiry?: boolean;
+  trackLot?: boolean;
+  trackSerial?: boolean;
+  velocityClass?: string;
 }

@@ -7,8 +7,8 @@
  */
 
 export type InventoryWebControllerListAdjustmentsParams = {
-  status: string
-  facilityId: string
-  page: number
-  limit: number
-}
+status: string;
+facilityId: string;
+page: number;
+limit: number;
+};

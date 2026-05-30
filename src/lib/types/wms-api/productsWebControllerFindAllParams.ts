@@ -7,9 +7,9 @@
  */
 
 export type ProductsWebControllerFindAllParams = {
-  search?: string
-  categoryId?: string
-  velocityClass?: string
-  trackLot?: boolean
-  isActive?: boolean
-}
+search?: string;
+categoryId?: string;
+velocityClass?: string;
+trackLot?: boolean;
+isActive?: boolean;
+};

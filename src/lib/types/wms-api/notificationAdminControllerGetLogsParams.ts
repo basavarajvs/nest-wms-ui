@@ -7,5 +7,5 @@
  */
 
 export type NotificationAdminControllerGetLogsParams = {
-  tenantId: string
-}
+tenantId: string;
+};

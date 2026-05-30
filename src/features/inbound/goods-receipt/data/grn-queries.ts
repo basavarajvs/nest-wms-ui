@@ -3,10 +3,18 @@ import {
   InboundWebController_createGrnFromAsn,
   InboundWebController_createGrnAdHoc,
   InboundWebController_getGrnProgress,
+  InboundWebController_markArrived,
+  InboundWebController_startReceiving,
+  InboundWebController_markReceived,
+  InboundWebController_startInspection,
+  InboundWebController_completeInspection,
+  InboundWebController_cancelGrn,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   CreateGrnFromAsnDto,
   CreateGrnAdHocDto,
+  MarkGrnArrivedDto,
+  CompleteInspectionDto,
 } from '@/lib/types/wms-api'
 
 export function useCreateGrnFromAsn() {
@@ -47,3 +55,76 @@ export function useGrnProgress(id: string) {
 }
 
 export const useGetGrnProgress = useGrnProgress
+
+// GRN status transition mutations
+export function useMarkGrnArrived() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (params: { receiptNumber: string; dto: MarkGrnArrivedDto }) => {
+      return InboundWebController_markArrived(params.receiptNumber, params.dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'grn'] })
+    },
+  })
+}
+
+export function useStartReceiving() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (receiptNumber: string) => {
+      return InboundWebController_startReceiving(receiptNumber)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'grn'] })
+    },
+  })
+}
+
+export function useMarkGrnReceived() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (receiptNumber: string) => {
+      return InboundWebController_markReceived(receiptNumber)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'grn'] })
+    },
+  })
+}
+
+export function useStartInspection() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (receiptNumber: string) => {
+      return InboundWebController_startInspection(receiptNumber)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'grn'] })
+    },
+  })
+}
+
+export function useCompleteInspection() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (args: { receiptNumber: string; dto: CompleteInspectionDto }) => {
+      return InboundWebController_completeInspection(args.receiptNumber, args.dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'grn'] })
+    },
+  })
+}
+
+export function useCancelGrn() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (receiptNumber: string) => {
+      return InboundWebController_cancelGrn(receiptNumber)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'grn'] })
+    },
+  })
+}

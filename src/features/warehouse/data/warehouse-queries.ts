@@ -1,7 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   WarehouseFacilityController_findAllWeb,
+  WarehouseFacilityController_findById,
+  WarehouseFacilityController_create,
+  WarehouseFacilityController_update,
+  WarehouseFacilityController_delete,
   WarehouseZoneController_findAllWeb,
+  WarehouseZoneController_findById,
+  WarehouseZoneController_create,
+  WarehouseZoneController_update,
+  WarehouseZoneController_delete,
   StorageLocationController_findAllWeb,
   StorageLocationController_createWeb,
   StorageLocationController_updateWeb,
@@ -9,6 +17,10 @@ import {
   StorageLocationController_findByCodeWeb,
 } from '@/lib/api/wms-api/master-data/master-data'
 import type {
+  CreateFacilityDto,
+  UpdateFacilityDto,
+  CreateZoneDto,
+  UpdateZoneDto,
   CreateLocationDto,
   UpdateLocationDto,
   StorageLocationControllerFindByCodeWebParams,
@@ -150,6 +162,72 @@ export function useFindLocationByCode(
     },
     enabled: !!code,
     staleTime: 1000 * 30,
+  })
+}
+
+export function useCreateFacility() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (dto: CreateFacilityDto) =>
+      WarehouseFacilityController_create(dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'facilities'] })
+    },
+  })
+}
+
+export function useUpdateFacility() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: UpdateFacilityDto }) =>
+      WarehouseFacilityController_update(id, dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'facilities'] })
+    },
+  })
+}
+
+export function useDeleteFacility() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) =>
+      WarehouseFacilityController_delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'facilities'] })
+    },
+  })
+}
+
+export function useCreateZone() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (dto: CreateZoneDto) =>
+      WarehouseZoneController_create(dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'zones'] })
+    },
+  })
+}
+
+export function useUpdateZone() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: UpdateZoneDto }) =>
+      WarehouseZoneController_update(id, dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'zones'] })
+    },
+  })
+}
+
+export function useDeleteZone() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) =>
+      WarehouseZoneController_delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'zones'] })
+    },
   })
 }
 

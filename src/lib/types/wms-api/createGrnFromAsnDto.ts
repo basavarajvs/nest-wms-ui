@@ -7,5 +7,5 @@
  */
 
 export interface CreateGrnFromAsnDto {
-  asnNumber: string
+  asnNumber: string;
 }

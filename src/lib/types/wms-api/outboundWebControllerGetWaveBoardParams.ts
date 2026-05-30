@@ -7,6 +7,6 @@
  */
 
 export type OutboundWebControllerGetWaveBoardParams = {
-  status: string
-  facilityId: string
-}
+status: string;
+facilityId: string;
+};

@@ -7,5 +7,5 @@
  */
 
 export interface UpdateAsnStatusDto {
-  status: string
+  status: string;
 }

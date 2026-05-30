@@ -7,8 +7,8 @@
  */
 
 export interface AllocationOverrideDto {
-  allocationId: string
-  reason: string
-  substituteLocationId: string
-  substituteLotId: string
+  allocationId: string;
+  reason: string;
+  substituteLocationId: string;
+  substituteLotId: string;
 }
