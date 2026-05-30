@@ -24,4 +24,4 @@
 /**
  * Metadata JSON
  */
-export type CreateGroupDtoMetadata = { [key: string]: unknown };
+export type CreateGroupDtoMetadata = { [key: string]: unknown }

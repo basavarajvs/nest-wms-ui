@@ -20,15 +20,15 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { RecordUsageMetricDtoMetadata } from './recordUsageMetricDtoMetadata.js';
+import type { RecordUsageMetricDtoMetadata } from './recordUsageMetricDtoMetadata.js'
 
 export interface RecordUsageMetricDto {
   /** Metadata JSON */
-  metadata?: RecordUsageMetricDtoMetadata;
+  metadata?: RecordUsageMetricDtoMetadata
   /** Resource type */
-  resourceType: string;
+  resourceType: string
   /** Unit */
-  unit?: string;
+  unit?: string
   /** Usage amount */
-  usageAmount: number;
+  usageAmount: number
 }

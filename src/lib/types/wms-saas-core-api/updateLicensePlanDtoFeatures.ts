@@ -24,4 +24,4 @@
 /**
  * Features JSON
  */
-export type UpdateLicensePlanDtoFeatures = { [key: string]: unknown };
+export type UpdateLicensePlanDtoFeatures = { [key: string]: unknown }

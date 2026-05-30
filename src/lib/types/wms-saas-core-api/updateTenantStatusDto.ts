@@ -20,9 +20,9 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { UpdateTenantStatusDtoStatus } from './updateTenantStatusDtoStatus.js';
+import type { UpdateTenantStatusDtoStatus } from './updateTenantStatusDtoStatus.js'
 
 export interface UpdateTenantStatusDto {
   /** New tenant status */
-  status: UpdateTenantStatusDtoStatus;
+  status: UpdateTenantStatusDtoStatus
 }

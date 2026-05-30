@@ -24,11 +24,11 @@
 /**
  * Resource scope
  */
-export type CreatePermissionDtoResourceScope = typeof CreatePermissionDtoResourceScope[keyof typeof CreatePermissionDtoResourceScope];
-
+export type CreatePermissionDtoResourceScope =
+  (typeof CreatePermissionDtoResourceScope)[keyof typeof CreatePermissionDtoResourceScope]
 
 export const CreatePermissionDtoResourceScope = {
   TENANT: 'TENANT',
   OWN: 'OWN',
   GROUP: 'GROUP',
-} as const;
+} as const

@@ -36,12 +36,12 @@ export interface Adjustment {
   reference?: string
   facilityId?: string
   reasonCode?: string
+  reason?: string
   notes?: string
   status?: string
   createdAt?: string
   submittedAt?: string
   approvedAt?: string
-  [key: string]: any
 }
 
 export function useAdjustments(
@@ -58,7 +58,7 @@ export function useAdjustments(
     queryKey: ['wms', 'inventory', 'adjustments', queryParams],
     queryFn: async () => {
       const res = await InventoryWebController_listAdjustments(
-        queryParams as any
+        queryParams
       )
       return res as unknown
     },

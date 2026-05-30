@@ -23,11 +23,11 @@
 
 export interface CreateResourceQuotaDto {
   /** Auto scale */
-  autoScale?: boolean;
+  autoScale?: boolean
   /** Current usage */
-  currentUsage?: number;
+  currentUsage?: number
   /** Limit amount */
-  limitAmount: number;
+  limitAmount: number
   /** Resource type */
-  resourceType: string;
+  resourceType: string
 }

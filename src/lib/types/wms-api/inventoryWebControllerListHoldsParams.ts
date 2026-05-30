@@ -7,8 +7,8 @@
  */
 
 export type InventoryWebControllerListHoldsParams = {
-status: string;
-facilityId: string;
-page: number;
-limit: number;
-};
+  status: string
+  facilityId: string
+  page: number
+  limit: number
+}

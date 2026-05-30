@@ -20,15 +20,15 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { UpdateGroupDtoMetadata } from './updateGroupDtoMetadata.js';
+import type { UpdateGroupDtoMetadata } from './updateGroupDtoMetadata.js'
 
 export interface UpdateGroupDto {
   /** Group description */
-  groupDescription?: string;
+  groupDescription?: string
   /** Group name */
-  groupName?: string;
+  groupName?: string
   /** Group type */
-  groupType?: string;
+  groupType?: string
   /** Metadata JSON */
-  metadata?: UpdateGroupDtoMetadata;
+  metadata?: UpdateGroupDtoMetadata
 }

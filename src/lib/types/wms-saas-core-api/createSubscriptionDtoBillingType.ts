@@ -24,11 +24,11 @@
 /**
  * Billing type
  */
-export type CreateSubscriptionDtoBillingType = typeof CreateSubscriptionDtoBillingType[keyof typeof CreateSubscriptionDtoBillingType];
-
+export type CreateSubscriptionDtoBillingType =
+  (typeof CreateSubscriptionDtoBillingType)[keyof typeof CreateSubscriptionDtoBillingType]
 
 export const CreateSubscriptionDtoBillingType = {
   recurring: 'recurring',
   one_time: 'one_time',
   usage_based: 'usage_based',
-} as const;
+} as const

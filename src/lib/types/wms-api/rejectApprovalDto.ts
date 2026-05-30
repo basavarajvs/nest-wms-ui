@@ -7,5 +7,5 @@
  */
 
 export interface RejectApprovalDto {
-  reason: string;
+  reason: string
 }

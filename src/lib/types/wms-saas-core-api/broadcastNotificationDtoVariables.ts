@@ -21,4 +21,4 @@
  * OpenAPI spec version: 1.0
  */
 
-export type BroadcastNotificationDtoVariables = { [key: string]: unknown };
+export type BroadcastNotificationDtoVariables = { [key: string]: unknown }

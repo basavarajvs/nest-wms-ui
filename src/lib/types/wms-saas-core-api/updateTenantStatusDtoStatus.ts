@@ -24,8 +24,8 @@
 /**
  * New tenant status
  */
-export type UpdateTenantStatusDtoStatus = typeof UpdateTenantStatusDtoStatus[keyof typeof UpdateTenantStatusDtoStatus];
-
+export type UpdateTenantStatusDtoStatus =
+  (typeof UpdateTenantStatusDtoStatus)[keyof typeof UpdateTenantStatusDtoStatus]
 
 export const UpdateTenantStatusDtoStatus = {
   active: 'active',
@@ -34,4 +34,4 @@ export const UpdateTenantStatusDtoStatus = {
   pending: 'pending',
   deleted: 'deleted',
   failed: 'failed',
-} as const;
+} as const

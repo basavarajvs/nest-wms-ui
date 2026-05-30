@@ -20,15 +20,15 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreateGroupDtoMetadata } from './createGroupDtoMetadata.js';
+import type { CreateGroupDtoMetadata } from './createGroupDtoMetadata.js'
 
 export interface CreateGroupDto {
   /** Group description */
-  groupDescription?: string;
+  groupDescription?: string
   /** Group name */
-  groupName: string;
+  groupName: string
   /** Group type */
-  groupType?: string;
+  groupType?: string
   /** Metadata JSON */
-  metadata?: CreateGroupDtoMetadata;
+  metadata?: CreateGroupDtoMetadata
 }

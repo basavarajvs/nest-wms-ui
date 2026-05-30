@@ -1,10 +1,13 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   InboundWebController_createGrnFromAsn,
   InboundWebController_createGrnAdHoc,
   InboundWebController_getGrnProgress,
 } from '@/lib/api/wms-api/wms-web/wms-web'
-import type { CreateGrnFromAsnDto, CreateGrnAdHocDto } from '@/lib/types/wms-api'
+import type {
+  CreateGrnFromAsnDto,
+  CreateGrnAdHocDto,
+} from '@/lib/types/wms-api'
 
 export function useCreateGrnFromAsn() {
   const queryClient = useQueryClient()
@@ -30,10 +33,17 @@ export function useCreateGrnAdHoc() {
   })
 }
 
-export function useGetGrnProgress() {
-  return useMutation({
-    mutationFn: async (id: string) => {
-      return InboundWebController_getGrnProgress(id)
+export function useGrnProgress(id: string) {
+  return useQuery({
+    queryKey: ['wms', 'inbound', 'grn', 'progress', id],
+    queryFn: async () => {
+      const res = await InboundWebController_getGrnProgress(id)
+      return res as unknown
     },
+    enabled: !!id,
+    staleTime: 1000 * 30,
+    retry: 1,
   })
 }
+
+export const useGetGrnProgress = useGrnProgress

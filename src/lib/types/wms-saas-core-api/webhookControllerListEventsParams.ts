@@ -22,8 +22,8 @@
  */
 
 export type WebhookControllerListEventsParams = {
-eventType: string;
-status: string;
-page: number;
-limit: number;
-};
+  eventType: string
+  status: string
+  page: number
+  limit: number
+}

@@ -1,10 +1,10 @@
 import { useState } from 'react'
+import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { toast } from 'sonner'
 import { Plus, Edit2 } from 'lucide-react'
-
+import { toast } from 'sonner'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -25,10 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
 import {
   useFacilities,
   useZones,
@@ -50,12 +48,14 @@ const locationSchema = z.object({
 type LocationForm = z.infer<typeof locationSchema>
 
 export function Warehouse() {
-  const [activeTab, setActiveTab] = useState<'facilities' | 'zones' | 'locations'>('facilities')
+  const [activeTab, setActiveTab] = useState<
+    'facilities' | 'zones' | 'locations'
+  >('facilities')
 
   // Data fetching
-  const { data: facilitiesData, isLoading: facilitiesLoading } = useFacilities()
-  const { data: zonesData, isLoading: zonesLoading } = useZones()
-  const { data: locationsData, isLoading: locationsLoading } = useLocations()
+  const { data: facilitiesData, isLoading: facilitiesLoading, error: facilitiesError, refetch: refetchFacilities } = useFacilities()
+  const { data: zonesData, isLoading: zonesLoading, error: zonesError, refetch: refetchZones } = useZones()
+  const { data: locationsData, isLoading: locationsLoading, error: locationsError, refetch: refetchLocations } = useLocations()
 
   const facilities = facilitiesData?.facilities ?? []
   const zones = zonesData?.zones ?? []
@@ -113,28 +113,41 @@ export function Warehouse() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Warehouse Structure</h1>
-        <p className="text-muted-foreground">Manage Facilities, Zones, and Storage Locations</p>
+        <h1 className='text-2xl font-bold tracking-tight'>
+          Warehouse Structure
+        </h1>
+        <p className='text-muted-foreground'>
+          Manage Facilities, Zones, and Storage Locations
+        </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="facilities">Facilities</TabsTrigger>
-          <TabsTrigger value="zones">Zones</TabsTrigger>
-          <TabsTrigger value="locations">Locations</TabsTrigger>
+        <TabsList className='grid w-full grid-cols-3'>
+          <TabsTrigger value='facilities'>Facilities</TabsTrigger>
+          <TabsTrigger value='zones'>Zones</TabsTrigger>
+          <TabsTrigger value='locations'>Locations</TabsTrigger>
         </TabsList>
 
         {/* Facilities */}
-        <TabsContent value="facilities">
+        <TabsContent value='facilities'>
           <Card>
             <CardHeader>
               <CardTitle>Facilities (Warehouses)</CardTitle>
             </CardHeader>
             <CardContent>
               {facilitiesLoading ? (
-                <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}</div>
+                <div className='space-y-2'>
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className='h-10 w-full' />
+                  ))}
+                </div>
+              ) : facilitiesError ? (
+                <div className="flex flex-col items-center gap-2 py-8 text-center">
+                  <p className="text-destructive font-medium">Failed to load facilities</p>
+                  <Button variant="outline" size="sm" onClick={() => refetchFacilities()}>Retry</Button>
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
@@ -147,15 +160,28 @@ export function Warehouse() {
                   </TableHeader>
                   <TableBody>
                     {facilities.length === 0 && (
-                      <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">No facilities found</TableCell></TableRow>
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          className='py-8 text-center text-muted-foreground'
+                        >
+                          No facilities found
+                        </TableCell>
+                      </TableRow>
                     )}
                     {facilities.map((f: Facility) => (
                       <TableRow key={f.id}>
-                        <TableCell className="font-medium">{f.facilityCode}</TableCell>
+                        <TableCell className='font-medium'>
+                          {f.facilityCode}
+                        </TableCell>
                         <TableCell>{f.facilityName}</TableCell>
                         <TableCell>{f.facilityType || '—'}</TableCell>
                         <TableCell>
-                          <Badge variant={f.isActive !== false ? 'default' : 'secondary'}>
+                          <Badge
+                            variant={
+                              f.isActive !== false ? 'default' : 'secondary'
+                            }
+                          >
                             {f.isActive !== false ? 'Active' : 'Inactive'}
                           </Badge>
                         </TableCell>
@@ -169,14 +195,23 @@ export function Warehouse() {
         </TabsContent>
 
         {/* Zones */}
-        <TabsContent value="zones">
+        <TabsContent value='zones'>
           <Card>
             <CardHeader>
               <CardTitle>Warehouse Zones</CardTitle>
             </CardHeader>
             <CardContent>
               {zonesLoading ? (
-                <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}</div>
+                <div className='space-y-2'>
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className='h-10 w-full' />
+                  ))}
+                </div>
+              ) : zonesError ? (
+                <div className="flex flex-col items-center gap-2 py-8 text-center">
+                  <p className="text-destructive font-medium">Failed to load zones</p>
+                  <Button variant="outline" size="sm" onClick={() => refetchZones()}>Retry</Button>
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
@@ -188,13 +223,26 @@ export function Warehouse() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {zones.length === 0 && <TableRow><TableCell colSpan={4} className="text-center py-8 text-muted-foreground">No zones found</TableCell></TableRow>}
+                    {zones.length === 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          className='py-8 text-center text-muted-foreground'
+                        >
+                          No zones found
+                        </TableCell>
+                      </TableRow>
+                    )}
                     {zones.map((z: Zone) => (
                       <TableRow key={z.id}>
-                        <TableCell className="font-medium">{z.zoneCode}</TableCell>
+                        <TableCell className='font-medium'>
+                          {z.zoneCode}
+                        </TableCell>
                         <TableCell>{z.zoneName}</TableCell>
                         <TableCell>{z.zoneType || '—'}</TableCell>
-                        <TableCell className="text-muted-foreground">{z.facilityId || '—'}</TableCell>
+                        <TableCell className='text-muted-foreground'>
+                          {z.facilityId || '—'}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -205,27 +253,39 @@ export function Warehouse() {
         </TabsContent>
 
         {/* Locations */}
-        <TabsContent value="locations">
-          <div className="flex justify-between items-center mb-4">
+        <TabsContent value='locations'>
+          <div className='mb-4 flex items-center justify-between'>
             <div>
-              <h3 className="text-lg font-semibold">Storage Locations</h3>
+              <h3 className='text-lg font-semibold'>Storage Locations</h3>
             </div>
-            <Dialog open={locationDialogOpen} onOpenChange={setLocationDialogOpen}>
+            <Dialog
+              open={locationDialogOpen}
+              onOpenChange={setLocationDialogOpen}
+            >
               <DialogTrigger asChild>
                 <Button onClick={() => openLocationDialog()}>
-                  <Plus className="mr-2 h-4 w-4" /> New Location
+                  <Plus className='mr-2 h-4 w-4' /> New Location
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <form onSubmit={handleSubmit(onLocationSubmit)}>
                   <DialogHeader>
-                    <DialogTitle>{editingLocation ? 'Edit Location' : 'Create Location'}</DialogTitle>
+                    <DialogTitle>
+                      {editingLocation ? 'Edit Location' : 'Create Location'}
+                    </DialogTitle>
                   </DialogHeader>
-                  <div className="grid gap-4 py-4">
+                  <div className='grid gap-4 py-4'>
                     <div>
                       <Label>Location Code *</Label>
-                      <Input {...register('locationCode')} disabled={!!editingLocation} />
-                      {errors.locationCode && <p className="text-sm text-destructive">{errors.locationCode.message}</p>}
+                      <Input
+                        {...register('locationCode')}
+                        disabled={!!editingLocation}
+                      />
+                      {errors.locationCode && (
+                        <p className='text-sm text-destructive'>
+                          {errors.locationCode.message}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <Label>Location Name</Label>
@@ -233,12 +293,23 @@ export function Warehouse() {
                     </div>
                     <div>
                       <Label>Location Type</Label>
-                      <Input {...register('locationType')} placeholder="BIN, RACK, etc." />
+                      <Input
+                        {...register('locationType')}
+                        placeholder='BIN, RACK, etc.'
+                      />
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => setLocationDialogOpen(false)}>Cancel</Button>
-                    <Button type="submit" disabled={isSubmitting}>Save</Button>
+                    <Button
+                      type='button'
+                      variant='outline'
+                      onClick={() => setLocationDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type='submit' disabled={isSubmitting}>
+                      Save
+                    </Button>
                   </DialogFooter>
                 </form>
               </DialogContent>
@@ -246,11 +317,22 @@ export function Warehouse() {
           </div>
 
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className='pt-6'>
               {locationsLoading ? (
-                <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}</div>
+                <div className='space-y-2'>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Skeleton key={i} className='h-10 w-full' />
+                  ))}
+                </div>
+              ) : locationsError ? (
+                <div className="flex flex-col items-center gap-2 py-8 text-center">
+                  <p className="text-destructive font-medium">Failed to load locations</p>
+                  <Button variant="outline" size="sm" onClick={() => refetchLocations()}>Retry</Button>
+                </div>
               ) : locations.length === 0 ? (
-                <div className="text-center py-10 text-muted-foreground">No locations found.</div>
+                <div className='py-10 text-center text-muted-foreground'>
+                  No locations found.
+                </div>
               ) : (
                 <Table>
                   <TableHeader>
@@ -258,18 +340,24 @@ export function Warehouse() {
                       <TableHead>Code</TableHead>
                       <TableHead>Name</TableHead>
                       <TableHead>Type</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead className='text-right'>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {locations.map((loc: Location) => (
                       <TableRow key={loc.id}>
-                        <TableCell className="font-medium">{loc.locationCode}</TableCell>
+                        <TableCell className='font-medium'>
+                          {loc.locationCode}
+                        </TableCell>
                         <TableCell>{loc.locationName || '—'}</TableCell>
                         <TableCell>{loc.locationType || '—'}</TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" onClick={() => openLocationDialog(loc)}>
-                            <Edit2 className="h-4 w-4" />
+                        <TableCell className='text-right'>
+                          <Button
+                            variant='ghost'
+                            size='icon'
+                            onClick={() => openLocationDialog(loc)}
+                          >
+                            <Edit2 className='h-4 w-4' />
                           </Button>
                         </TableCell>
                       </TableRow>

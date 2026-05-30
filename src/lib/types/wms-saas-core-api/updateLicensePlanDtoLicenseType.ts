@@ -21,12 +21,12 @@
  * OpenAPI spec version: 1.0
  */
 
-export type UpdateLicensePlanDtoLicenseType = typeof UpdateLicensePlanDtoLicenseType[keyof typeof UpdateLicensePlanDtoLicenseType];
-
+export type UpdateLicensePlanDtoLicenseType =
+  (typeof UpdateLicensePlanDtoLicenseType)[keyof typeof UpdateLicensePlanDtoLicenseType]
 
 export const UpdateLicensePlanDtoLicenseType = {
   trial: 'trial',
   basic: 'basic',
   premium: 'premium',
   enterprise: 'enterprise',
-} as const;
+} as const

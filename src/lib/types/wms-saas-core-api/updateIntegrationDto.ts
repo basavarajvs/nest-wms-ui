@@ -20,15 +20,15 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { UpdateIntegrationDtoConfig } from './updateIntegrationDtoConfig.js';
-import type { UpdateIntegrationDtoStatus } from './updateIntegrationDtoStatus.js';
-import type { UpdateIntegrationDtoSyncFrequency } from './updateIntegrationDtoSyncFrequency.js';
+import type { UpdateIntegrationDtoConfig } from './updateIntegrationDtoConfig.js'
+import type { UpdateIntegrationDtoStatus } from './updateIntegrationDtoStatus.js'
+import type { UpdateIntegrationDtoSyncFrequency } from './updateIntegrationDtoSyncFrequency.js'
 
 export interface UpdateIntegrationDto {
   /** Configuration JSON */
-  config?: UpdateIntegrationDtoConfig;
+  config?: UpdateIntegrationDtoConfig
   /** Integration name */
-  integrationName?: string;
-  status?: UpdateIntegrationDtoStatus;
-  syncFrequency?: UpdateIntegrationDtoSyncFrequency;
+  integrationName?: string
+  status?: UpdateIntegrationDtoStatus
+  syncFrequency?: UpdateIntegrationDtoSyncFrequency
 }

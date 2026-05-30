@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Warehouse } from '@/features/warehouse'
+import FacilitiesPage from '@/pages/warehouse/Facilities'
 
-// @ts-ignore - route will be valid after TanStack Router generator runs
 export const Route = createFileRoute('/_authenticated/warehouse/facilities')({
-  component: Warehouse,
+  component: FacilitiesPage,
 })

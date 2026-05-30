@@ -23,14 +23,14 @@
 
 export interface CreateApiKeyDto {
   /**
-     * Description
-     * @maxLength 500
-     */
-  description?: string;
+   * Description
+   * @maxLength 500
+   */
+  description?: string
   /** Expiry date (ISO 8601) */
-  expiresAt?: string;
+  expiresAt?: string
   /** Key name */
-  keyName: string;
+  keyName: string
   /** Permission scopes */
-  scopes?: string[];
+  scopes?: string[]
 }

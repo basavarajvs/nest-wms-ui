@@ -22,10 +22,10 @@
  */
 
 export type SystemAdminControllerGetAuditParams = {
-tenantId?: string;
-eventType?: string;
-dateFrom?: string;
-dateTo?: string;
-page?: number;
-limit?: number;
-};
+  tenantId?: string
+  eventType?: string
+  dateFrom?: string
+  dateTo?: string
+  page?: number
+  limit?: number
+}

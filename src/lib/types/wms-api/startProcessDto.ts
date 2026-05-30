@@ -5,10 +5,10 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { StartProcessDtoInitialContext } from './startProcessDtoInitialContext.js';
+import type { StartProcessDtoInitialContext } from './startProcessDtoInitialContext.js'
 
 export interface StartProcessDto {
-  entityId: string;
-  entityType: string;
-  initialContext: StartProcessDtoInitialContext;
+  entityId: string
+  entityType: string
+  initialContext: StartProcessDtoInitialContext
 }

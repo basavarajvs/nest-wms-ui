@@ -23,21 +23,21 @@
 
 export interface CreateUserDto {
   /** Email address */
-  email: string;
+  email: string
   /** First name */
-  firstName: string;
+  firstName: string
   /** Last name */
-  lastName: string;
+  lastName: string
   /** Locale */
-  locale?: string;
+  locale?: string
   /** Account password */
-  password: string;
+  password: string
   /** Phone number */
-  phone?: string;
+  phone?: string
   /** Initial role IDs */
-  roleIds?: string[];
+  roleIds?: string[]
   /** Send invite email */
-  sendInvite?: boolean;
+  sendInvite?: boolean
   /** Timezone */
-  timezone?: string;
+  timezone?: string
 }

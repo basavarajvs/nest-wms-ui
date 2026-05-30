@@ -6,4 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type UpsertStateMachineDtoDefinitionJson = { [key: string]: unknown };
+export type UpsertStateMachineDtoDefinitionJson = { [key: string]: unknown }

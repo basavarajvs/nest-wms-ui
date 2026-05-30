@@ -24,4 +24,4 @@
 /**
  * Address object
  */
-export type UpdateUserDtoAddress = { [key: string]: unknown };
+export type UpdateUserDtoAddress = { [key: string]: unknown }

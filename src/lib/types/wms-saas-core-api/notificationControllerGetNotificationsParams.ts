@@ -22,7 +22,7 @@
  */
 
 export type NotificationControllerGetNotificationsParams = {
-page: string;
-limit: string;
-unreadOnly: string;
-};
+  page: string
+  limit: string
+  unreadOnly: string
+}

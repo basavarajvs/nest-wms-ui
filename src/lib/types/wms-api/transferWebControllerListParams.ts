@@ -7,6 +7,6 @@
  */
 
 export type TransferWebControllerListParams = {
-status: string;
-transferType: string;
-};
+  status: string
+  transferType: string
+}

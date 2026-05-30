@@ -21,8 +21,8 @@
  * OpenAPI spec version: 1.0
  */
 
-export type CreateSystemSettingDtoCategory = typeof CreateSystemSettingDtoCategory[keyof typeof CreateSystemSettingDtoCategory];
-
+export type CreateSystemSettingDtoCategory =
+  (typeof CreateSystemSettingDtoCategory)[keyof typeof CreateSystemSettingDtoCategory]
 
 export const CreateSystemSettingDtoCategory = {
   general: 'general',
@@ -30,4 +30,4 @@ export const CreateSystemSettingDtoCategory = {
   compliance: 'compliance',
   billing: 'billing',
   notifications: 'notifications',
-} as const;
+} as const

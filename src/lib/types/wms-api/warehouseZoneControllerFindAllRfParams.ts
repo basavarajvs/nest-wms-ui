@@ -7,5 +7,5 @@
  */
 
 export type WarehouseZoneControllerFindAllRfParams = {
-facilityId: string;
-};
+  facilityId: string
+}

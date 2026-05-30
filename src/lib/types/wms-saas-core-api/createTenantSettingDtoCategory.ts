@@ -21,8 +21,8 @@
  * OpenAPI spec version: 1.0
  */
 
-export type CreateTenantSettingDtoCategory = typeof CreateTenantSettingDtoCategory[keyof typeof CreateTenantSettingDtoCategory];
-
+export type CreateTenantSettingDtoCategory =
+  (typeof CreateTenantSettingDtoCategory)[keyof typeof CreateTenantSettingDtoCategory]
 
 export const CreateTenantSettingDtoCategory = {
   general: 'general',
@@ -30,4 +30,4 @@ export const CreateTenantSettingDtoCategory = {
   compliance: 'compliance',
   billing: 'billing',
   notifications: 'notifications',
-} as const;
+} as const

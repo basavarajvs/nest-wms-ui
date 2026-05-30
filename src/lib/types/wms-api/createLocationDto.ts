@@ -5,12 +5,12 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { CreateLocationDtoAttributes } from './createLocationDtoAttributes.js';
+import type { CreateLocationDtoAttributes } from './createLocationDtoAttributes.js'
 
 export interface CreateLocationDto {
-  attributes?: CreateLocationDtoAttributes;
-  facilityId: string;
-  locationCode: string;
-  locationType: string;
-  zoneId: string;
+  attributes?: CreateLocationDtoAttributes
+  facilityId: string
+  locationCode: string
+  locationType: string
+  zoneId: string
 }

@@ -22,7 +22,7 @@
  */
 
 export type ApiKeyControllerFindAllParams = {
-isActive?: boolean;
-page?: number;
-limit?: number;
-};
+  isActive?: boolean
+  page?: number
+  limit?: number
+}

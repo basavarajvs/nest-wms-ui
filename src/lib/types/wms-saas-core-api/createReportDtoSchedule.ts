@@ -24,4 +24,4 @@
 /**
  * Schedule config for recurring reports
  */
-export type CreateReportDtoSchedule = { [key: string]: unknown };
+export type CreateReportDtoSchedule = { [key: string]: unknown }

@@ -21,8 +21,8 @@
  * OpenAPI spec version: 1.0
  */
 
-export type UpdateSubscriptionDtoStatus = typeof UpdateSubscriptionDtoStatus[keyof typeof UpdateSubscriptionDtoStatus];
-
+export type UpdateSubscriptionDtoStatus =
+  (typeof UpdateSubscriptionDtoStatus)[keyof typeof UpdateSubscriptionDtoStatus]
 
 export const UpdateSubscriptionDtoStatus = {
   active: 'active',
@@ -30,4 +30,4 @@ export const UpdateSubscriptionDtoStatus = {
   suspended: 'suspended',
   cancelled: 'cancelled',
   expired: 'expired',
-} as const;
+} as const

@@ -22,12 +22,12 @@
  */
 
 export type AuditControllerExportParams = {
-userId?: string;
-eventType?: string;
-resourceType?: string;
-resourceId?: string;
-dateFrom?: string;
-dateTo?: string;
-page?: number;
-limit?: number;
-};
+  userId?: string
+  eventType?: string
+  resourceType?: string
+  resourceId?: string
+  dateFrom?: string
+  dateTo?: string
+  page?: number
+  limit?: number
+}

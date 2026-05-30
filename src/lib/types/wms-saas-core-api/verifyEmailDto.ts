@@ -23,5 +23,5 @@
 
 export interface VerifyEmailDto {
   /** Email verification token */
-  token: string;
+  token: string
 }

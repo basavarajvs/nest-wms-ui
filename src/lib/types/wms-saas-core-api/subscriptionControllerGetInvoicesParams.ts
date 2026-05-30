@@ -22,7 +22,7 @@
  */
 
 export type SubscriptionControllerGetInvoicesParams = {
-tenantId: string;
-page?: number;
-limit?: number;
-};
+  tenantId: string
+  page?: number
+  limit?: number
+}

@@ -22,6 +22,6 @@
  */
 
 export type PermissionControllerFindAllParams = {
-includeSystem?: string;
-resourceType?: string;
-};
+  includeSystem?: string
+  resourceType?: string
+}

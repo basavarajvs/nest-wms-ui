@@ -7,9 +7,9 @@
  */
 
 export interface RfReceiveDto {
-  expiryDate?: string;
-  grnLineId: string;
-  locationId?: string;
-  lotNumber?: string;
-  lpnNumber?: string;
+  expiryDate?: string
+  grnLineId: string
+  locationId?: string
+  lotNumber?: string
+  lpnNumber?: string
 }

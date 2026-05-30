@@ -23,17 +23,17 @@
 
 export interface UpdateCompliancePolicyDto {
   /** Effective date */
-  effectiveDate?: string;
+  effectiveDate?: string
   /** Is active */
-  isActive?: boolean;
+  isActive?: boolean
   /** Policy description */
-  policyDescription?: string;
+  policyDescription?: string
   /** Policy document */
-  policyDocument?: string;
+  policyDocument?: string
   /** Policy name */
-  policyName?: string;
+  policyName?: string
   /** Policy version */
-  policyVersion?: string;
+  policyVersion?: string
   /** Review date */
-  reviewDate?: string;
+  reviewDate?: string
 }

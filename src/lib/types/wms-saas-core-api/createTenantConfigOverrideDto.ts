@@ -23,11 +23,11 @@
 
 export interface CreateTenantConfigOverrideDto {
   /** Config key */
-  configKey: string;
+  configKey: string
   /** Config type */
-  configType?: string;
+  configType?: string
   /** Config value */
-  configValue?: string;
+  configValue?: string
   /** Description */
-  description?: string;
+  description?: string
 }

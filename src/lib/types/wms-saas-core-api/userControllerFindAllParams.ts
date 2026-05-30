@@ -22,32 +22,32 @@
  */
 
 export type UserControllerFindAllParams = {
-/**
- * Page number
- */
-page?: number;
-/**
- * Items per page
- */
-limit?: number;
-/**
- * Search query
- */
-search?: string;
-/**
- * Filter by status
- */
-status?: string;
-/**
- * Filter by role code
- */
-roleCode?: string;
-/**
- * Sort field
- */
-sortBy?: string;
-/**
- * Sort order
- */
-sortOrder?: string;
-};
+  /**
+   * Page number
+   */
+  page?: number
+  /**
+   * Items per page
+   */
+  limit?: number
+  /**
+   * Search query
+   */
+  search?: string
+  /**
+   * Filter by status
+   */
+  status?: string
+  /**
+   * Filter by role code
+   */
+  roleCode?: string
+  /**
+   * Sort field
+   */
+  sortBy?: string
+  /**
+   * Sort order
+   */
+  sortOrder?: string
+}

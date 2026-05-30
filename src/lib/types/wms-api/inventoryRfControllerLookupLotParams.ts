@@ -7,6 +7,6 @@
  */
 
 export type InventoryRfControllerLookupLotParams = {
-facilityId: string;
-productId: string;
-};
+  facilityId: string
+  productId: string
+}

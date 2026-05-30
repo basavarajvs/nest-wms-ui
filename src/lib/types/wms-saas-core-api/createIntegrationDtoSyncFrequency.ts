@@ -21,12 +21,12 @@
  * OpenAPI spec version: 1.0
  */
 
-export type CreateIntegrationDtoSyncFrequency = typeof CreateIntegrationDtoSyncFrequency[keyof typeof CreateIntegrationDtoSyncFrequency];
-
+export type CreateIntegrationDtoSyncFrequency =
+  (typeof CreateIntegrationDtoSyncFrequency)[keyof typeof CreateIntegrationDtoSyncFrequency]
 
 export const CreateIntegrationDtoSyncFrequency = {
   hourly: 'hourly',
   daily: 'daily',
   weekly: 'weekly',
   monthly: 'monthly',
-} as const;
+} as const

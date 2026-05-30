@@ -23,11 +23,11 @@
 
 export interface AcceptInvitationDto {
   /** First name */
-  firstName: string;
+  firstName: string
   /** Last name */
-  lastName: string;
+  lastName: string
   /** Account password */
-  password: string;
+  password: string
   /** Invitation token */
-  token: string;
+  token: string
 }

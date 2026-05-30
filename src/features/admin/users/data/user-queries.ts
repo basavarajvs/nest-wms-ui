@@ -1,11 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { RoleController_findAll } from '@/lib/api/wms-saas-core-api/roles/roles'
 import {
   UserController_findAll,
   UserController_invite,
   UserController_assignRole,
 } from '@/lib/api/wms-saas-core-api/users/users'
-import { RoleController_findAll } from '@/lib/api/wms-saas-core-api/roles/roles'
-import type { InviteUserDto, AssignRoleDto } from '@/lib/types/wms-saas-core-api'
+import type {
+  InviteUserDto,
+  AssignRoleDto,
+} from '@/lib/types/wms-saas-core-api'
 import type { UserControllerFindAllParams } from '@/lib/types/wms-saas-core-api/userControllerFindAllParams'
 
 // Defensive helpers (generated responses are data: void)
@@ -91,7 +94,13 @@ export function useInviteUser() {
 export function useAssignRole() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ userId, dto }: { userId: string; dto: AssignRoleDto }) => {
+    mutationFn: async ({
+      userId,
+      dto,
+    }: {
+      userId: string
+      dto: AssignRoleDto
+    }) => {
       const res = await UserController_assignRole(userId, dto)
       return res
     },

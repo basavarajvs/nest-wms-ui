@@ -7,5 +7,5 @@
  */
 
 export type StorageLocationControllerFindByCodeWebParams = {
-facilityId: string;
-};
+  facilityId: string
+}

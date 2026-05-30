@@ -23,7 +23,7 @@
 
 export interface ChangePinDto {
   /** Current PIN */
-  currentPin: string;
+  currentPin: string
   /** New PIN */
-  newPin: string;
+  newPin: string
 }

@@ -23,9 +23,9 @@
 
 export interface UpdateResourceQuotaDto {
   /** Auto scale */
-  autoScale?: boolean;
+  autoScale?: boolean
   /** Current usage */
-  currentUsage?: number;
+  currentUsage?: number
   /** Limit amount */
-  limitAmount?: number;
+  limitAmount?: number
 }

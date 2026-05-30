@@ -24,4 +24,4 @@
 /**
  * Applies to JSON
  */
-export type CreateRetentionPolicyDtoAppliesTo = { [key: string]: unknown };
+export type CreateRetentionPolicyDtoAppliesTo = { [key: string]: unknown }

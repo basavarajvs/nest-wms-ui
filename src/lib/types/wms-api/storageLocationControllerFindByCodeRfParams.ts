@@ -7,5 +7,5 @@
  */
 
 export type StorageLocationControllerFindByCodeRfParams = {
-facilityId: string;
-};
+  facilityId: string
+}

@@ -23,11 +23,11 @@
 
 export interface UpdateWebhookEndpointDto {
   /** Endpoint name */
-  endpointName?: string;
+  endpointName?: string
   /** Webhook URL (HTTPS only) */
-  endpointUrl?: string;
+  endpointUrl?: string
   /** Event types to subscribe to */
-  eventTypes?: string[];
+  eventTypes?: string[]
   /** Is active */
-  isActive?: boolean;
+  isActive?: boolean
 }

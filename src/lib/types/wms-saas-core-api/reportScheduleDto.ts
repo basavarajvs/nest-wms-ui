@@ -23,7 +23,7 @@
 
 export interface ReportScheduleDto {
   /** Cron expression */
-  cronExpression: string;
+  cronExpression: string
   /** Frequency label */
-  frequency: string;
+  frequency: string
 }

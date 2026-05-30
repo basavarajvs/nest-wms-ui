@@ -11,7 +11,6 @@ import type {
   ProductsWebControllerFindAllParams,
 } from '@/lib/types/wms-api'
 
-// Defensive helpers (same pattern as users/dashboard)
 function safeArray<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[]
   if (data && typeof data === 'object') {
@@ -47,19 +46,35 @@ export interface Product {
   velocityClass?: string
   isActive?: boolean
   createdAt?: string
+  updatedAt?: string
 }
 
-export function useProducts(params?: ProductsWebControllerFindAllParams) {
+export function useProducts(params?: ProductsWebControllerFindAllParams & { page?: number; limit?: number }) {
+  const stableKey = JSON.stringify(params)
   return useQuery({
-    queryKey: ['wms', 'products', 'list', params],
+    queryKey: ['wms', 'products', 'list', stableKey],
     queryFn: async () => {
-      const res = await ProductsWebController_findAll(params)
+      const res = await ProductsWebController_findAll(params as ProductsWebControllerFindAllParams)
       return res as unknown
     },
     select: (data) => ({
       products: safeArray<Product>(data),
       total: safeTotal(data),
     }),
+    staleTime: 1000 * 60 * 2,
+  })
+}
+
+export function useProduct(id: string) {
+  return useQuery({
+    queryKey: ['wms', 'products', 'detail', id],
+    queryFn: async () => {
+      const res = await ProductsWebController_findAll({ search: id } as ProductsWebControllerFindAllParams)
+      const data = res as unknown
+      const items = safeArray<Product>(data)
+      return items.find((p) => p.id === id) ?? items[0] ?? null
+    },
+    enabled: !!id,
     staleTime: 1000 * 60 * 2,
   })
 }

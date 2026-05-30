@@ -23,5 +23,5 @@
 
 export interface UpgradeDowngradeDto {
   /** Target plan ID */
-  planId: string;
+  planId: string
 }

@@ -23,11 +23,11 @@
 
 export interface SetAttributeDto {
   /** Attribute name */
-  name: string;
+  name: string
   /** Attribute source */
-  source?: string;
+  source?: string
   /** Attribute type */
-  type?: string;
+  type?: string
   /** Attribute value */
-  value: string;
+  value: string
 }

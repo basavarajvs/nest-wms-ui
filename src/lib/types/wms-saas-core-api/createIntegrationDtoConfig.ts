@@ -24,4 +24,4 @@
 /**
  * Configuration JSON
  */
-export type CreateIntegrationDtoConfig = { [key: string]: unknown };
+export type CreateIntegrationDtoConfig = { [key: string]: unknown }

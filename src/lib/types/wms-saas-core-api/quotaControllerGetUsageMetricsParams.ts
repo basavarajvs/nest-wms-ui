@@ -22,5 +22,5 @@
  */
 
 export type QuotaControllerGetUsageMetricsParams = {
-resourceType?: string;
-};
+  resourceType?: string
+}

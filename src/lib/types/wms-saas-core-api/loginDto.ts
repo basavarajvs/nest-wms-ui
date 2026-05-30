@@ -23,9 +23,9 @@
 
 export interface LoginDto {
   /** Email address */
-  email: string;
+  email: string
   /** MFA code (if enabled) */
-  mfaCode?: string;
+  mfaCode?: string
   /** Password */
-  password: string;
+  password: string
 }

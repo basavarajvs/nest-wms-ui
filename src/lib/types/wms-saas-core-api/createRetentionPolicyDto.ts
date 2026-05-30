@@ -20,19 +20,19 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreateRetentionPolicyDtoAppliesTo } from './createRetentionPolicyDtoAppliesTo.js';
+import type { CreateRetentionPolicyDtoAppliesTo } from './createRetentionPolicyDtoAppliesTo.js'
 
 export interface CreateRetentionPolicyDto {
   /** Applies to JSON */
-  appliesTo?: CreateRetentionPolicyDtoAppliesTo;
+  appliesTo?: CreateRetentionPolicyDtoAppliesTo
   /** Description */
-  description?: string;
+  description?: string
   /** Is active */
-  isActive?: boolean;
+  isActive?: boolean
   /** Policy name */
-  policyName: string;
+  policyName: string
   /** Policy type */
-  policyType: string;
+  policyType: string
   /** Retention period in days */
-  retentionDays: number;
+  retentionDays: number
 }

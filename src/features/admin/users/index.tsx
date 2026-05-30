@@ -1,15 +1,10 @@
 import { useState } from 'react'
+import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
+import { UserPlus, Search, MoreHorizontal, Shield } from 'lucide-react'
 import { toast } from 'sonner'
-import {
-  UserPlus,
-  Search,
-  MoreHorizontal,
-  Shield,
-} from 'lucide-react'
-
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -42,6 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -50,9 +46,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
-
 import {
   useUsers,
   useRoles,
@@ -78,7 +71,9 @@ export function AdminUsers() {
   const [roleFilter, setRoleFilter] = useState<string>('')
 
   const [inviteOpen, setInviteOpen] = useState(false)
-  const [selectedUserForRole, setSelectedUserForRole] = useState<User | null>(null)
+  const [selectedUserForRole, setSelectedUserForRole] = useState<User | null>(
+    null
+  )
 
   const params = {
     page,
@@ -128,7 +123,10 @@ export function AdminUsers() {
       reset()
       refetch()
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Failed to send invitation'
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        'Failed to send invitation'
       toast.error(msg)
     }
   }
@@ -150,11 +148,11 @@ export function AdminUsers() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className='space-y-6'>
+      <div className='flex items-center justify-between'>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
-          <p className="text-muted-foreground">
+          <h1 className='text-2xl font-bold tracking-tight'>User Management</h1>
+          <p className='text-muted-foreground'>
             Manage tenant users, send invitations, and assign roles
           </p>
         </div>
@@ -162,56 +160,63 @@ export function AdminUsers() {
         <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => setInviteOpen(true)}>
-              <UserPlus className="mr-2 h-4 w-4" />
+              <UserPlus className='mr-2 h-4 w-4' />
               Invite User
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[480px]">
+          <DialogContent className='sm:max-w-[480px]'>
             <form onSubmit={handleSubmit(onInviteSubmit)}>
               <DialogHeader>
                 <DialogTitle>Invite New User</DialogTitle>
                 <DialogDescription>
-                  Send an invitation email. The user will receive a link to complete registration.
+                  Send an invitation email. The user will receive a link to
+                  complete registration.
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email *</Label>
-                  <Input id="email" type="email" {...register('email')} />
+              <div className='grid gap-4 py-4'>
+                <div className='grid gap-2'>
+                  <Label htmlFor='email'>Email *</Label>
+                  <Input id='email' type='email' {...register('email')} />
                   {errors.email && (
-                    <p className="text-sm text-destructive">{errors.email.message}</p>
+                    <p className='text-sm text-destructive'>
+                      {errors.email.message}
+                    </p>
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="firstName">First Name *</Label>
-                    <Input id="firstName" {...register('firstName')} />
+                <div className='grid grid-cols-2 gap-4'>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='firstName'>First Name *</Label>
+                    <Input id='firstName' {...register('firstName')} />
                     {errors.firstName && (
-                      <p className="text-sm text-destructive">{errors.firstName.message}</p>
+                      <p className='text-sm text-destructive'>
+                        {errors.firstName.message}
+                      </p>
                     )}
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="lastName">Last Name *</Label>
-                    <Input id="lastName" {...register('lastName')} />
+                  <div className='grid gap-2'>
+                    <Label htmlFor='lastName'>Last Name *</Label>
+                    <Input id='lastName' {...register('lastName')} />
                     {errors.lastName && (
-                      <p className="text-sm text-destructive">{errors.lastName.message}</p>
+                      <p className='text-sm text-destructive'>
+                        {errors.lastName.message}
+                      </p>
                     )}
                   </div>
                 </div>
 
-                <div className="grid gap-2">
+                <div className='grid gap-2'>
                   <Label>Assign Role (optional)</Label>
                   <Select
                     onValueChange={(val) => setValue('roleId', val)}
                     value={watch('roleId')}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
+                      <SelectValue placeholder='Select a role' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No role</SelectItem>
+                      <SelectItem value=''>No role</SelectItem>
                       {roles.map((role) => (
                         <SelectItem key={role.id} value={role.id}>
                           {role.name || role.code || role.id}
@@ -221,16 +226,20 @@ export function AdminUsers() {
                   </Select>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="message">Custom Message (optional)</Label>
-                  <Input id="message" {...register('message')} placeholder="Welcome to the team!" />
+                <div className='grid gap-2'>
+                  <Label htmlFor='message'>Custom Message (optional)</Label>
+                  <Input
+                    id='message'
+                    {...register('message')}
+                    placeholder='Welcome to the team!'
+                  />
                 </div>
               </div>
 
               <DialogFooter>
                 <Button
-                  type="button"
-                  variant="outline"
+                  type='button'
+                  variant='outline'
                   onClick={() => {
                     setInviteOpen(false)
                     reset()
@@ -238,7 +247,10 @@ export function AdminUsers() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting || inviteMutation.isPending}>
+                <Button
+                  type='submit'
+                  disabled={isSubmitting || inviteMutation.isPending}
+                >
                   {inviteMutation.isPending ? 'Sending...' : 'Send Invitation'}
                 </Button>
               </DialogFooter>
@@ -248,12 +260,12 @@ export function AdminUsers() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+      <div className='flex flex-col gap-4 sm:flex-row sm:items-center'>
+        <div className='relative flex-1'>
+          <Search className='absolute top-3 left-3 h-4 w-4 text-muted-foreground' />
           <Input
-            placeholder="Search by email or name..."
-            className="pl-9"
+            placeholder='Search by email or name...'
+            className='pl-9'
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
@@ -269,11 +281,11 @@ export function AdminUsers() {
             setPage(1)
           }}
         >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by role" />
+          <SelectTrigger className='w-[180px]'>
+            <SelectValue placeholder='Filter by role' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Roles</SelectItem>
+            <SelectItem value=''>All Roles</SelectItem>
             {roles.map((r) => (
               <SelectItem key={r.id} value={r.code || r.id}>
                 {r.name || r.code}
@@ -282,7 +294,7 @@ export function AdminUsers() {
           </SelectContent>
         </Select>
 
-        <Button variant="outline" onClick={() => refetch()}>
+        <Button variant='outline' onClick={() => refetch()}>
           Refresh
         </Button>
       </div>
@@ -297,17 +309,21 @@ export function AdminUsers() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-2">
+            <div className='space-y-2'>
               {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
+                <Skeleton key={i} className='h-12 w-full' />
               ))}
             </div>
           ) : error ? (
-            <div className="py-8 text-center text-destructive">
-              Failed to load users. Please try again.
+            <div className="flex flex-col items-center gap-2 py-8 text-center">
+              <p className="text-destructive font-medium">Failed to load users</p>
+              <p className="text-sm text-muted-foreground">
+                {(error as any)?.message || 'An unexpected error occurred'}
+              </p>
+              <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
             </div>
           ) : users.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">
+            <div className='py-8 text-center text-muted-foreground'>
               No users found.
             </div>
           ) : (
@@ -319,46 +335,56 @@ export function AdminUsers() {
                     <TableHead>Name</TableHead>
                     <TableHead>Roles</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className='text-right'>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {users.map((user: User) => (
                     <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.email}</TableCell>
-                      <TableCell>
-                        {[user.firstName, user.lastName].filter(Boolean).join(' ') || '—'}
+                      <TableCell className='font-medium'>
+                        {user.email}
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-wrap gap-1">
+                        {[user.firstName, user.lastName]
+                          .filter(Boolean)
+                          .join(' ') || '—'}
+                      </TableCell>
+                      <TableCell>
+                        <div className='flex flex-wrap gap-1'>
                           {user.roles && user.roles.length > 0 ? (
                             user.roles.map((role, idx) => (
-                              <Badge key={idx} variant="secondary">
+                              <Badge key={idx} variant='secondary'>
                                 {role.name || role.code || 'Role'}
                               </Badge>
                             ))
                           ) : (
-                            <span className="text-muted-foreground text-sm">No roles</span>
+                            <span className='text-sm text-muted-foreground'>
+                              No roles
+                            </span>
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={user.status === 'active' ? 'default' : 'outline'}>
+                        <Badge
+                          variant={
+                            user.status === 'active' ? 'default' : 'outline'
+                          }
+                        >
                           {user.status || 'unknown'}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className='text-right'>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
+                            <Button variant='ghost' size='icon'>
+                              <MoreHorizontal className='h-4 w-4' />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
+                          <DropdownMenuContent align='end'>
                             <DropdownMenuItem
                               onClick={() => setSelectedUserForRole(user)}
                             >
-                              <Shield className="mr-2 h-4 w-4" />
+                              <Shield className='mr-2 h-4 w-4' />
                               Assign Role
                             </DropdownMenuItem>
                             {/* Future: Deactivate, etc. */}
@@ -371,22 +397,22 @@ export function AdminUsers() {
               </Table>
 
               {/* Simple Pagination */}
-              <div className="mt-4 flex items-center justify-between text-sm">
+              <div className='mt-4 flex items-center justify-between text-sm'>
                 <div>
                   Page {page} of {totalPages}
                 </div>
-                <div className="flex gap-2">
+                <div className='flex gap-2'>
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant='outline'
+                    size='sm'
                     disabled={page <= 1}
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                   >
                     Previous
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant='outline'
+                    size='sm'
                     disabled={page >= totalPages}
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   >
@@ -400,18 +426,23 @@ export function AdminUsers() {
       </Card>
 
       {/* Role Assignment Dialog */}
-      <Dialog open={!!selectedUserForRole} onOpenChange={(open) => !open && setSelectedUserForRole(null)}>
+      <Dialog
+        open={!!selectedUserForRole}
+        onOpenChange={(open) => !open && setSelectedUserForRole(null)}
+      >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Assign Role to {selectedUserForRole?.email}</DialogTitle>
+            <DialogTitle>
+              Assign Role to {selectedUserForRole?.email}
+            </DialogTitle>
             <DialogDescription>
               Select a role to assign. This will add the role to the user.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="py-4">
+          <div className='py-4'>
             {rolesLoading ? (
-              <Skeleton className="h-10 w-full" />
+              <Skeleton className='h-10 w-full' />
             ) : (
               <Select
                 onValueChange={(roleId) => {
@@ -421,7 +452,7 @@ export function AdminUsers() {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose a role" />
+                  <SelectValue placeholder='Choose a role' />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
@@ -435,7 +466,10 @@ export function AdminUsers() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedUserForRole(null)}>
+            <Button
+              variant='outline'
+              onClick={() => setSelectedUserForRole(null)}
+            >
               Cancel
             </Button>
           </DialogFooter>

@@ -21,8 +21,8 @@
  * OpenAPI spec version: 1.0
  */
 
-export type CreateBillingCycleDtoStatus = typeof CreateBillingCycleDtoStatus[keyof typeof CreateBillingCycleDtoStatus];
-
+export type CreateBillingCycleDtoStatus =
+  (typeof CreateBillingCycleDtoStatus)[keyof typeof CreateBillingCycleDtoStatus]
 
 export const CreateBillingCycleDtoStatus = {
   pending: 'pending',
@@ -30,4 +30,4 @@ export const CreateBillingCycleDtoStatus = {
   overdue: 'overdue',
   cancelled: 'cancelled',
   refunded: 'refunded',
-} as const;
+} as const

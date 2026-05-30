@@ -20,20 +20,20 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreateBillingCycleDtoStatus } from './createBillingCycleDtoStatus.js';
+import type { CreateBillingCycleDtoStatus } from './createBillingCycleDtoStatus.js'
 
 export interface CreateBillingCycleDto {
   /** Amount */
-  amount?: number;
+  amount?: number
   /** Currency */
-  currency?: string;
+  currency?: string
   /** End date */
-  endDate: string;
+  endDate: string
   /** Start date */
-  startDate: string;
-  status?: CreateBillingCycleDtoStatus;
+  startDate: string
+  status?: CreateBillingCycleDtoStatus
   /** Subscription ID */
-  subscriptionId?: string;
+  subscriptionId?: string
   /** Tenant ID */
-  tenantId: string;
+  tenantId: string
 }

@@ -19,31 +19,45 @@ function safeList<T>(data: unknown): T[] {
   return []
 }
 
+function safeTotal(data: unknown, fallback = 0): number {
+  if (data && typeof data === 'object') {
+    const obj = data as Record<string, unknown>
+    if (typeof obj.total === 'number') return obj.total
+    if (typeof obj.count === 'number') return obj.count
+    return safeList(obj).length || fallback
+  }
+  return fallback
+}
+
 export interface PendingAllocation {
   id?: string
   orderId?: string
   productId?: string
+  productSku?: string
+  productName?: string
   quantity?: number
   locationId?: string
   lotId?: string
   status?: string
-  [key: string]: any
 }
 
-export function usePendingAllocations(params: Partial<OutboundWebControllerGetPendingAllocationsParams> = {}) {
+export function usePendingAllocations(
+  params: Partial<OutboundWebControllerGetPendingAllocationsParams> = {}
+) {
   const queryParams: OutboundWebControllerGetPendingAllocationsParams = {
     facilityId: params.facilityId || '',
   }
 
+  const stableKey = JSON.stringify(queryParams)
   return useQuery({
-    queryKey: ['wms', 'outbound', 'pending-allocations', queryParams],
+    queryKey: ['wms', 'outbound', 'pending-allocations', stableKey],
     queryFn: async () => {
-      const res = await OutboundWebController_getPendingAllocations(queryParams as any)
+      const res = await OutboundWebController_getPendingAllocations(queryParams)
       return res as unknown
     },
     select: (data) => ({
       allocations: safeList<PendingAllocation>(data),
-      raw: data,
+      total: safeTotal(data),
     }),
     staleTime: 1000 * 30,
   })
@@ -56,7 +70,9 @@ export function useOverrideAllocation() {
       return OutboundWebController_overrideAllocation(dto)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wms', 'outbound', 'pending-allocations'] })
+      queryClient.invalidateQueries({
+        queryKey: ['wms', 'outbound', 'pending-allocations'],
+      })
     },
   })
 }

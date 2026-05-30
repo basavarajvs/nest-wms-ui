@@ -7,7 +7,7 @@
  */
 
 export interface QcRfResultDto {
-  lpnNumber: string;
-  notes?: string;
-  result: string;
+  lpnNumber: string
+  notes?: string
+  result: string
 }

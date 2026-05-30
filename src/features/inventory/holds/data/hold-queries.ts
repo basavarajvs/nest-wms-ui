@@ -30,13 +30,28 @@ export interface Hold {
   locationId?: string
   lotId?: string
   quantity?: number
+  qty?: number
   reason?: string
+  holdType?: string
   status?: string
   createdAt?: string
-  [key: string]: any
+  releasedAt?: string
+  productName?: string
+  productSku?: string
 }
 
-export function useHolds(params: Partial<InventoryWebControllerListHoldsParams> = {}) {
+interface HoldQueryParams {
+  status?: string
+  facilityId?: string
+  page?: number
+  limit?: number
+  holdType?: string
+  locationId?: string
+}
+
+export function useHolds(
+  params: HoldQueryParams = {}
+) {
   const queryParams: InventoryWebControllerListHoldsParams = {
     status: params.status || '',
     facilityId: params.facilityId || '',
@@ -44,10 +59,13 @@ export function useHolds(params: Partial<InventoryWebControllerListHoldsParams> 
     limit: params.limit ?? 20,
   }
 
+  const combined = { ...queryParams, holdType: params.holdType, locationId: params.locationId }
+  const stableKey = JSON.stringify(combined)
+
   return useQuery({
-    queryKey: ['wms', 'inventory', 'holds', queryParams],
+    queryKey: ['wms', 'inventory', 'holds', stableKey],
     queryFn: async () => {
-      const res = await InventoryWebController_listHolds(queryParams as any)
+      const res = await InventoryWebController_listHolds(combined as InventoryWebControllerListHoldsParams)
       return res as unknown
     },
     select: (data) => ({

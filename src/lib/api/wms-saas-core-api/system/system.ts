@@ -20,100 +20,108 @@
  *
  * OpenAPI spec version: 1.0
  */
-import {
-  useMutation
-} from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query'
 import type {
   MutationFunction,
   UseMutationOptions,
-  UseMutationResult
-} from '@tanstack/react-query';
+  UseMutationResult,
+} from '@tanstack/react-query'
+import { customInstance } from '../../../httpSaasClient'
 
-import { customInstance } from '../../../httpClient';
-
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export type SystemController_getRequestLogResponse200 = {
   data: void
   status: 200
 }
 
-export type SystemController_getRequestLogResponseSuccess = (SystemController_getRequestLogResponse200) & {
-  headers: Headers;
-};
-;
-
-export type SystemController_getRequestLogResponse = (SystemController_getRequestLogResponseSuccess)
+export type SystemController_getRequestLogResponseSuccess =
+  SystemController_getRequestLogResponse200 & {
+    headers: Headers
+  }
+export type SystemController_getRequestLogResponse =
+  SystemController_getRequestLogResponseSuccess
 
 export const getSystemControllerGetRequestLogUrl = () => {
-
-
-
-
   return `/api/v1/system/request-log`
 }
 
 /**
  * @summary Get system request audit log (system only)
  */
-export const SystemController_getRequestLog = async ( options?: RequestInit): Promise<SystemController_getRequestLogResponse> => {
+export const SystemController_getRequestLog = async (
+  options?: RequestInit
+): Promise<SystemController_getRequestLogResponse> => {
+  return customInstance<SystemController_getRequestLogResponse>(
+    getSystemControllerGetRequestLogUrl(),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<SystemController_getRequestLogResponse>(getSystemControllerGetRequestLogUrl(),
-  {
-    ...options,
-    method: 'GET'
+export const getSystemControllerGetRequestLogMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof SystemController_getRequestLog>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof SystemController_getRequestLog>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['systemControllerGetRequestLog']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
-
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof SystemController_getRequestLog>>,
+    void
+  > = () => {
+    return SystemController_getRequestLog(requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type SystemControllerGetRequestLogMutationResult = NonNullable<
+  Awaited<ReturnType<typeof SystemController_getRequestLog>>
+>
 
+export type SystemControllerGetRequestLogMutationError = unknown
 
-export const getSystemControllerGetRequestLogMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof SystemController_getRequestLog>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof SystemController_getRequestLog>>, TError,void, TContext> => {
-
-const mutationKey = ['systemControllerGetRequestLog'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof SystemController_getRequestLog>>, void> = () => {
-
-
-          return  SystemController_getRequestLog(requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SystemControllerGetRequestLogMutationResult = NonNullable<Awaited<ReturnType<typeof SystemController_getRequestLog>>>
-
-    export type SystemControllerGetRequestLogMutationError = unknown
-
-    /**
+/**
  * @summary Get system request audit log (system only)
  */
-export const useSystemControllerGetRequestLog = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof SystemController_getRequestLog>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof SystemController_getRequestLog>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getSystemControllerGetRequestLogMutationOptions(options));
-    }
+export const useSystemControllerGetRequestLog = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof SystemController_getRequestLog>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof SystemController_getRequestLog>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getSystemControllerGetRequestLogMutationOptions(options))
+}

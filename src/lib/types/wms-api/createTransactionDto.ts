@@ -5,20 +5,20 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { CreateTransactionDtoMetadata } from './createTransactionDtoMetadata.js';
+import type { CreateTransactionDtoMetadata } from './createTransactionDtoMetadata.js'
 
 export interface CreateTransactionDto {
-  facilityId: string;
-  locationId?: string;
-  locationIdTo?: string;
-  lotId?: string;
-  metadata?: CreateTransactionDtoMetadata;
-  performedByUserId?: string;
-  productId: string;
-  quantity: number;
-  reasonCode?: string;
-  referenceId?: string;
-  referenceType: string;
-  transactionType: string;
-  uomId: string;
+  facilityId: string
+  locationId?: string
+  locationIdTo?: string
+  lotId?: string
+  metadata?: CreateTransactionDtoMetadata
+  performedByUserId?: string
+  productId: string
+  quantity: number
+  reasonCode?: string
+  referenceId?: string
+  referenceType: string
+  transactionType: string
+  uomId: string
 }

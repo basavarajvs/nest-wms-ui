@@ -24,4 +24,4 @@
 /**
  * Timezone
  */
-export type RegisterDtoTimezone = { [key: string]: unknown };
+export type RegisterDtoTimezone = { [key: string]: unknown }

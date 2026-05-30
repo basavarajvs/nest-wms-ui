@@ -23,9 +23,9 @@
 
 export interface InviteUserDto {
   /** Email address to invite */
-  email: string;
+  email: string
   /** Custom invitation message */
-  message?: string;
+  message?: string
   /** Role ID to assign on acceptance */
-  roleId?: string;
+  roleId?: string
 }

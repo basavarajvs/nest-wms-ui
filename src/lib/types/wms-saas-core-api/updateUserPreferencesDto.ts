@@ -23,11 +23,11 @@
 
 export interface UpdateUserPreferencesDto {
   /** Dashboard layout */
-  dashboardLayout?: string;
+  dashboardLayout?: string
   /** Email notifications enabled */
-  emailNotifications?: boolean;
+  emailNotifications?: boolean
   /** Notification channels */
-  notificationChannels?: string[];
+  notificationChannels?: string[]
   /** Push notifications enabled */
-  pushNotifications?: boolean;
+  pushNotifications?: boolean
 }

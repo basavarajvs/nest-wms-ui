@@ -23,20 +23,20 @@
 
 export interface PaymentRequestDto {
   /** Amount */
-  amount: number;
+  amount: number
   /** Currency */
-  currency?: string;
+  currency?: string
   /** Notes */
-  notes?: string;
+  notes?: string
   /** Payment date (ISO 8601) */
-  paymentDate: string;
+  paymentDate: string
   /** Payment method */
-  paymentMethod: string;
+  paymentMethod: string
   /**
-     * Reference number
-     * @maxLength 100
-     */
-  referenceNumber?: string;
+   * Reference number
+   * @maxLength 100
+   */
+  referenceNumber?: string
   /** Subscription ID */
-  subscriptionId: string;
+  subscriptionId: string
 }

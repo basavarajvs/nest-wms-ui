@@ -23,11 +23,11 @@
 
 export interface ConfirmPaymentDto {
   /** Confirmed amount */
-  confirmedAmount: number;
+  confirmedAmount: number
   /** Notes */
-  notes?: string;
+  notes?: string
   /** Payment ID */
-  paymentId: string;
+  paymentId: string
   /** Admin transaction reference */
-  transactionId: string;
+  transactionId: string
 }

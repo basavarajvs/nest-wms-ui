@@ -5,11 +5,11 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { UpdateLocationDtoAttributes } from './updateLocationDtoAttributes.js';
+import type { UpdateLocationDtoAttributes } from './updateLocationDtoAttributes.js'
 
 export interface UpdateLocationDto {
-  attributes?: UpdateLocationDtoAttributes;
-  isActive?: boolean;
-  isBlocked?: boolean;
-  parentId?: string;
+  attributes?: UpdateLocationDtoAttributes
+  isActive?: boolean
+  isBlocked?: boolean
+  parentId?: string
 }

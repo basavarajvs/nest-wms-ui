@@ -7,8 +7,8 @@
  */
 
 export type ExecutionControllerListParams = {
-entityType?: string;
-status?: string;
-dateFrom?: string;
-dateTo?: string;
-};
+  entityType?: string
+  status?: string
+  dateFrom?: string
+  dateTo?: string
+}

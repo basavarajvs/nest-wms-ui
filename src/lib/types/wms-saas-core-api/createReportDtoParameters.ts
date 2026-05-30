@@ -24,4 +24,4 @@
 /**
  * Report parameters JSON
  */
-export type CreateReportDtoParameters = { [key: string]: unknown };
+export type CreateReportDtoParameters = { [key: string]: unknown }

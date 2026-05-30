@@ -23,7 +23,7 @@
 
 export interface PinLoginDto {
   /** PIN code */
-  pin: string;
+  pin: string
   /** User code */
-  userCode: string;
+  userCode: string
 }

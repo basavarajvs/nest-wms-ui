@@ -1,5 +1,15 @@
-import { createContext, useState, useCallback, useEffect, type ReactNode } from 'react'
-import { AuthController_login, AuthController_logout, AuthController_refresh } from '@/lib/api/wms-saas-core-api/auth/auth'
+import {
+  createContext,
+  useState,
+  useCallback,
+  useEffect,
+  type ReactNode,
+} from 'react'
+import {
+  AuthController_login,
+  AuthController_logout,
+  AuthController_refresh,
+} from '@/lib/api/wms-saas-core-api/auth/auth'
 import { UserController_getMe } from '@/lib/api/wms-saas-core-api/users/users'
 
 export interface User {
@@ -15,7 +25,11 @@ export interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
-  login: (credentials: { email: string; password: string; tenantCode?: string }) => Promise<{ success: boolean; error?: string }>
+  login: (credentials: {
+    email: string
+    password: string
+    tenantCode?: string
+  }) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<void>
   refreshToken: () => Promise<void>
 }
@@ -23,14 +37,15 @@ export interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 async function fetchUserProfile(): Promise<User> {
-  const response = await UserController_getMe() as unknown as User
+  const response = (await UserController_getMe()) as unknown as User
   const userData = (response as any)?.data ?? response
   return {
     id: userData.id,
     email: userData.email,
     firstName: userData.firstName,
     lastName: userData.lastName,
-    tenantCode: userData.tenantCode || localStorage.getItem('tenant_code') || undefined,
+    tenantCode:
+      userData.tenantCode || localStorage.getItem('tenant_code') || undefined,
     roles: userData.roles ?? [],
   }
 }
@@ -50,44 +65,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = localStorage.getItem('auth_token')
     if (token) {
       fetchUserProfile()
-        .then(setUser)
+        .then((profile) => {
+          setUser(profile)
+        })
         .catch(() => {
           clearAuthState()
-          setUser(null)
         })
-        .finally(() => setIsLoading(false))
+        .finally(() => {
+          setIsLoading(false)
+        })
     } else {
       setIsLoading(false)
     }
   }, [])
 
-  const login = useCallback(async (credentials: { email: string; password: string; tenantCode?: string }) => {
-    try {
-      if (credentials.tenantCode) {
-        localStorage.setItem('tenant_code', credentials.tenantCode)
+  const login = useCallback(
+    async (credentials: {
+      email: string
+      password: string
+      tenantCode?: string
+    }) => {
+      try {
+        if (credentials.tenantCode) {
+          localStorage.setItem('tenant_code', credentials.tenantCode)
+        }
+
+        const loginResponse = (await AuthController_login({
+          email: credentials.email,
+          password: credentials.password,
+        })) as any
+        const tokens = loginResponse?.data ?? loginResponse
+
+        localStorage.setItem('auth_token', tokens.accessToken)
+        localStorage.setItem('refresh_token', tokens.refreshToken)
+
+        const userProfile = await fetchUserProfile()
+        setUser(userProfile)
+        localStorage.setItem('user_info', JSON.stringify(userProfile))
+
+        return { success: true }
+      } catch (error: any) {
+        clearAuthState()
+        setUser(null)
+
+        const message =
+          error?.response?.data?.message || error?.message || 'Login failed'
+        return { success: false, error: message }
       }
-
-      const response = await AuthController_login({
-        email: credentials.email,
-        password: credentials.password,
-      }) as unknown as { accessToken: string; refreshToken: string }
-
-      localStorage.setItem('auth_token', response.accessToken)
-      localStorage.setItem('refresh_token', response.refreshToken)
-
-      const userProfile = await fetchUserProfile()
-      setUser(userProfile)
-      localStorage.setItem('user_info', JSON.stringify(userProfile))
-
-      return { success: true }
-    } catch (error: any) {
-      clearAuthState()
-      setUser(null)
-
-      const message = error?.response?.data?.message || error?.message || 'Login failed'
-      return { success: false, error: message }
-    }
-  }, [])
+    },
+    []
+  )
 
   const logout = useCallback(async () => {
     try {
@@ -109,10 +136,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const response = await AuthController_refresh({ refreshToken: storedRefreshToken }) as unknown as { accessToken: string; refreshToken: string }
+      const refreshResponse = (await AuthController_refresh({
+        refreshToken: storedRefreshToken,
+      })) as any
+      const tokens = refreshResponse?.data ?? refreshResponse
 
-      localStorage.setItem('auth_token', response.accessToken)
-      localStorage.setItem('refresh_token', response.refreshToken)
+      localStorage.setItem('auth_token', tokens.accessToken)
+      localStorage.setItem('refresh_token', tokens.refreshToken)
     } catch {
       clearAuthState()
       setUser(null)
@@ -121,7 +151,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, login, logout, refreshToken }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        isAuthenticated: !!user,
+        login,
+        logout,
+        refreshToken,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

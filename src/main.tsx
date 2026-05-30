@@ -2,20 +2,22 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
-import { TooltipProvider } from '@/components/ui/tooltip'
 import { queryClient } from '@/lib/queryClient'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { AuthProvider } from './context/AuthContext'
 import { DirectionProvider } from './context/direction-provider'
+import { FacilityProvider } from './context/FacilityContext'
 import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'
-import { AuthProvider } from './context/AuthContext'
 import { useAuth } from './hooks/useAuth'
+import { ErrorBoundary } from '@/components/error-boundary'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
 // Styles
 import './styles/index.css'
 
 // Create a new router instance
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   context: { queryClient, auth: undefined! },
   defaultPreload: 'intent',
@@ -42,15 +44,19 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <ThemeProvider>
-            <FontProvider>
-              <DirectionProvider>
-                <TooltipProvider>
-                  <InnerApp />
-                </TooltipProvider>
-              </DirectionProvider>
-            </FontProvider>
-          </ThemeProvider>
+          <FacilityProvider>
+            <ThemeProvider>
+              <FontProvider>
+                <DirectionProvider>
+                  <TooltipProvider>
+                    <ErrorBoundary>
+                      <InnerApp />
+                    </ErrorBoundary>
+                  </TooltipProvider>
+                </DirectionProvider>
+              </FontProvider>
+            </ThemeProvider>
+          </FacilityProvider>
         </AuthProvider>
       </QueryClientProvider>
     </StrictMode>

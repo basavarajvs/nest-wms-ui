@@ -20,20 +20,20 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreatePaymentDtoStatus } from './createPaymentDtoStatus.js';
+import type { CreatePaymentDtoStatus } from './createPaymentDtoStatus.js'
 
 export interface CreatePaymentDto {
   /** Amount */
-  amount: number;
+  amount: number
   /** Currency */
-  currency?: string;
+  currency?: string
   /** Billing cycle ID */
-  cycleId?: string;
+  cycleId?: string
   /** Payment method */
-  paymentMethod?: string;
-  status?: CreatePaymentDtoStatus;
+  paymentMethod?: string
+  status?: CreatePaymentDtoStatus
   /** Stripe payment intent ID */
-  stripePaymentIntentId?: string;
+  stripePaymentIntentId?: string
   /** Tenant ID */
-  tenantId: string;
+  tenantId: string
 }

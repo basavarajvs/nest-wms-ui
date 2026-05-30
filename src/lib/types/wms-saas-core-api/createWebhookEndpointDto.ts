@@ -23,14 +23,14 @@
 
 export interface CreateWebhookEndpointDto {
   /**
-     * Description
-     * @maxLength 500
-     */
-  description?: string;
+   * Description
+   * @maxLength 500
+   */
+  description?: string
   /** Endpoint name */
-  endpointName: string;
+  endpointName: string
   /** Webhook URL (HTTPS only) */
-  endpointUrl: string;
+  endpointUrl: string
   /** Event types to subscribe to (empty = all events) */
-  eventTypes?: string[];
+  eventTypes?: string[]
 }

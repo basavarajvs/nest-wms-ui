@@ -23,7 +23,7 @@
 
 export interface ResetPasswordDto {
   /** New password (min 8 chars) */
-  newPassword: string;
+  newPassword: string
   /** Reset token */
-  token: string;
+  token: string
 }

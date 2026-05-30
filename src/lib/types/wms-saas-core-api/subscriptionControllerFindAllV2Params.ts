@@ -22,9 +22,9 @@
  */
 
 export type SubscriptionControllerFindAllV2Params = {
-status?: string;
-licenseType?: string;
-tenantId?: string;
-page?: number;
-limit?: number;
-};
+  status?: string
+  licenseType?: string
+  tenantId?: string
+  page?: number
+  limit?: number
+}

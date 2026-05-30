@@ -23,9 +23,9 @@
 
 export interface AssignPermissionDto {
   /** Condition context for the permission */
-  conditionContext?: string;
+  conditionContext?: string
   /** Expiration date of the permission assignment */
-  expiresAt?: string;
+  expiresAt?: string
   /** Permission ID to assign */
-  permissionId: string;
+  permissionId: string
 }

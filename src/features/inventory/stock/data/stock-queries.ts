@@ -1,12 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  InventoryWebController_getStock,
-  InventoryWebController_createAdjustment,
-} from '@/lib/api/wms-api/wms-web/wms-web'
-import type {
-  InventoryWebControllerGetStockParams,
-  CreateAdjustmentDto,
-} from '@/lib/types/wms-api'
+import { useQuery } from '@tanstack/react-query'
+import { InventoryWebController_getStock } from '@/lib/api/wms-api/wms-web/wms-web'
+import type { InventoryWebControllerGetStockParams } from '@/lib/types/wms-api'
 
 function safeList<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[]
@@ -43,10 +37,21 @@ export interface StockLevel {
   reserved?: number
   available?: number
   status?: string
-  [key: string]: any
 }
 
-export function useStockLevels(params: Partial<InventoryWebControllerGetStockParams> = {}) {
+interface NormalizedStockParams extends Record<string, unknown> {
+  facilityId: string
+  productId: string
+  locationId: string
+  lotId: string
+  productSku: string
+  productName: string
+  lowStock: boolean
+}
+
+export function useStockLevels(
+  params: Partial<InventoryWebControllerGetStockParams> = {}
+) {
   const queryParams: InventoryWebControllerGetStockParams = {
     facilityId: params.facilityId || '',
     productId: params.productId || '',
@@ -57,10 +62,12 @@ export function useStockLevels(params: Partial<InventoryWebControllerGetStockPar
     lowStock: params.lowStock ?? false,
   }
 
+  const stableKey = JSON.stringify(queryParams)
+
   return useQuery({
-    queryKey: ['wms', 'inventory', 'stock', queryParams],
+    queryKey: ['wms', 'inventory', 'stock', stableKey],
     queryFn: async () => {
-      const res = await InventoryWebController_getStock(queryParams as any)
+      const res = await InventoryWebController_getStock(queryParams)
       return res as unknown
     },
     select: (data) => ({
@@ -68,19 +75,5 @@ export function useStockLevels(params: Partial<InventoryWebControllerGetStockPar
       total: safeTotal(data),
     }),
     staleTime: 1000 * 30,
-  })
-}
-
-// For adjustments creation (used by adjustments page too, but colocated for now)
-export function useCreateAdjustment() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (dto: CreateAdjustmentDto) => {
-      return InventoryWebController_createAdjustment(dto)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wms', 'inventory', 'adjustments'] })
-      queryClient.invalidateQueries({ queryKey: ['wms', 'inventory', 'stock'] })
-    },
   })
 }

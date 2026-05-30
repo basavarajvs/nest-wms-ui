@@ -20,23 +20,23 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { UpdateUserDtoAddress } from './updateUserDtoAddress.js';
+import type { UpdateUserDtoAddress } from './updateUserDtoAddress.js'
 
 export interface UpdateUserDto {
   /** Address object */
-  address?: UpdateUserDtoAddress;
+  address?: UpdateUserDtoAddress
   /** User bio */
-  bio?: string;
+  bio?: string
   /** First name */
-  firstName?: string;
+  firstName?: string
   /** Last name */
-  lastName?: string;
+  lastName?: string
   /** Locale */
-  locale?: string;
+  locale?: string
   /** Phone number */
-  phone?: string;
+  phone?: string
   /** Theme preference */
-  theme?: string;
+  theme?: string
   /** Timezone */
-  timezone?: string;
+  timezone?: string
 }

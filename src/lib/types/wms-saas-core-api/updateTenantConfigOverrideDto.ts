@@ -23,9 +23,9 @@
 
 export interface UpdateTenantConfigOverrideDto {
   /** Config type */
-  configType?: string;
+  configType?: string
   /** Config value */
-  configValue?: string;
+  configValue?: string
   /** Description */
-  description?: string;
+  description?: string
 }

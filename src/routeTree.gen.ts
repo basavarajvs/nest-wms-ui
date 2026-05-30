@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedTransfersRouteImport } from './routes/_authenticated/transfers'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
@@ -24,12 +25,17 @@ import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedWarehouseRouteRouteImport } from './routes/_authenticated/warehouse/route'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
+import { Route as AuthenticatedReportsRouteRouteImport } from './routes/_authenticated/reports/route'
 import { Route as AuthenticatedOutboundRouteRouteImport } from './routes/_authenticated/outbound/route'
 import { Route as AuthenticatedItemsRouteRouteImport } from './routes/_authenticated/items/route'
 import { Route as AuthenticatedInventoryRouteRouteImport } from './routes/_authenticated/inventory/route'
 import { Route as AuthenticatedInboundRouteRouteImport } from './routes/_authenticated/inbound/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports/index'
+import { Route as AuthenticatedOutboundIndexRouteImport } from './routes/_authenticated/outbound/index'
+import { Route as AuthenticatedInventoryIndexRouteImport } from './routes/_authenticated/inventory/index'
+import { Route as AuthenticatedInboundIndexRouteImport } from './routes/_authenticated/inbound/index'
 import { Route as AuthenticatedWarehouseZonesRouteImport } from './routes/_authenticated/warehouse/zones'
 import { Route as AuthenticatedWarehouseLocationsRouteImport } from './routes/_authenticated/warehouse/locations'
 import { Route as AuthenticatedWarehouseFacilitiesRouteImport } from './routes/_authenticated/warehouse/facilities'
@@ -42,6 +48,7 @@ import { Route as AuthenticatedOutboundShipmentsRouteImport } from './routes/_au
 import { Route as AuthenticatedOutboundOrdersRouteImport } from './routes/_authenticated/outbound/orders'
 import { Route as AuthenticatedOutboundAllocationsRouteImport } from './routes/_authenticated/outbound/allocations'
 import { Route as AuthenticatedItemsProductsRouteImport } from './routes/_authenticated/items/products'
+import { Route as AuthenticatedItemsCategoriesRouteImport } from './routes/_authenticated/items/categories'
 import { Route as AuthenticatedInventoryTransactionsRouteImport } from './routes/_authenticated/inventory/transactions'
 import { Route as AuthenticatedInventoryStockRouteImport } from './routes/_authenticated/inventory/stock'
 import { Route as AuthenticatedInventoryPoliciesRouteImport } from './routes/_authenticated/inventory/policies'
@@ -51,7 +58,15 @@ import { Route as AuthenticatedInventoryAdjustmentsRouteImport } from './routes/
 import { Route as AuthenticatedInboundPutawayBoardRouteImport } from './routes/_authenticated/inbound/putaway-board'
 import { Route as AuthenticatedInboundGoodsReceiptRouteImport } from './routes/_authenticated/inbound/goods-receipt'
 import { Route as AuthenticatedInboundAsnsRouteImport } from './routes/_authenticated/inbound/asns'
+import { Route as AuthenticatedCountsScheduleRouteImport } from './routes/_authenticated/counts/schedule'
+import { Route as AuthenticatedCountsCycleRouteImport } from './routes/_authenticated/counts/cycle'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
+import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin/notifications'
+import { Route as AuthenticatedAdminCustomizationRouteImport } from './routes/_authenticated/admin/customization'
+import { Route as AuthenticatedAdminApprovalsRouteImport } from './routes/_authenticated/admin/approvals'
+import { Route as AuthenticatedItemsProductsNewRouteImport } from './routes/_authenticated/items/products.new'
+import { Route as AuthenticatedItemsProductsIdEditRouteImport } from './routes/_authenticated/items/products.$id.edit'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -60,6 +75,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTransfersRoute = AuthenticatedTransfersRouteImport.update({
+  id: '/transfers',
+  path: '/transfers',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const errors503Route = errors503RouteImport.update({
@@ -129,6 +149,12 @@ const AuthenticatedSettingsRouteRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReportsRouteRoute =
+  AuthenticatedReportsRouteRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedOutboundRouteRoute =
   AuthenticatedOutboundRouteRouteImport.update({
     id: '/outbound',
@@ -162,6 +188,30 @@ const AuthenticatedSettingsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+const AuthenticatedReportsIndexRoute =
+  AuthenticatedReportsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedReportsRouteRoute,
+  } as any)
+const AuthenticatedOutboundIndexRoute =
+  AuthenticatedOutboundIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedOutboundRouteRoute,
+  } as any)
+const AuthenticatedInventoryIndexRoute =
+  AuthenticatedInventoryIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedInventoryRouteRoute,
+  } as any)
+const AuthenticatedInboundIndexRoute =
+  AuthenticatedInboundIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedInboundRouteRoute,
   } as any)
 const AuthenticatedWarehouseZonesRoute =
   AuthenticatedWarehouseZonesRouteImport.update({
@@ -235,6 +285,12 @@ const AuthenticatedItemsProductsRoute =
     path: '/products',
     getParentRoute: () => AuthenticatedItemsRouteRoute,
   } as any)
+const AuthenticatedItemsCategoriesRoute =
+  AuthenticatedItemsCategoriesRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => AuthenticatedItemsRouteRoute,
+  } as any)
 const AuthenticatedInventoryTransactionsRoute =
   AuthenticatedInventoryTransactionsRouteImport.update({
     id: '/transactions',
@@ -289,11 +345,59 @@ const AuthenticatedInboundAsnsRoute =
     path: '/asns',
     getParentRoute: () => AuthenticatedInboundRouteRoute,
   } as any)
+const AuthenticatedCountsScheduleRoute =
+  AuthenticatedCountsScheduleRouteImport.update({
+    id: '/counts/schedule',
+    path: '/counts/schedule',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCountsCycleRoute =
+  AuthenticatedCountsCycleRouteImport.update({
+    id: '/counts/cycle',
+    path: '/counts/cycle',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminNotificationsRoute =
+  AuthenticatedAdminNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminCustomizationRoute =
+  AuthenticatedAdminCustomizationRouteImport.update({
+    id: '/customization',
+    path: '/customization',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminApprovalsRoute =
+  AuthenticatedAdminApprovalsRouteImport.update({
+    id: '/approvals',
+    path: '/approvals',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedItemsProductsNewRoute =
+  AuthenticatedItemsProductsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedItemsProductsRoute,
+  } as any)
+const AuthenticatedItemsProductsIdEditRoute =
+  AuthenticatedItemsProductsIdEditRouteImport.update({
+    id: '/$id/edit',
+    path: '/$id/edit',
+    getParentRoute: () => AuthenticatedItemsProductsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -302,6 +406,7 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof AuthenticatedInventoryRouteRouteWithChildren
   '/items': typeof AuthenticatedItemsRouteRouteWithChildren
   '/outbound': typeof AuthenticatedOutboundRouteRouteWithChildren
+  '/reports': typeof AuthenticatedReportsRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/warehouse': typeof AuthenticatedWarehouseRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
@@ -315,7 +420,14 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/transfers': typeof AuthenticatedTransfersRoute
+  '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
+  '/admin/customization': typeof AuthenticatedAdminCustomizationRoute
+  '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/counts/cycle': typeof AuthenticatedCountsCycleRoute
+  '/counts/schedule': typeof AuthenticatedCountsScheduleRoute
   '/inbound/asns': typeof AuthenticatedInboundAsnsRoute
   '/inbound/goods-receipt': typeof AuthenticatedInboundGoodsReceiptRoute
   '/inbound/putaway-board': typeof AuthenticatedInboundPutawayBoardRoute
@@ -325,7 +437,8 @@ export interface FileRoutesByFullPath {
   '/inventory/policies': typeof AuthenticatedInventoryPoliciesRoute
   '/inventory/stock': typeof AuthenticatedInventoryStockRoute
   '/inventory/transactions': typeof AuthenticatedInventoryTransactionsRoute
-  '/items/products': typeof AuthenticatedItemsProductsRoute
+  '/items/categories': typeof AuthenticatedItemsCategoriesRoute
+  '/items/products': typeof AuthenticatedItemsProductsRouteWithChildren
   '/outbound/allocations': typeof AuthenticatedOutboundAllocationsRoute
   '/outbound/orders': typeof AuthenticatedOutboundOrdersRoute
   '/outbound/shipments': typeof AuthenticatedOutboundShipmentsRoute
@@ -337,14 +450,17 @@ export interface FileRoutesByFullPath {
   '/warehouse/facilities': typeof AuthenticatedWarehouseFacilitiesRoute
   '/warehouse/locations': typeof AuthenticatedWarehouseLocationsRoute
   '/warehouse/zones': typeof AuthenticatedWarehouseZonesRoute
+  '/inbound/': typeof AuthenticatedInboundIndexRoute
+  '/inventory/': typeof AuthenticatedInventoryIndexRoute
+  '/outbound/': typeof AuthenticatedOutboundIndexRoute
+  '/reports/': typeof AuthenticatedReportsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/items/products/new': typeof AuthenticatedItemsProductsNewRoute
+  '/items/products/$id/edit': typeof AuthenticatedItemsProductsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/inbound': typeof AuthenticatedInboundRouteRouteWithChildren
-  '/inventory': typeof AuthenticatedInventoryRouteRouteWithChildren
   '/items': typeof AuthenticatedItemsRouteRouteWithChildren
-  '/outbound': typeof AuthenticatedOutboundRouteRouteWithChildren
   '/warehouse': typeof AuthenticatedWarehouseRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
@@ -357,8 +473,15 @@ export interface FileRoutesByTo {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/transfers': typeof AuthenticatedTransfersRoute
   '/': typeof AuthenticatedIndexRoute
+  '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
+  '/admin/customization': typeof AuthenticatedAdminCustomizationRoute
+  '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/counts/cycle': typeof AuthenticatedCountsCycleRoute
+  '/counts/schedule': typeof AuthenticatedCountsScheduleRoute
   '/inbound/asns': typeof AuthenticatedInboundAsnsRoute
   '/inbound/goods-receipt': typeof AuthenticatedInboundGoodsReceiptRoute
   '/inbound/putaway-board': typeof AuthenticatedInboundPutawayBoardRoute
@@ -368,7 +491,8 @@ export interface FileRoutesByTo {
   '/inventory/policies': typeof AuthenticatedInventoryPoliciesRoute
   '/inventory/stock': typeof AuthenticatedInventoryStockRoute
   '/inventory/transactions': typeof AuthenticatedInventoryTransactionsRoute
-  '/items/products': typeof AuthenticatedItemsProductsRoute
+  '/items/categories': typeof AuthenticatedItemsCategoriesRoute
+  '/items/products': typeof AuthenticatedItemsProductsRouteWithChildren
   '/outbound/allocations': typeof AuthenticatedOutboundAllocationsRoute
   '/outbound/orders': typeof AuthenticatedOutboundOrdersRoute
   '/outbound/shipments': typeof AuthenticatedOutboundShipmentsRoute
@@ -380,7 +504,13 @@ export interface FileRoutesByTo {
   '/warehouse/facilities': typeof AuthenticatedWarehouseFacilitiesRoute
   '/warehouse/locations': typeof AuthenticatedWarehouseLocationsRoute
   '/warehouse/zones': typeof AuthenticatedWarehouseZonesRoute
+  '/inbound': typeof AuthenticatedInboundIndexRoute
+  '/inventory': typeof AuthenticatedInventoryIndexRoute
+  '/outbound': typeof AuthenticatedOutboundIndexRoute
+  '/reports': typeof AuthenticatedReportsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/items/products/new': typeof AuthenticatedItemsProductsNewRoute
+  '/items/products/$id/edit': typeof AuthenticatedItemsProductsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -390,6 +520,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory': typeof AuthenticatedInventoryRouteRouteWithChildren
   '/_authenticated/items': typeof AuthenticatedItemsRouteRouteWithChildren
   '/_authenticated/outbound': typeof AuthenticatedOutboundRouteRouteWithChildren
+  '/_authenticated/reports': typeof AuthenticatedReportsRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/_authenticated/warehouse': typeof AuthenticatedWarehouseRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
@@ -403,8 +534,15 @@ export interface FileRoutesById {
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
+  '/_authenticated/transfers': typeof AuthenticatedTransfersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
+  '/_authenticated/admin/customization': typeof AuthenticatedAdminCustomizationRoute
+  '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/counts/cycle': typeof AuthenticatedCountsCycleRoute
+  '/_authenticated/counts/schedule': typeof AuthenticatedCountsScheduleRoute
   '/_authenticated/inbound/asns': typeof AuthenticatedInboundAsnsRoute
   '/_authenticated/inbound/goods-receipt': typeof AuthenticatedInboundGoodsReceiptRoute
   '/_authenticated/inbound/putaway-board': typeof AuthenticatedInboundPutawayBoardRoute
@@ -414,7 +552,8 @@ export interface FileRoutesById {
   '/_authenticated/inventory/policies': typeof AuthenticatedInventoryPoliciesRoute
   '/_authenticated/inventory/stock': typeof AuthenticatedInventoryStockRoute
   '/_authenticated/inventory/transactions': typeof AuthenticatedInventoryTransactionsRoute
-  '/_authenticated/items/products': typeof AuthenticatedItemsProductsRoute
+  '/_authenticated/items/categories': typeof AuthenticatedItemsCategoriesRoute
+  '/_authenticated/items/products': typeof AuthenticatedItemsProductsRouteWithChildren
   '/_authenticated/outbound/allocations': typeof AuthenticatedOutboundAllocationsRoute
   '/_authenticated/outbound/orders': typeof AuthenticatedOutboundOrdersRoute
   '/_authenticated/outbound/shipments': typeof AuthenticatedOutboundShipmentsRoute
@@ -426,7 +565,13 @@ export interface FileRoutesById {
   '/_authenticated/warehouse/facilities': typeof AuthenticatedWarehouseFacilitiesRoute
   '/_authenticated/warehouse/locations': typeof AuthenticatedWarehouseLocationsRoute
   '/_authenticated/warehouse/zones': typeof AuthenticatedWarehouseZonesRoute
+  '/_authenticated/inbound/': typeof AuthenticatedInboundIndexRoute
+  '/_authenticated/inventory/': typeof AuthenticatedInventoryIndexRoute
+  '/_authenticated/outbound/': typeof AuthenticatedOutboundIndexRoute
+  '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/_authenticated/items/products/new': typeof AuthenticatedItemsProductsNewRoute
+  '/_authenticated/items/products/$id/edit': typeof AuthenticatedItemsProductsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -437,6 +582,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/items'
     | '/outbound'
+    | '/reports'
     | '/settings'
     | '/warehouse'
     | '/forgot-password'
@@ -450,7 +596,14 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/transfers'
+    | '/admin/approvals'
+    | '/admin/customization'
+    | '/admin/notifications'
+    | '/admin/settings'
     | '/admin/users'
+    | '/counts/cycle'
+    | '/counts/schedule'
     | '/inbound/asns'
     | '/inbound/goods-receipt'
     | '/inbound/putaway-board'
@@ -460,6 +613,7 @@ export interface FileRouteTypes {
     | '/inventory/policies'
     | '/inventory/stock'
     | '/inventory/transactions'
+    | '/items/categories'
     | '/items/products'
     | '/outbound/allocations'
     | '/outbound/orders'
@@ -472,14 +626,17 @@ export interface FileRouteTypes {
     | '/warehouse/facilities'
     | '/warehouse/locations'
     | '/warehouse/zones'
+    | '/inbound/'
+    | '/inventory/'
+    | '/outbound/'
+    | '/reports/'
     | '/settings/'
+    | '/items/products/new'
+    | '/items/products/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/admin'
-    | '/inbound'
-    | '/inventory'
     | '/items'
-    | '/outbound'
     | '/warehouse'
     | '/forgot-password'
     | '/login'
@@ -492,8 +649,15 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/transfers'
     | '/'
+    | '/admin/approvals'
+    | '/admin/customization'
+    | '/admin/notifications'
+    | '/admin/settings'
     | '/admin/users'
+    | '/counts/cycle'
+    | '/counts/schedule'
     | '/inbound/asns'
     | '/inbound/goods-receipt'
     | '/inbound/putaway-board'
@@ -503,6 +667,7 @@ export interface FileRouteTypes {
     | '/inventory/policies'
     | '/inventory/stock'
     | '/inventory/transactions'
+    | '/items/categories'
     | '/items/products'
     | '/outbound/allocations'
     | '/outbound/orders'
@@ -515,7 +680,13 @@ export interface FileRouteTypes {
     | '/warehouse/facilities'
     | '/warehouse/locations'
     | '/warehouse/zones'
+    | '/inbound'
+    | '/inventory'
+    | '/outbound'
+    | '/reports'
     | '/settings'
+    | '/items/products/new'
+    | '/items/products/$id/edit'
   id:
     | '__root__'
     | '/_authenticated'
@@ -524,6 +695,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory'
     | '/_authenticated/items'
     | '/_authenticated/outbound'
+    | '/_authenticated/reports'
     | '/_authenticated/settings'
     | '/_authenticated/warehouse'
     | '/(auth)/forgot-password'
@@ -537,8 +709,15 @@ export interface FileRouteTypes {
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
+    | '/_authenticated/transfers'
     | '/_authenticated/'
+    | '/_authenticated/admin/approvals'
+    | '/_authenticated/admin/customization'
+    | '/_authenticated/admin/notifications'
+    | '/_authenticated/admin/settings'
     | '/_authenticated/admin/users'
+    | '/_authenticated/counts/cycle'
+    | '/_authenticated/counts/schedule'
     | '/_authenticated/inbound/asns'
     | '/_authenticated/inbound/goods-receipt'
     | '/_authenticated/inbound/putaway-board'
@@ -548,6 +727,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/policies'
     | '/_authenticated/inventory/stock'
     | '/_authenticated/inventory/transactions'
+    | '/_authenticated/items/categories'
     | '/_authenticated/items/products'
     | '/_authenticated/outbound/allocations'
     | '/_authenticated/outbound/orders'
@@ -560,7 +740,13 @@ export interface FileRouteTypes {
     | '/_authenticated/warehouse/facilities'
     | '/_authenticated/warehouse/locations'
     | '/_authenticated/warehouse/zones'
+    | '/_authenticated/inbound/'
+    | '/_authenticated/inventory/'
+    | '/_authenticated/outbound/'
+    | '/_authenticated/reports/'
     | '/_authenticated/settings/'
+    | '/_authenticated/items/products/new'
+    | '/_authenticated/items/products/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -592,6 +778,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/transfers': {
+      id: '/_authenticated/transfers'
+      path: '/transfers'
+      fullPath: '/transfers'
+      preLoaderRoute: typeof AuthenticatedTransfersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/(errors)/503': {
@@ -685,6 +878,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reports': {
+      id: '/_authenticated/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedReportsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/outbound': {
       id: '/_authenticated/outbound'
       path: '/outbound'
@@ -726,6 +926,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+    '/_authenticated/reports/': {
+      id: '/_authenticated/reports/'
+      path: '/'
+      fullPath: '/reports/'
+      preLoaderRoute: typeof AuthenticatedReportsIndexRouteImport
+      parentRoute: typeof AuthenticatedReportsRouteRoute
+    }
+    '/_authenticated/outbound/': {
+      id: '/_authenticated/outbound/'
+      path: '/'
+      fullPath: '/outbound/'
+      preLoaderRoute: typeof AuthenticatedOutboundIndexRouteImport
+      parentRoute: typeof AuthenticatedOutboundRouteRoute
+    }
+    '/_authenticated/inventory/': {
+      id: '/_authenticated/inventory/'
+      path: '/'
+      fullPath: '/inventory/'
+      preLoaderRoute: typeof AuthenticatedInventoryIndexRouteImport
+      parentRoute: typeof AuthenticatedInventoryRouteRoute
+    }
+    '/_authenticated/inbound/': {
+      id: '/_authenticated/inbound/'
+      path: '/'
+      fullPath: '/inbound/'
+      preLoaderRoute: typeof AuthenticatedInboundIndexRouteImport
+      parentRoute: typeof AuthenticatedInboundRouteRoute
     }
     '/_authenticated/warehouse/zones': {
       id: '/_authenticated/warehouse/zones'
@@ -811,6 +1039,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedItemsProductsRouteImport
       parentRoute: typeof AuthenticatedItemsRouteRoute
     }
+    '/_authenticated/items/categories': {
+      id: '/_authenticated/items/categories'
+      path: '/categories'
+      fullPath: '/items/categories'
+      preLoaderRoute: typeof AuthenticatedItemsCategoriesRouteImport
+      parentRoute: typeof AuthenticatedItemsRouteRoute
+    }
     '/_authenticated/inventory/transactions': {
       id: '/_authenticated/inventory/transactions'
       path: '/transactions'
@@ -874,6 +1109,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInboundAsnsRouteImport
       parentRoute: typeof AuthenticatedInboundRouteRoute
     }
+    '/_authenticated/counts/schedule': {
+      id: '/_authenticated/counts/schedule'
+      path: '/counts/schedule'
+      fullPath: '/counts/schedule'
+      preLoaderRoute: typeof AuthenticatedCountsScheduleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/counts/cycle': {
+      id: '/_authenticated/counts/cycle'
+      path: '/counts/cycle'
+      fullPath: '/counts/cycle'
+      preLoaderRoute: typeof AuthenticatedCountsCycleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
       path: '/users'
@@ -881,15 +1130,65 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/notifications': {
+      id: '/_authenticated/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AuthenticatedAdminNotificationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/customization': {
+      id: '/_authenticated/admin/customization'
+      path: '/customization'
+      fullPath: '/admin/customization'
+      preLoaderRoute: typeof AuthenticatedAdminCustomizationRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/approvals': {
+      id: '/_authenticated/admin/approvals'
+      path: '/approvals'
+      fullPath: '/admin/approvals'
+      preLoaderRoute: typeof AuthenticatedAdminApprovalsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/items/products/new': {
+      id: '/_authenticated/items/products/new'
+      path: '/new'
+      fullPath: '/items/products/new'
+      preLoaderRoute: typeof AuthenticatedItemsProductsNewRouteImport
+      parentRoute: typeof AuthenticatedItemsProductsRoute
+    }
+    '/_authenticated/items/products/$id/edit': {
+      id: '/_authenticated/items/products/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/items/products/$id/edit'
+      preLoaderRoute: typeof AuthenticatedItemsProductsIdEditRouteImport
+      parentRoute: typeof AuthenticatedItemsProductsRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminApprovalsRoute: typeof AuthenticatedAdminApprovalsRoute
+  AuthenticatedAdminCustomizationRoute: typeof AuthenticatedAdminCustomizationRoute
+  AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminApprovalsRoute: AuthenticatedAdminApprovalsRoute,
+    AuthenticatedAdminCustomizationRoute: AuthenticatedAdminCustomizationRoute,
+    AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
+    AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   }
 
@@ -902,6 +1201,7 @@ interface AuthenticatedInboundRouteRouteChildren {
   AuthenticatedInboundAsnsRoute: typeof AuthenticatedInboundAsnsRoute
   AuthenticatedInboundGoodsReceiptRoute: typeof AuthenticatedInboundGoodsReceiptRoute
   AuthenticatedInboundPutawayBoardRoute: typeof AuthenticatedInboundPutawayBoardRoute
+  AuthenticatedInboundIndexRoute: typeof AuthenticatedInboundIndexRoute
 }
 
 const AuthenticatedInboundRouteRouteChildren: AuthenticatedInboundRouteRouteChildren =
@@ -911,6 +1211,7 @@ const AuthenticatedInboundRouteRouteChildren: AuthenticatedInboundRouteRouteChil
       AuthenticatedInboundGoodsReceiptRoute,
     AuthenticatedInboundPutawayBoardRoute:
       AuthenticatedInboundPutawayBoardRoute,
+    AuthenticatedInboundIndexRoute: AuthenticatedInboundIndexRoute,
   }
 
 const AuthenticatedInboundRouteRouteWithChildren =
@@ -925,6 +1226,7 @@ interface AuthenticatedInventoryRouteRouteChildren {
   AuthenticatedInventoryPoliciesRoute: typeof AuthenticatedInventoryPoliciesRoute
   AuthenticatedInventoryStockRoute: typeof AuthenticatedInventoryStockRoute
   AuthenticatedInventoryTransactionsRoute: typeof AuthenticatedInventoryTransactionsRoute
+  AuthenticatedInventoryIndexRoute: typeof AuthenticatedInventoryIndexRoute
 }
 
 const AuthenticatedInventoryRouteRouteChildren: AuthenticatedInventoryRouteRouteChildren =
@@ -937,6 +1239,7 @@ const AuthenticatedInventoryRouteRouteChildren: AuthenticatedInventoryRouteRoute
     AuthenticatedInventoryStockRoute: AuthenticatedInventoryStockRoute,
     AuthenticatedInventoryTransactionsRoute:
       AuthenticatedInventoryTransactionsRoute,
+    AuthenticatedInventoryIndexRoute: AuthenticatedInventoryIndexRoute,
   }
 
 const AuthenticatedInventoryRouteRouteWithChildren =
@@ -944,13 +1247,33 @@ const AuthenticatedInventoryRouteRouteWithChildren =
     AuthenticatedInventoryRouteRouteChildren,
   )
 
+interface AuthenticatedItemsProductsRouteChildren {
+  AuthenticatedItemsProductsNewRoute: typeof AuthenticatedItemsProductsNewRoute
+  AuthenticatedItemsProductsIdEditRoute: typeof AuthenticatedItemsProductsIdEditRoute
+}
+
+const AuthenticatedItemsProductsRouteChildren: AuthenticatedItemsProductsRouteChildren =
+  {
+    AuthenticatedItemsProductsNewRoute: AuthenticatedItemsProductsNewRoute,
+    AuthenticatedItemsProductsIdEditRoute:
+      AuthenticatedItemsProductsIdEditRoute,
+  }
+
+const AuthenticatedItemsProductsRouteWithChildren =
+  AuthenticatedItemsProductsRoute._addFileChildren(
+    AuthenticatedItemsProductsRouteChildren,
+  )
+
 interface AuthenticatedItemsRouteRouteChildren {
-  AuthenticatedItemsProductsRoute: typeof AuthenticatedItemsProductsRoute
+  AuthenticatedItemsCategoriesRoute: typeof AuthenticatedItemsCategoriesRoute
+  AuthenticatedItemsProductsRoute: typeof AuthenticatedItemsProductsRouteWithChildren
 }
 
 const AuthenticatedItemsRouteRouteChildren: AuthenticatedItemsRouteRouteChildren =
   {
-    AuthenticatedItemsProductsRoute: AuthenticatedItemsProductsRoute,
+    AuthenticatedItemsCategoriesRoute: AuthenticatedItemsCategoriesRoute,
+    AuthenticatedItemsProductsRoute:
+      AuthenticatedItemsProductsRouteWithChildren,
   }
 
 const AuthenticatedItemsRouteRouteWithChildren =
@@ -963,6 +1286,7 @@ interface AuthenticatedOutboundRouteRouteChildren {
   AuthenticatedOutboundOrdersRoute: typeof AuthenticatedOutboundOrdersRoute
   AuthenticatedOutboundShipmentsRoute: typeof AuthenticatedOutboundShipmentsRoute
   AuthenticatedOutboundWavesRoute: typeof AuthenticatedOutboundWavesRoute
+  AuthenticatedOutboundIndexRoute: typeof AuthenticatedOutboundIndexRoute
 }
 
 const AuthenticatedOutboundRouteRouteChildren: AuthenticatedOutboundRouteRouteChildren =
@@ -972,11 +1296,26 @@ const AuthenticatedOutboundRouteRouteChildren: AuthenticatedOutboundRouteRouteCh
     AuthenticatedOutboundOrdersRoute: AuthenticatedOutboundOrdersRoute,
     AuthenticatedOutboundShipmentsRoute: AuthenticatedOutboundShipmentsRoute,
     AuthenticatedOutboundWavesRoute: AuthenticatedOutboundWavesRoute,
+    AuthenticatedOutboundIndexRoute: AuthenticatedOutboundIndexRoute,
   }
 
 const AuthenticatedOutboundRouteRouteWithChildren =
   AuthenticatedOutboundRouteRoute._addFileChildren(
     AuthenticatedOutboundRouteRouteChildren,
+  )
+
+interface AuthenticatedReportsRouteRouteChildren {
+  AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
+}
+
+const AuthenticatedReportsRouteRouteChildren: AuthenticatedReportsRouteRouteChildren =
+  {
+    AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
+  }
+
+const AuthenticatedReportsRouteRouteWithChildren =
+  AuthenticatedReportsRouteRoute._addFileChildren(
+    AuthenticatedReportsRouteRouteChildren,
   )
 
 interface AuthenticatedSettingsRouteRouteChildren {
@@ -1027,9 +1366,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInventoryRouteRoute: typeof AuthenticatedInventoryRouteRouteWithChildren
   AuthenticatedItemsRouteRoute: typeof AuthenticatedItemsRouteRouteWithChildren
   AuthenticatedOutboundRouteRoute: typeof AuthenticatedOutboundRouteRouteWithChildren
+  AuthenticatedReportsRouteRoute: typeof AuthenticatedReportsRouteRouteWithChildren
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedWarehouseRouteRoute: typeof AuthenticatedWarehouseRouteRouteWithChildren
+  AuthenticatedTransfersRoute: typeof AuthenticatedTransfersRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCountsCycleRoute: typeof AuthenticatedCountsCycleRoute
+  AuthenticatedCountsScheduleRoute: typeof AuthenticatedCountsScheduleRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -1039,10 +1382,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedInventoryRouteRouteWithChildren,
   AuthenticatedItemsRouteRoute: AuthenticatedItemsRouteRouteWithChildren,
   AuthenticatedOutboundRouteRoute: AuthenticatedOutboundRouteRouteWithChildren,
+  AuthenticatedReportsRouteRoute: AuthenticatedReportsRouteRouteWithChildren,
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedWarehouseRouteRoute:
     AuthenticatedWarehouseRouteRouteWithChildren,
+  AuthenticatedTransfersRoute: AuthenticatedTransfersRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedCountsCycleRoute: AuthenticatedCountsCycleRoute,
+  AuthenticatedCountsScheduleRoute: AuthenticatedCountsScheduleRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

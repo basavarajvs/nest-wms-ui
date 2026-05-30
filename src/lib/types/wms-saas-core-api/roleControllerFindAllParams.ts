@@ -22,5 +22,5 @@
  */
 
 export type RoleControllerFindAllParams = {
-includeSystem?: string;
-};
+  includeSystem?: string
+}

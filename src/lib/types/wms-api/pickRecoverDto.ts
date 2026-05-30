@@ -7,6 +7,6 @@
  */
 
 export interface PickRecoverDto {
-  taskId: string;
-  userId: string;
+  taskId: string
+  userId: string
 }

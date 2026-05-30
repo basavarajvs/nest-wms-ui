@@ -24,4 +24,4 @@
 /**
  * Metadata JSON
  */
-export type RecordUsageMetricDtoMetadata = { [key: string]: unknown };
+export type RecordUsageMetricDtoMetadata = { [key: string]: unknown }

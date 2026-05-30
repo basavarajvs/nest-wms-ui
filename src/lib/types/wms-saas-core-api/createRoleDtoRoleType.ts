@@ -24,11 +24,11 @@
 /**
  * Role type
  */
-export type CreateRoleDtoRoleType = typeof CreateRoleDtoRoleType[keyof typeof CreateRoleDtoRoleType];
-
+export type CreateRoleDtoRoleType =
+  (typeof CreateRoleDtoRoleType)[keyof typeof CreateRoleDtoRoleType]
 
 export const CreateRoleDtoRoleType = {
   system: 'system',
   tenant: 'tenant',
   user: 'user',
-} as const;
+} as const

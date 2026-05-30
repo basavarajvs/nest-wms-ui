@@ -38,10 +38,13 @@ export interface Order {
   priority?: number
   requestedDeliveryDate?: string
   createdAt?: string
-  [key: string]: any
+  orderType?: string
+  notes?: string
 }
 
-export function useOrders(params?: Partial<OutboundWebControllerListOrdersParams>) {
+export function useOrders(
+  params?: Partial<OutboundWebControllerListOrdersParams>
+) {
   const queryParams: OutboundWebControllerListOrdersParams = {
     status: params?.status || '',
     clientCode: params?.clientCode || '',
@@ -50,10 +53,11 @@ export function useOrders(params?: Partial<OutboundWebControllerListOrdersParams
     limit: params?.limit ?? 20,
   }
 
+  const stableKey = JSON.stringify(queryParams)
   return useQuery({
-    queryKey: ['wms', 'outbound', 'orders', queryParams],
+    queryKey: ['wms', 'outbound', 'orders', stableKey],
     queryFn: async () => {
-      const res = await OutboundWebController_listOrders(queryParams as any)
+      const res = await OutboundWebController_listOrders(queryParams)
       return res as unknown
     },
     select: (data) => ({

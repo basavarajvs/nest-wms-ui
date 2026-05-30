@@ -23,7 +23,7 @@
 
 export interface AddGroupMemberDto {
   /** Role in group */
-  role?: string;
+  role?: string
   /** User ID to add */
-  userId: string;
+  userId: string
 }

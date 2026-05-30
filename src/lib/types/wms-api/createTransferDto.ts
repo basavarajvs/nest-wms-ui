@@ -7,10 +7,10 @@
  */
 
 export interface CreateTransferDto {
-  facilityId: string;
-  fromLocationId?: string;
-  notes?: string;
-  toFacilityId?: string;
-  toLocationId: string;
-  transferType: string;
+  facilityId: string
+  fromLocationId?: string
+  notes?: string
+  toFacilityId?: string
+  toLocationId: string
+  transferType: string
 }

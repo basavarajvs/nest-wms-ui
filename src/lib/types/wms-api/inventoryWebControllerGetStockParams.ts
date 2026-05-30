@@ -7,11 +7,11 @@
  */
 
 export type InventoryWebControllerGetStockParams = {
-facilityId?: string;
-productId?: string;
-locationId?: string;
-lotId?: string;
-productSku?: string;
-productName?: string;
-lowStock?: boolean;
-};
+  facilityId?: string
+  productId?: string
+  locationId?: string
+  lotId?: string
+  productSku?: string
+  productName?: string
+  lowStock?: boolean
+}

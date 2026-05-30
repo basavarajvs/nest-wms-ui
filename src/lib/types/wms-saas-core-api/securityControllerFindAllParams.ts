@@ -22,11 +22,11 @@
  */
 
 export type SecurityControllerFindAllParams = {
-severity?: string;
-eventType?: string;
-resolved?: string;
-dateFrom?: string;
-dateTo?: string;
-page?: number;
-limit?: number;
-};
+  severity?: string
+  eventType?: string
+  resolved?: string
+  dateFrom?: string
+  dateTo?: string
+  page?: number
+  limit?: number
+}

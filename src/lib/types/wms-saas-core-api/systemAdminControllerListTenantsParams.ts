@@ -22,8 +22,8 @@
  */
 
 export type SystemAdminControllerListTenantsParams = {
-status?: string;
-search?: string;
-page?: number;
-limit?: number;
-};
+  status?: string
+  search?: string
+  page?: number
+  limit?: number
+}

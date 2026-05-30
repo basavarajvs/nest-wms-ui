@@ -6,7 +6,6 @@ import {
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type { CreateAsnDto, UpdateAsnStatusDto } from '@/lib/types/wms-api'
 
-export interface AsnCreateInput extends CreateAsnDto {}
 
 export function useCreateAsn() {
   const queryClient = useQueryClient()
@@ -31,7 +30,13 @@ export function usePreviewAsn() {
 export function useUpdateAsnStatus() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ id, dto }: { id: string; dto: UpdateAsnStatusDto }) => {
+    mutationFn: async ({
+      id,
+      dto,
+    }: {
+      id: string
+      dto: UpdateAsnStatusDto
+    }) => {
       return InboundWebController_updateAsnStatus(id, dto)
     },
     onSuccess: () => {

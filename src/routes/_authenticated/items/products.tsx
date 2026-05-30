@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Products } from '@/features/items/products'
+import { Products } from '@/pages/products/Products'
 
-// @ts-ignore - route id will be valid after TanStack Router generator runs
 export const Route = createFileRoute('/_authenticated/items/products')({
   component: Products,
 })

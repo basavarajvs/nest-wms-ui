@@ -7,5 +7,5 @@
  */
 
 export interface SubmitCountLineDto {
-  lineId: string;
+  lineId: string
 }

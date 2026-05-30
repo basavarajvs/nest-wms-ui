@@ -20,25 +20,25 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreateRoleDtoRoleType } from './createRoleDtoRoleType.js';
+import type { CreateRoleDtoRoleType } from './createRoleDtoRoleType.js'
 
 export interface CreateRoleDto {
   /** Whether assignment requires approval */
-  assignmentRequiresApproval?: boolean;
+  assignmentRequiresApproval?: boolean
   /** Whether auto-expiry is enabled */
-  autoExpiryEnabled?: boolean;
+  autoExpiryEnabled?: boolean
   /** Whether this is a default role */
-  isDefaultRole?: boolean;
+  isDefaultRole?: boolean
   /** Maximum duration hours for role assignment */
-  maxDurationHours?: number;
+  maxDurationHours?: number
   /** Parent role ID for hierarchy */
-  parentRoleId?: string;
+  parentRoleId?: string
   /** Unique role code */
-  roleCode: string;
+  roleCode: string
   /** Role description */
-  roleDescription?: string;
+  roleDescription?: string
   /** Role display name */
-  roleName: string;
+  roleName: string
   /** Role type */
-  roleType?: CreateRoleDtoRoleType;
+  roleType?: CreateRoleDtoRoleType
 }

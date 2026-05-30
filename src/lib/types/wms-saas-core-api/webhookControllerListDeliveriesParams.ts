@@ -22,10 +22,10 @@
  */
 
 export type WebhookControllerListDeliveriesParams = {
-endpointId?: string;
-status?: string;
-dateFrom?: string;
-dateTo?: string;
-page?: number;
-limit?: number;
-};
+  endpointId?: string
+  status?: string
+  dateFrom?: string
+  dateTo?: string
+  page?: number
+  limit?: number
+}

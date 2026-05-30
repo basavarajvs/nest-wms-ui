@@ -7,12 +7,12 @@
  */
 
 export interface ReportParamsDto {
-  dateFrom?: string;
-  dateTo?: string;
-  facilityId?: string;
-  liveQuery?: boolean;
-  productClass?: string;
-  thresholdDays?: number;
-  timezone?: string;
-  zoneId?: string;
+  dateFrom?: string
+  dateTo?: string
+  facilityId?: string
+  liveQuery?: boolean
+  productClass?: string
+  thresholdDays?: number
+  timezone?: string
+  zoneId?: string
 }

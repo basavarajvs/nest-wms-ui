@@ -24,4 +24,4 @@
 /**
  * Limits JSON
  */
-export type UpdateLicensePlanDtoLimits = { [key: string]: unknown };
+export type UpdateLicensePlanDtoLimits = { [key: string]: unknown }

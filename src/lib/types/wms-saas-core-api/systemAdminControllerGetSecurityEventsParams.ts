@@ -22,9 +22,9 @@
  */
 
 export type SystemAdminControllerGetSecurityEventsParams = {
-tenantId?: string;
-severity?: string;
-resolved?: string;
-page?: number;
-limit?: number;
-};
+  tenantId?: string
+  severity?: string
+  resolved?: string
+  page?: number
+  limit?: number
+}

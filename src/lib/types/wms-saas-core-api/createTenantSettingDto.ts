@@ -20,18 +20,18 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreateTenantSettingDtoCategory } from './createTenantSettingDtoCategory.js';
+import type { CreateTenantSettingDtoCategory } from './createTenantSettingDtoCategory.js'
 
 export interface CreateTenantSettingDto {
-  category: CreateTenantSettingDtoCategory;
+  category: CreateTenantSettingDtoCategory
   /** Description */
-  description?: string;
+  description?: string
   /** Is encrypted */
-  isEncrypted?: boolean;
+  isEncrypted?: boolean
   /** Setting key */
-  settingKey: string;
+  settingKey: string
   /** Setting type */
-  settingType?: string;
+  settingType?: string
   /** Setting value */
-  settingValue?: string;
+  settingValue?: string
 }

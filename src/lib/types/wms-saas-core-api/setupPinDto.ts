@@ -23,7 +23,7 @@
 
 export interface SetupPinDto {
   /** Current password for verification */
-  password: string;
+  password: string
   /** New PIN */
-  pin: string;
+  pin: string
 }

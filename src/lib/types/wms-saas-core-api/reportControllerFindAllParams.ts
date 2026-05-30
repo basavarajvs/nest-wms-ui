@@ -22,8 +22,8 @@
  */
 
 export type ReportControllerFindAllParams = {
-page?: number;
-limit?: number;
-status?: string;
-reportType?: string;
-};
+  page?: number
+  limit?: number
+  status?: string
+  reportType?: string
+}

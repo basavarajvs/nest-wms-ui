@@ -20,21 +20,21 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreatePermissionDtoResourceScope } from './createPermissionDtoResourceScope.js';
+import type { CreatePermissionDtoResourceScope } from './createPermissionDtoResourceScope.js'
 
 export interface CreatePermissionDto {
   /** Unique permission code */
-  permissionCode: string;
+  permissionCode: string
   /** Permission description */
-  permissionDescription?: string;
+  permissionDescription?: string
   /** Permission display name */
-  permissionName: string;
+  permissionName: string
   /** Permission type */
-  permissionType: string;
+  permissionType: string
   /** Action on the resource */
-  resourceAction: string;
+  resourceAction: string
   /** Resource scope */
-  resourceScope?: CreatePermissionDtoResourceScope;
+  resourceScope?: CreatePermissionDtoResourceScope
   /** Resource type this permission applies to */
-  resourceType: string;
+  resourceType: string
 }

@@ -20,25 +20,25 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreatePlanDtoFeatures } from './createPlanDtoFeatures.js';
-import type { CreatePlanDtoLicenseType } from './createPlanDtoLicenseType.js';
-import type { CreatePlanDtoLimits } from './createPlanDtoLimits.js';
+import type { CreatePlanDtoFeatures } from './createPlanDtoFeatures.js'
+import type { CreatePlanDtoLicenseType } from './createPlanDtoLicenseType.js'
+import type { CreatePlanDtoLimits } from './createPlanDtoLimits.js'
 
 export interface CreatePlanDto {
   /** Billing cycle in days */
-  billingCycleDays: number;
+  billingCycleDays: number
   /** Features JSON */
-  features?: CreatePlanDtoFeatures;
+  features?: CreatePlanDtoFeatures
   /** Is active */
-  isActive?: boolean;
+  isActive?: boolean
   /** License type */
-  licenseType: CreatePlanDtoLicenseType;
+  licenseType: CreatePlanDtoLicenseType
   /** Limits JSON */
-  limits: CreatePlanDtoLimits;
+  limits: CreatePlanDtoLimits
   /** Plan description */
-  planDescription?: string;
+  planDescription?: string
   /** Plan name */
-  planName: string;
+  planName: string
   /** Price */
-  price: number;
+  price: number
 }

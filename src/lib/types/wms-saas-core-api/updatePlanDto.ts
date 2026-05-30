@@ -20,20 +20,20 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { UpdatePlanDtoFeatures } from './updatePlanDtoFeatures.js';
-import type { UpdatePlanDtoLimits } from './updatePlanDtoLimits.js';
+import type { UpdatePlanDtoFeatures } from './updatePlanDtoFeatures.js'
+import type { UpdatePlanDtoLimits } from './updatePlanDtoLimits.js'
 
 export interface UpdatePlanDto {
   /** Billing cycle in days */
-  billingCycleDays?: number;
+  billingCycleDays?: number
   /** Features JSON */
-  features?: UpdatePlanDtoFeatures;
+  features?: UpdatePlanDtoFeatures
   /** Is active */
-  isActive?: boolean;
+  isActive?: boolean
   /** Limits JSON */
-  limits?: UpdatePlanDtoLimits;
+  limits?: UpdatePlanDtoLimits
   /** Plan description */
-  planDescription?: string;
+  planDescription?: string
   /** Price */
-  price?: number;
+  price?: number
 }

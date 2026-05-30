@@ -23,5 +23,5 @@
 
 export interface UpdateApiKeyScopesDto {
   /** Permission scopes */
-  scopes: string[];
+  scopes: string[]
 }

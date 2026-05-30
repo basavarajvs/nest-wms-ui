@@ -23,17 +23,17 @@
 
 export interface CreateTenantDto {
   /** Domain URL for the tenant */
-  domain?: string;
+  domain?: string
   /** Locale */
-  locale?: string;
+  locale?: string
   /** Plan UUID */
-  planId?: string;
+  planId?: string
   /**
-     * Name of the tenant
-     * @minLength 2
-     * @maxLength 255
-     */
-  tenantName: string;
+   * Name of the tenant
+   * @minLength 2
+   * @maxLength 255
+   */
+  tenantName: string
   /** Timezone */
-  timezone?: string;
+  timezone?: string
 }

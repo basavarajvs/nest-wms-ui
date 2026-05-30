@@ -20,10 +20,7 @@
  *
  * OpenAPI spec version: 1.0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query'
 import type {
   MutationFunction,
   QueryFunction,
@@ -31,108 +28,121 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
-
+  UseQueryResult,
+} from '@tanstack/react-query'
+import { customInstance } from '../../../httpSaasClient'
 import type {
   CreateTenantDto,
-  UpdateTenantStatusDto
-} from '../../../types/wms-saas-core-api';
+  UpdateTenantStatusDto,
+} from '../../../types/wms-saas-core-api'
 
-import { customInstance } from '../../../httpClient';
-
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export type TenantController_createResponse201 = {
   data: void
   status: 201
 }
 
-export type TenantController_createResponseSuccess = (TenantController_createResponse201) & {
-  headers: Headers;
-};
-;
-
-export type TenantController_createResponse = (TenantController_createResponseSuccess)
+export type TenantController_createResponseSuccess =
+  TenantController_createResponse201 & {
+    headers: Headers
+  }
+export type TenantController_createResponse =
+  TenantController_createResponseSuccess
 
 export const getTenantControllerCreateUrl = () => {
-
-
-
-
   return `/api/v1/tenants`
 }
 
 /**
  * @summary Create a new tenant (system only)
  */
-export const TenantController_create = async (createTenantDto: CreateTenantDto, options?: RequestInit): Promise<TenantController_createResponse> => {
-
-  return customInstance<TenantController_createResponse>(getTenantControllerCreateUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createTenantDto)
-  }
-);}
-
-
-
-
-
-export const getTenantControllerCreateQueryKey = (createTenantDto?: CreateTenantDto,) => {
-    return [
-    'POST', `/api/v1/tenants`, createTenantDto
-    ] as const;
+export const TenantController_create = async (
+  createTenantDto: CreateTenantDto,
+  options?: RequestInit
+): Promise<TenantController_createResponse> => {
+  return customInstance<TenantController_createResponse>(
+    getTenantControllerCreateUrl(),
+    {
+      ...options,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...options?.headers },
+      body: JSON.stringify(createTenantDto),
     }
-
-
-export const getTenantControllerCreateQueryOptions = <TData = Awaited<ReturnType<typeof TenantController_create>>, TError = unknown>(createTenantDto: CreateTenantDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof TenantController_create>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getTenantControllerCreateQueryKey(createTenantDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof TenantController_create>>> = ({ signal }) => TenantController_create(createTenantDto, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof TenantController_create>>, TError, TData> & { queryKey: QueryKey }
+  )
 }
 
-export type TenantControllerCreateQueryResult = NonNullable<Awaited<ReturnType<typeof TenantController_create>>>
-export type TenantControllerCreateQueryError = unknown
+export const getTenantControllerCreateQueryKey = (
+  createTenantDto?: CreateTenantDto
+) => {
+  return ['POST', `/api/v1/tenants`, createTenantDto] as const
+}
 
+export const getTenantControllerCreateQueryOptions = <
+  TData = Awaited<ReturnType<typeof TenantController_create>>,
+  TError = unknown,
+>(
+  createTenantDto: CreateTenantDto,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof TenantController_create>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey =
+    queryOptions?.queryKey ?? getTenantControllerCreateQueryKey(createTenantDto)
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof TenantController_create>>
+  > = ({ signal }) =>
+    TenantController_create(createTenantDto, { signal, ...requestOptions })
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof TenantController_create>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey }
+}
+
+export type TenantControllerCreateQueryResult = NonNullable<
+  Awaited<ReturnType<typeof TenantController_create>>
+>
+export type TenantControllerCreateQueryError = unknown
 
 /**
  * @summary Create a new tenant (system only)
  */
 
-export function useTenantControllerCreate<TData = Awaited<ReturnType<typeof TenantController_create>>, TError = unknown>(
- createTenantDto: CreateTenantDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof TenantController_create>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+export function useTenantControllerCreate<
+  TData = Awaited<ReturnType<typeof TenantController_create>>,
+  TError = unknown,
+>(
+  createTenantDto: CreateTenantDto,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof TenantController_create>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getTenantControllerCreateQueryOptions(
+    createTenantDto,
+    options
+  )
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey
+  }
 
-  const queryOptions = getTenantControllerCreateQueryOptions(createTenantDto,options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  return { ...query, queryKey: queryOptions.queryKey };
+  return { ...query, queryKey: queryOptions.queryKey }
 }
-
-
-
-
-
 
 export type TenantController_findOneResponse200 = {
   data: void
@@ -144,254 +154,324 @@ export type TenantController_findOneResponse404 = {
   status: 404
 }
 
-export type TenantController_findOneResponseSuccess = (TenantController_findOneResponse200) & {
-  headers: Headers;
-};
-export type TenantController_findOneResponseError = (TenantController_findOneResponse404) & {
-  headers: Headers;
-};
+export type TenantController_findOneResponseSuccess =
+  TenantController_findOneResponse200 & {
+    headers: Headers
+  }
+export type TenantController_findOneResponseError =
+  TenantController_findOneResponse404 & {
+    headers: Headers
+  }
 
-export type TenantController_findOneResponse = (TenantController_findOneResponseSuccess | TenantController_findOneResponseError)
+export type TenantController_findOneResponse =
+  | TenantController_findOneResponseSuccess
+  | TenantController_findOneResponseError
 
-export const getTenantControllerFindOneUrl = (id: string,) => {
-
-
-
-
+export const getTenantControllerFindOneUrl = (id: string) => {
   return `/api/v1/tenants/${id}`
 }
 
 /**
  * @summary Get tenant by ID (system only)
  */
-export const TenantController_findOne = async (id: string, options?: RequestInit): Promise<TenantController_findOneResponse> => {
+export const TenantController_findOne = async (
+  id: string,
+  options?: RequestInit
+): Promise<TenantController_findOneResponse> => {
+  return customInstance<TenantController_findOneResponse>(
+    getTenantControllerFindOneUrl(id),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<TenantController_findOneResponse>(getTenantControllerFindOneUrl(id),
-  {
-    ...options,
-    method: 'GET'
+export const getTenantControllerFindOneMutationOptions = <
+  TError = void,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof TenantController_findOne>>,
+    TError,
+    { id: string },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof TenantController_findOne>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ['tenantControllerFindOne']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof TenantController_findOne>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {}
 
+    return TenantController_findOne(id, requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type TenantControllerFindOneMutationResult = NonNullable<
+  Awaited<ReturnType<typeof TenantController_findOne>>
+>
 
+export type TenantControllerFindOneMutationError = void
 
-export const getTenantControllerFindOneMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof TenantController_findOne>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof TenantController_findOne>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['tenantControllerFindOne'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof TenantController_findOne>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  TenantController_findOne(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type TenantControllerFindOneMutationResult = NonNullable<Awaited<ReturnType<typeof TenantController_findOne>>>
-
-    export type TenantControllerFindOneMutationError = void
-
-    /**
+/**
  * @summary Get tenant by ID (system only)
  */
-export const useTenantControllerFindOne = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof TenantController_findOne>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof TenantController_findOne>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getTenantControllerFindOneMutationOptions(options));
-    }
-    export type TenantController_updateStatusResponse200 = {
+export const useTenantControllerFindOne = <
+  TError = void,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof TenantController_findOne>>,
+    TError,
+    { id: string },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof TenantController_findOne>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getTenantControllerFindOneMutationOptions(options))
+}
+export type TenantController_updateStatusResponse200 = {
   data: void
   status: 200
 }
 
-export type TenantController_updateStatusResponseSuccess = (TenantController_updateStatusResponse200) & {
-  headers: Headers;
-};
-;
+export type TenantController_updateStatusResponseSuccess =
+  TenantController_updateStatusResponse200 & {
+    headers: Headers
+  }
+export type TenantController_updateStatusResponse =
+  TenantController_updateStatusResponseSuccess
 
-export type TenantController_updateStatusResponse = (TenantController_updateStatusResponseSuccess)
-
-export const getTenantControllerUpdateStatusUrl = (id: string,) => {
-
-
-
-
+export const getTenantControllerUpdateStatusUrl = (id: string) => {
   return `/api/v1/tenants/${id}/status`
 }
 
 /**
  * @summary Update tenant status (system only)
  */
-export const TenantController_updateStatus = async (id: string,
-    updateTenantStatusDto: UpdateTenantStatusDto, options?: RequestInit): Promise<TenantController_updateStatusResponse> => {
-
-  return customInstance<TenantController_updateStatusResponse>(getTenantControllerUpdateStatusUrl(id),
-  {
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(updateTenantStatusDto)
-  }
-);}
-
-
-
-
-
-export const getTenantControllerUpdateStatusQueryKey = (id: string,
-    updateTenantStatusDto?: UpdateTenantStatusDto,) => {
-    return [
-    'PATCH', `/api/v1/tenants/${id}/status`, updateTenantStatusDto
-    ] as const;
+export const TenantController_updateStatus = async (
+  id: string,
+  updateTenantStatusDto: UpdateTenantStatusDto,
+  options?: RequestInit
+): Promise<TenantController_updateStatusResponse> => {
+  return customInstance<TenantController_updateStatusResponse>(
+    getTenantControllerUpdateStatusUrl(id),
+    {
+      ...options,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...options?.headers },
+      body: JSON.stringify(updateTenantStatusDto),
     }
-
-
-export const getTenantControllerUpdateStatusQueryOptions = <TData = Awaited<ReturnType<typeof TenantController_updateStatus>>, TError = unknown>(id: string,
-    updateTenantStatusDto: UpdateTenantStatusDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof TenantController_updateStatus>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getTenantControllerUpdateStatusQueryKey(id,updateTenantStatusDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof TenantController_updateStatus>>> = ({ signal }) => TenantController_updateStatus(id,updateTenantStatusDto, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof TenantController_updateStatus>>, TError, TData> & { queryKey: QueryKey }
+  )
 }
 
-export type TenantControllerUpdateStatusQueryResult = NonNullable<Awaited<ReturnType<typeof TenantController_updateStatus>>>
-export type TenantControllerUpdateStatusQueryError = unknown
+export const getTenantControllerUpdateStatusQueryKey = (
+  id: string,
+  updateTenantStatusDto?: UpdateTenantStatusDto
+) => {
+  return [
+    'PATCH',
+    `/api/v1/tenants/${id}/status`,
+    updateTenantStatusDto,
+  ] as const
+}
 
+export const getTenantControllerUpdateStatusQueryOptions = <
+  TData = Awaited<ReturnType<typeof TenantController_updateStatus>>,
+  TError = unknown,
+>(
+  id: string,
+  updateTenantStatusDto: UpdateTenantStatusDto,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof TenantController_updateStatus>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getTenantControllerUpdateStatusQueryKey(id, updateTenantStatusDto)
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof TenantController_updateStatus>>
+  > = ({ signal }) =>
+    TenantController_updateStatus(id, updateTenantStatusDto, {
+      signal,
+      ...requestOptions,
+    })
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof TenantController_updateStatus>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey }
+}
+
+export type TenantControllerUpdateStatusQueryResult = NonNullable<
+  Awaited<ReturnType<typeof TenantController_updateStatus>>
+>
+export type TenantControllerUpdateStatusQueryError = unknown
 
 /**
  * @summary Update tenant status (system only)
  */
 
-export function useTenantControllerUpdateStatus<TData = Awaited<ReturnType<typeof TenantController_updateStatus>>, TError = unknown>(
- id: string,
-    updateTenantStatusDto: UpdateTenantStatusDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof TenantController_updateStatus>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+export function useTenantControllerUpdateStatus<
+  TData = Awaited<ReturnType<typeof TenantController_updateStatus>>,
+  TError = unknown,
+>(
+  id: string,
+  updateTenantStatusDto: UpdateTenantStatusDto,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof TenantController_updateStatus>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getTenantControllerUpdateStatusQueryOptions(
+    id,
+    updateTenantStatusDto,
+    options
+  )
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey
+  }
 
-  const queryOptions = getTenantControllerUpdateStatusQueryOptions(id,updateTenantStatusDto,options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  return { ...query, queryKey: queryOptions.queryKey };
+  return { ...query, queryKey: queryOptions.queryKey }
 }
-
-
-
-
-
 
 export type TenantController_getHealthResponse200 = {
   data: void
   status: 200
 }
 
-export type TenantController_getHealthResponseSuccess = (TenantController_getHealthResponse200) & {
-  headers: Headers;
-};
-;
+export type TenantController_getHealthResponseSuccess =
+  TenantController_getHealthResponse200 & {
+    headers: Headers
+  }
+export type TenantController_getHealthResponse =
+  TenantController_getHealthResponseSuccess
 
-export type TenantController_getHealthResponse = (TenantController_getHealthResponseSuccess)
-
-export const getTenantControllerGetHealthUrl = (id: string,) => {
-
-
-
-
+export const getTenantControllerGetHealthUrl = (id: string) => {
   return `/api/v1/tenants/${id}/health`
 }
 
 /**
  * @summary Get tenant health status (system only)
  */
-export const TenantController_getHealth = async (id: string, options?: RequestInit): Promise<TenantController_getHealthResponse> => {
+export const TenantController_getHealth = async (
+  id: string,
+  options?: RequestInit
+): Promise<TenantController_getHealthResponse> => {
+  return customInstance<TenantController_getHealthResponse>(
+    getTenantControllerGetHealthUrl(id),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<TenantController_getHealthResponse>(getTenantControllerGetHealthUrl(id),
-  {
-    ...options,
-    method: 'GET'
+export const getTenantControllerGetHealthMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof TenantController_getHealth>>,
+    TError,
+    { id: string },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof TenantController_getHealth>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ['tenantControllerGetHealth']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof TenantController_getHealth>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {}
 
+    return TenantController_getHealth(id, requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type TenantControllerGetHealthMutationResult = NonNullable<
+  Awaited<ReturnType<typeof TenantController_getHealth>>
+>
 
+export type TenantControllerGetHealthMutationError = unknown
 
-export const getTenantControllerGetHealthMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof TenantController_getHealth>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof TenantController_getHealth>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['tenantControllerGetHealth'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof TenantController_getHealth>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  TenantController_getHealth(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type TenantControllerGetHealthMutationResult = NonNullable<Awaited<ReturnType<typeof TenantController_getHealth>>>
-
-    export type TenantControllerGetHealthMutationError = unknown
-
-    /**
+/**
  * @summary Get tenant health status (system only)
  */
-export const useTenantControllerGetHealth = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof TenantController_getHealth>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof TenantController_getHealth>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getTenantControllerGetHealthMutationOptions(options));
-    }
+export const useTenantControllerGetHealth = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof TenantController_getHealth>>,
+    TError,
+    { id: string },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof TenantController_getHealth>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getTenantControllerGetHealthMutationOptions(options))
+}

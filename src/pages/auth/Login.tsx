@@ -27,7 +27,10 @@ import { PasswordInput } from '@/components/password-input'
 import { AuthLayout } from '@/features/auth/auth-layout'
 
 const loginSchema = z.object({
-  email: z.string().min(1, 'Please enter your email.').email('Invalid email address.'),
+  email: z
+    .string()
+    .min(1, 'Please enter your email.')
+    .email('Invalid email address.'),
   password: z
     .string()
     .min(1, 'Please enter your password.')
@@ -74,15 +77,16 @@ export function LoginPage() {
 
   return (
     <AuthLayout>
-      <Card className="max-w-sm gap-4">
+      <Card className='max-w-sm gap-4'>
         <CardHeader>
-          <CardTitle className="text-lg tracking-tight">Sign in</CardTitle>
+          <CardTitle className='text-lg tracking-tight'>Sign in</CardTitle>
           <CardDescription>
             Enter your email and password below to log into{' '}
-            <br className="max-sm:hidden" /> your account. Don't have an account?{' '}
+            <br className='max-sm:hidden' /> your account. Don't have an
+            account?{' '}
             <Link
-              to="/sign-up"
-              className="text-nowrap underline underline-offset-4 hover:text-primary"
+              to='/sign-up'
+              className='text-nowrap underline underline-offset-4 hover:text-primary'
             >
               Sign Up
             </Link>
@@ -90,15 +94,15 @@ export function LoginPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+            <form onSubmit={form.handleSubmit(onSubmit)} className='grid gap-3'>
               <FormField
                 control={form.control}
-                name="email"
+                name='email'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="name@example.com" {...field} />
+                      <Input placeholder='name@example.com' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -106,17 +110,17 @@ export function LoginPage() {
               />
               <FormField
                 control={form.control}
-                name="password"
+                name='password'
                 render={({ field }) => (
-                  <FormItem className="relative">
+                  <FormItem className='relative'>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <PasswordInput placeholder="********" {...field} />
+                      <PasswordInput placeholder='********' {...field} />
                     </FormControl>
                     <FormMessage />
                     <Link
-                      to="/forgot-password"
-                      className="absolute end-0 -top-0.5 text-sm font-medium text-muted-foreground hover:opacity-75"
+                      to='/forgot-password'
+                      className='absolute end-0 -top-0.5 text-sm font-medium text-muted-foreground hover:opacity-75'
                     >
                       Forgot password?
                     </Link>
@@ -125,40 +129,38 @@ export function LoginPage() {
               />
               <FormField
                 control={form.control}
-                name="tenantCode"
+                name='tenantCode'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tenant Code</FormLabel>
                     <FormControl>
-                      <Input placeholder="your-tenant" {...field} />
+                      <Input placeholder='your-tenant' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {error && (
-                <p className="text-sm text-destructive">{error}</p>
-              )}
-              <Button className="mt-2" disabled={isLoading}>
-                {isLoading ? <Loader2 className="animate-spin" /> : <LogIn />}
+              {error && <p className='text-sm text-destructive'>{error}</p>}
+              <Button className='mt-2' disabled={isLoading}>
+                {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
                 Sign in
               </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter>
-          <p className="px-8 text-center text-sm text-muted-foreground">
+          <p className='px-8 text-center text-sm text-muted-foreground'>
             By clicking sign in, you agree to our{' '}
             <a
-              href="/terms"
-              className="underline underline-offset-4 hover:text-primary"
+              href='/terms'
+              className='underline underline-offset-4 hover:text-primary'
             >
               Terms of Service
             </a>{' '}
             and{' '}
             <a
-              href="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
+              href='/privacy'
+              className='underline underline-offset-4 hover:text-primary'
             >
               Privacy Policy
             </a>

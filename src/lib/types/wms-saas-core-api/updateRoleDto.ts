@@ -23,17 +23,17 @@
 
 export interface UpdateRoleDto {
   /** Whether assignment requires approval */
-  assignmentRequiresApproval?: boolean;
+  assignmentRequiresApproval?: boolean
   /** Whether auto-expiry is enabled */
-  autoExpiryEnabled?: boolean;
+  autoExpiryEnabled?: boolean
   /** Whether the role is active */
-  isActive?: boolean;
+  isActive?: boolean
   /** Whether this is a default role */
-  isDefaultRole?: boolean;
+  isDefaultRole?: boolean
   /** Maximum duration hours for role assignment */
-  maxDurationHours?: number;
+  maxDurationHours?: number
   /** Role description */
-  roleDescription?: string;
+  roleDescription?: string
   /** Role display name */
-  roleName?: string;
+  roleName?: string
 }

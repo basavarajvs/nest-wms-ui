@@ -22,6 +22,6 @@
  */
 
 export type TenantAdminControllerGetUsageParams = {
-dateFrom?: string;
-dateTo?: string;
-};
+  dateFrom?: string
+  dateTo?: string
+}

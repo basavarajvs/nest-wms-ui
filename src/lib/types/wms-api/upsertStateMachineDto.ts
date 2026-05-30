@@ -5,10 +5,10 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { UpsertStateMachineDtoDefinitionJson } from './upsertStateMachineDtoDefinitionJson.js';
+import type { UpsertStateMachineDtoDefinitionJson } from './upsertStateMachineDtoDefinitionJson.js'
 
 export interface UpsertStateMachineDto {
-  definitionJson: UpsertStateMachineDtoDefinitionJson;
-  entityType: string;
-  machineKey: string;
+  definitionJson: UpsertStateMachineDtoDefinitionJson
+  entityType: string
+  machineKey: string
 }

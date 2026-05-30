@@ -23,11 +23,11 @@
 
 export interface AssignRoleDto {
   /** Reason for role assignment */
-  assignmentReason?: string;
+  assignmentReason?: string
   /** Role expiration date */
-  expiresAt?: string;
+  expiresAt?: string
   /** Whether the assignment requires approval */
-  requiresApproval?: boolean;
+  requiresApproval?: boolean
   /** Role ID */
-  roleId: string;
+  roleId: string
 }

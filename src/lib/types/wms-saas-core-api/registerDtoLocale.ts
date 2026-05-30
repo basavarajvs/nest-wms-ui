@@ -24,4 +24,4 @@
 /**
  * Locale
  */
-export type RegisterDtoLocale = { [key: string]: unknown };
+export type RegisterDtoLocale = { [key: string]: unknown }

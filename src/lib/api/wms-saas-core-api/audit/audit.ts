@@ -20,281 +20,335 @@
  *
  * OpenAPI spec version: 1.0
  */
-import {
-  useMutation
-} from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query'
 import type {
   MutationFunction,
   UseMutationOptions,
-  UseMutationResult
-} from '@tanstack/react-query';
-
+  UseMutationResult,
+} from '@tanstack/react-query'
+import { customInstance } from '../../../httpSaasClient'
 import type {
   AuditControllerExportParams,
-  AuditControllerQueryParams
-} from '../../../types/wms-saas-core-api';
+  AuditControllerQueryParams,
+} from '../../../types/wms-saas-core-api'
 
-import { customInstance } from '../../../httpClient';
-
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export type AuditController_queryResponse200 = {
   data: void
   status: 200
 }
 
-export type AuditController_queryResponseSuccess = (AuditController_queryResponse200) & {
-  headers: Headers;
-};
-;
+export type AuditController_queryResponseSuccess =
+  AuditController_queryResponse200 & {
+    headers: Headers
+  }
+export type AuditController_queryResponse = AuditController_queryResponseSuccess
 
-export type AuditController_queryResponse = (AuditController_queryResponseSuccess)
-
-export const getAuditControllerQueryUrl = (params?: AuditControllerQueryParams,) => {
-  const normalizedParams = new URLSearchParams();
+export const getAuditControllerQueryUrl = (
+  params?: AuditControllerQueryParams
+) => {
+  const normalizedParams = new URLSearchParams()
 
   Object.entries(params || {}).forEach(([key, value]) => {
-
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
     }
-  });
+  })
 
-  const stringifiedParams = normalizedParams.toString();
+  const stringifiedParams = normalizedParams.toString()
 
-  return stringifiedParams.length > 0 ? `/api/v1/audit?${stringifiedParams}` : `/api/v1/audit`
+  return stringifiedParams.length > 0
+    ? `/api/v1/audit?${stringifiedParams}`
+    : `/api/v1/audit`
 }
 
 /**
  * @summary Query audit log entries with filtering/pagination
  */
-export const AuditController_query = async (params?: AuditControllerQueryParams, options?: RequestInit): Promise<AuditController_queryResponse> => {
+export const AuditController_query = async (
+  params?: AuditControllerQueryParams,
+  options?: RequestInit
+): Promise<AuditController_queryResponse> => {
+  return customInstance<AuditController_queryResponse>(
+    getAuditControllerQueryUrl(params),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<AuditController_queryResponse>(getAuditControllerQueryUrl(params),
-  {
-    ...options,
-    method: 'GET'
+export const getAuditControllerQueryMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof AuditController_query>>,
+    TError,
+    { params?: AuditControllerQueryParams },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof AuditController_query>>,
+  TError,
+  { params?: AuditControllerQueryParams },
+  TContext
+> => {
+  const mutationKey = ['auditControllerQuery']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof AuditController_query>>,
+    { params?: AuditControllerQueryParams }
+  > = (props) => {
+    const { params } = props ?? {}
 
+    return AuditController_query(params, requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type AuditControllerQueryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof AuditController_query>>
+>
 
+export type AuditControllerQueryMutationError = unknown
 
-export const getAuditControllerQueryMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof AuditController_query>>, TError,{params?: AuditControllerQueryParams}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof AuditController_query>>, TError,{params?: AuditControllerQueryParams}, TContext> => {
-
-const mutationKey = ['auditControllerQuery'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof AuditController_query>>, {params?: AuditControllerQueryParams}> = (props) => {
-          const {params} = props ?? {};
-
-          return  AuditController_query(params,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AuditControllerQueryMutationResult = NonNullable<Awaited<ReturnType<typeof AuditController_query>>>
-
-    export type AuditControllerQueryMutationError = unknown
-
-    /**
+/**
  * @summary Query audit log entries with filtering/pagination
  */
-export const useAuditControllerQuery = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof AuditController_query>>, TError,{params?: AuditControllerQueryParams}, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof AuditController_query>>,
-        TError,
-        {params?: AuditControllerQueryParams},
-        TContext
-      > => {
-      return useMutation(getAuditControllerQueryMutationOptions(options));
-    }
-    export type AuditController_exportResponse200 = {
+export const useAuditControllerQuery = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof AuditController_query>>,
+    TError,
+    { params?: AuditControllerQueryParams },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof AuditController_query>>,
+  TError,
+  { params?: AuditControllerQueryParams },
+  TContext
+> => {
+  return useMutation(getAuditControllerQueryMutationOptions(options))
+}
+export type AuditController_exportResponse200 = {
   data: void
   status: 200
 }
 
-export type AuditController_exportResponseSuccess = (AuditController_exportResponse200) & {
-  headers: Headers;
-};
-;
+export type AuditController_exportResponseSuccess =
+  AuditController_exportResponse200 & {
+    headers: Headers
+  }
+export type AuditController_exportResponse =
+  AuditController_exportResponseSuccess
 
-export type AuditController_exportResponse = (AuditController_exportResponseSuccess)
-
-export const getAuditControllerExportUrl = (params?: AuditControllerExportParams,) => {
-  const normalizedParams = new URLSearchParams();
+export const getAuditControllerExportUrl = (
+  params?: AuditControllerExportParams
+) => {
+  const normalizedParams = new URLSearchParams()
 
   Object.entries(params || {}).forEach(([key, value]) => {
-
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
     }
-  });
+  })
 
-  const stringifiedParams = normalizedParams.toString();
+  const stringifiedParams = normalizedParams.toString()
 
-  return stringifiedParams.length > 0 ? `/api/v1/audit/export?${stringifiedParams}` : `/api/v1/audit/export`
+  return stringifiedParams.length > 0
+    ? `/api/v1/audit/export?${stringifiedParams}`
+    : `/api/v1/audit/export`
 }
 
 /**
  * @summary Export audit log as CSV
  */
-export const AuditController_export = async (params?: AuditControllerExportParams, options?: RequestInit): Promise<AuditController_exportResponse> => {
+export const AuditController_export = async (
+  params?: AuditControllerExportParams,
+  options?: RequestInit
+): Promise<AuditController_exportResponse> => {
+  return customInstance<AuditController_exportResponse>(
+    getAuditControllerExportUrl(params),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<AuditController_exportResponse>(getAuditControllerExportUrl(params),
-  {
-    ...options,
-    method: 'GET'
+export const getAuditControllerExportMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof AuditController_export>>,
+    TError,
+    { params?: AuditControllerExportParams },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof AuditController_export>>,
+  TError,
+  { params?: AuditControllerExportParams },
+  TContext
+> => {
+  const mutationKey = ['auditControllerExport']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof AuditController_export>>,
+    { params?: AuditControllerExportParams }
+  > = (props) => {
+    const { params } = props ?? {}
 
+    return AuditController_export(params, requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type AuditControllerExportMutationResult = NonNullable<
+  Awaited<ReturnType<typeof AuditController_export>>
+>
 
+export type AuditControllerExportMutationError = unknown
 
-export const getAuditControllerExportMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof AuditController_export>>, TError,{params?: AuditControllerExportParams}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof AuditController_export>>, TError,{params?: AuditControllerExportParams}, TContext> => {
-
-const mutationKey = ['auditControllerExport'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof AuditController_export>>, {params?: AuditControllerExportParams}> = (props) => {
-          const {params} = props ?? {};
-
-          return  AuditController_export(params,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AuditControllerExportMutationResult = NonNullable<Awaited<ReturnType<typeof AuditController_export>>>
-
-    export type AuditControllerExportMutationError = unknown
-
-    /**
+/**
  * @summary Export audit log as CSV
  */
-export const useAuditControllerExport = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof AuditController_export>>, TError,{params?: AuditControllerExportParams}, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof AuditController_export>>,
-        TError,
-        {params?: AuditControllerExportParams},
-        TContext
-      > => {
-      return useMutation(getAuditControllerExportMutationOptions(options));
-    }
-    export type AuditController_summaryResponse200 = {
+export const useAuditControllerExport = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof AuditController_export>>,
+    TError,
+    { params?: AuditControllerExportParams },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof AuditController_export>>,
+  TError,
+  { params?: AuditControllerExportParams },
+  TContext
+> => {
+  return useMutation(getAuditControllerExportMutationOptions(options))
+}
+export type AuditController_summaryResponse200 = {
   data: void
   status: 200
 }
 
-export type AuditController_summaryResponseSuccess = (AuditController_summaryResponse200) & {
-  headers: Headers;
-};
-;
-
-export type AuditController_summaryResponse = (AuditController_summaryResponseSuccess)
+export type AuditController_summaryResponseSuccess =
+  AuditController_summaryResponse200 & {
+    headers: Headers
+  }
+export type AuditController_summaryResponse =
+  AuditController_summaryResponseSuccess
 
 export const getAuditControllerSummaryUrl = () => {
-
-
-
-
   return `/api/v1/audit/summary`
 }
 
 /**
  * @summary Get audit summary statistics (7-day)
  */
-export const AuditController_summary = async ( options?: RequestInit): Promise<AuditController_summaryResponse> => {
+export const AuditController_summary = async (
+  options?: RequestInit
+): Promise<AuditController_summaryResponse> => {
+  return customInstance<AuditController_summaryResponse>(
+    getAuditControllerSummaryUrl(),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<AuditController_summaryResponse>(getAuditControllerSummaryUrl(),
-  {
-    ...options,
-    method: 'GET'
+export const getAuditControllerSummaryMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof AuditController_summary>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof AuditController_summary>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['auditControllerSummary']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
-
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof AuditController_summary>>,
+    void
+  > = () => {
+    return AuditController_summary(requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type AuditControllerSummaryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof AuditController_summary>>
+>
 
+export type AuditControllerSummaryMutationError = unknown
 
-export const getAuditControllerSummaryMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof AuditController_summary>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof AuditController_summary>>, TError,void, TContext> => {
-
-const mutationKey = ['auditControllerSummary'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof AuditController_summary>>, void> = () => {
-
-
-          return  AuditController_summary(requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AuditControllerSummaryMutationResult = NonNullable<Awaited<ReturnType<typeof AuditController_summary>>>
-
-    export type AuditControllerSummaryMutationError = unknown
-
-    /**
+/**
  * @summary Get audit summary statistics (7-day)
  */
-export const useAuditControllerSummary = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof AuditController_summary>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof AuditController_summary>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getAuditControllerSummaryMutationOptions(options));
-    }
+export const useAuditControllerSummary = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof AuditController_summary>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof AuditController_summary>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getAuditControllerSummaryMutationOptions(options))
+}

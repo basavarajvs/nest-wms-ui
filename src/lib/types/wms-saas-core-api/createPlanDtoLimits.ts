@@ -24,4 +24,4 @@
 /**
  * Limits JSON
  */
-export type CreatePlanDtoLimits = { [key: string]: unknown };
+export type CreatePlanDtoLimits = { [key: string]: unknown }

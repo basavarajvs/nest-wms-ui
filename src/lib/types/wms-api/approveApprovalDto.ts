@@ -7,5 +7,5 @@
  */
 
 export interface ApproveApprovalDto {
-  comments?: string;
+  comments?: string
 }

@@ -23,5 +23,5 @@
 
 export interface VerifyMfaDto {
   /** MFA code */
-  code: string;
+  code: string
 }

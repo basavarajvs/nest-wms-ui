@@ -20,22 +20,22 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { UpdateLicensePlanDtoFeatures } from './updateLicensePlanDtoFeatures.js';
-import type { UpdateLicensePlanDtoLicenseType } from './updateLicensePlanDtoLicenseType.js';
-import type { UpdateLicensePlanDtoLimits } from './updateLicensePlanDtoLimits.js';
+import type { UpdateLicensePlanDtoFeatures } from './updateLicensePlanDtoFeatures.js'
+import type { UpdateLicensePlanDtoLicenseType } from './updateLicensePlanDtoLicenseType.js'
+import type { UpdateLicensePlanDtoLimits } from './updateLicensePlanDtoLimits.js'
 
 export interface UpdateLicensePlanDto {
   /** Features JSON */
-  features?: UpdateLicensePlanDtoFeatures;
+  features?: UpdateLicensePlanDtoFeatures
   /** Is active */
-  isActive?: boolean;
-  licenseType?: UpdateLicensePlanDtoLicenseType;
+  isActive?: boolean
+  licenseType?: UpdateLicensePlanDtoLicenseType
   /** Limits JSON */
-  limits?: UpdateLicensePlanDtoLimits;
+  limits?: UpdateLicensePlanDtoLimits
   /** Plan description */
-  planDescription?: string;
+  planDescription?: string
   /** Plan name */
-  planName?: string;
+  planName?: string
   /** Price */
-  price?: number;
+  price?: number
 }

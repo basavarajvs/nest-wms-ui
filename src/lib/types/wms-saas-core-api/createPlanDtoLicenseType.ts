@@ -24,12 +24,12 @@
 /**
  * License type
  */
-export type CreatePlanDtoLicenseType = typeof CreatePlanDtoLicenseType[keyof typeof CreatePlanDtoLicenseType];
-
+export type CreatePlanDtoLicenseType =
+  (typeof CreatePlanDtoLicenseType)[keyof typeof CreatePlanDtoLicenseType]
 
 export const CreatePlanDtoLicenseType = {
   trial: 'trial',
   basic: 'basic',
   premium: 'premium',
   enterprise: 'enterprise',
-} as const;
+} as const

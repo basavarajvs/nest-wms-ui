@@ -20,13 +20,13 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { BroadcastNotificationDtoVariables } from './broadcastNotificationDtoVariables.js';
+import type { BroadcastNotificationDtoVariables } from './broadcastNotificationDtoVariables.js'
 
 export interface BroadcastNotificationDto {
-  channel: string;
-  notificationType: string;
-  priority?: string;
-  recipientIds?: string[];
-  recipientRoleCode?: string;
-  variables: BroadcastNotificationDtoVariables;
+  channel: string
+  notificationType: string
+  priority?: string
+  recipientIds?: string[]
+  recipientRoleCode?: string
+  variables: BroadcastNotificationDtoVariables
 }

@@ -21,11 +21,11 @@
  * OpenAPI spec version: 1.0
  */
 
-export type CreateIntegrationDtoStatus = typeof CreateIntegrationDtoStatus[keyof typeof CreateIntegrationDtoStatus];
-
+export type CreateIntegrationDtoStatus =
+  (typeof CreateIntegrationDtoStatus)[keyof typeof CreateIntegrationDtoStatus]
 
 export const CreateIntegrationDtoStatus = {
   active: 'active',
   inactive: 'inactive',
   error: 'error',
-} as const;
+} as const

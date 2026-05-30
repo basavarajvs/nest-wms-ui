@@ -14,6 +14,16 @@ function safeList<T>(data: unknown): T[] {
   return []
 }
 
+function safeTotal(data: unknown, fallback = 0): number {
+  if (data && typeof data === 'object') {
+    const obj = data as Record<string, unknown>
+    if (typeof obj.total === 'number') return obj.total
+    if (typeof obj.count === 'number') return obj.count
+    return safeList(obj).length || fallback
+  }
+  return fallback
+}
+
 export interface LowStockAlert {
   id?: string
   facilityId?: string
@@ -24,27 +34,46 @@ export interface LowStockAlert {
   onHand?: number
   threshold?: number
   available?: number
-  [key: string]: any
 }
 
-export function useLowStockAlerts(params: Partial<{ facilityId?: string; threshold?: number; productId?: string }> = {}) {
-  // Generated type only declares facilityId; threshold and other filters are passed at runtime (as seen in dashboard usage)
+export function useLowStockAlerts(
+  params: Partial<{
+    facilityId?: string
+    threshold?: number
+    productId?: string
+    productSku?: string
+    page?: number
+    limit?: number
+  }> = {}
+) {
   const queryParams: InventoryWebControllerGetLowStockParams = {
     facilityId: params.facilityId || '',
   }
 
   return useQuery({
-    queryKey: ['wms', 'inventory', 'low-stock', { ...queryParams, threshold: params.threshold ?? 10 }],
+    queryKey: [
+      'wms',
+      'inventory',
+      'low-stock',
+      { ...queryParams, threshold: params.threshold ?? 10, productSku: params.productSku, page: params.page, limit: params.limit },
+    ],
     queryFn: async () => {
       const res = await InventoryWebController_getLowStock({
         ...queryParams,
         threshold: params.threshold ?? 10,
+        productSku: params.productSku,
+        page: params.page,
+        limit: params.limit,
       } as any)
       return res as unknown
     },
-    select: (data) => ({
-      alerts: safeList<LowStockAlert>(data),
-    }),
+    select: (data) => {
+      const alerts = safeList<LowStockAlert>(data)
+      return {
+        alerts,
+        total: safeTotal(data, alerts.length),
+      }
+    },
     staleTime: 1000 * 60,
   })
 }

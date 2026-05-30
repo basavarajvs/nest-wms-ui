@@ -24,4 +24,4 @@
 /**
  * Applies to JSON
  */
-export type UpdateRetentionPolicyDtoAppliesTo = { [key: string]: unknown };
+export type UpdateRetentionPolicyDtoAppliesTo = { [key: string]: unknown }

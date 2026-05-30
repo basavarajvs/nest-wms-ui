@@ -20,10 +20,7 @@
  *
  * OpenAPI spec version: 1.0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query'
 import type {
   MutationFunction,
   QueryFunction,
@@ -31,189 +28,220 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
-
+  UseQueryResult,
+} from '@tanstack/react-query'
+import { customInstance } from '../../../httpSaasClient'
 import type {
   CreateLicensePlanDto,
-  UpdateLicensePlanDto
-} from '../../../types/wms-saas-core-api';
+  UpdateLicensePlanDto,
+} from '../../../types/wms-saas-core-api'
 
-import { customInstance } from '../../../httpClient';
-
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export type LicensePlanController_findAllResponse200 = {
   data: void
   status: 200
 }
 
-export type LicensePlanController_findAllResponseSuccess = (LicensePlanController_findAllResponse200) & {
-  headers: Headers;
-};
-;
-
-export type LicensePlanController_findAllResponse = (LicensePlanController_findAllResponseSuccess)
+export type LicensePlanController_findAllResponseSuccess =
+  LicensePlanController_findAllResponse200 & {
+    headers: Headers
+  }
+export type LicensePlanController_findAllResponse =
+  LicensePlanController_findAllResponseSuccess
 
 export const getLicensePlanControllerFindAllUrl = () => {
-
-
-
-
   return `/api/v1/license-plans`
 }
 
 /**
  * @summary List all license plans
  */
-export const LicensePlanController_findAll = async ( options?: RequestInit): Promise<LicensePlanController_findAllResponse> => {
+export const LicensePlanController_findAll = async (
+  options?: RequestInit
+): Promise<LicensePlanController_findAllResponse> => {
+  return customInstance<LicensePlanController_findAllResponse>(
+    getLicensePlanControllerFindAllUrl(),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<LicensePlanController_findAllResponse>(getLicensePlanControllerFindAllUrl(),
-  {
-    ...options,
-    method: 'GET'
+export const getLicensePlanControllerFindAllMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof LicensePlanController_findAll>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof LicensePlanController_findAll>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['licensePlanControllerFindAll']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
-
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof LicensePlanController_findAll>>,
+    void
+  > = () => {
+    return LicensePlanController_findAll(requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type LicensePlanControllerFindAllMutationResult = NonNullable<
+  Awaited<ReturnType<typeof LicensePlanController_findAll>>
+>
 
+export type LicensePlanControllerFindAllMutationError = unknown
 
-export const getLicensePlanControllerFindAllMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof LicensePlanController_findAll>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof LicensePlanController_findAll>>, TError,void, TContext> => {
-
-const mutationKey = ['licensePlanControllerFindAll'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof LicensePlanController_findAll>>, void> = () => {
-
-
-          return  LicensePlanController_findAll(requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type LicensePlanControllerFindAllMutationResult = NonNullable<Awaited<ReturnType<typeof LicensePlanController_findAll>>>
-
-    export type LicensePlanControllerFindAllMutationError = unknown
-
-    /**
+/**
  * @summary List all license plans
  */
-export const useLicensePlanControllerFindAll = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof LicensePlanController_findAll>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof LicensePlanController_findAll>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getLicensePlanControllerFindAllMutationOptions(options));
-    }
-    export type LicensePlanController_createResponse201 = {
+export const useLicensePlanControllerFindAll = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof LicensePlanController_findAll>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof LicensePlanController_findAll>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getLicensePlanControllerFindAllMutationOptions(options))
+}
+export type LicensePlanController_createResponse201 = {
   data: void
   status: 201
 }
 
-export type LicensePlanController_createResponseSuccess = (LicensePlanController_createResponse201) & {
-  headers: Headers;
-};
-;
-
-export type LicensePlanController_createResponse = (LicensePlanController_createResponseSuccess)
+export type LicensePlanController_createResponseSuccess =
+  LicensePlanController_createResponse201 & {
+    headers: Headers
+  }
+export type LicensePlanController_createResponse =
+  LicensePlanController_createResponseSuccess
 
 export const getLicensePlanControllerCreateUrl = () => {
-
-
-
-
   return `/api/v1/license-plans`
 }
 
 /**
  * @summary Create a new license plan (system only)
  */
-export const LicensePlanController_create = async (createLicensePlanDto: CreateLicensePlanDto, options?: RequestInit): Promise<LicensePlanController_createResponse> => {
-
-  return customInstance<LicensePlanController_createResponse>(getLicensePlanControllerCreateUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createLicensePlanDto)
-  }
-);}
-
-
-
-
-
-export const getLicensePlanControllerCreateQueryKey = (createLicensePlanDto?: CreateLicensePlanDto,) => {
-    return [
-    'POST', `/api/v1/license-plans`, createLicensePlanDto
-    ] as const;
+export const LicensePlanController_create = async (
+  createLicensePlanDto: CreateLicensePlanDto,
+  options?: RequestInit
+): Promise<LicensePlanController_createResponse> => {
+  return customInstance<LicensePlanController_createResponse>(
+    getLicensePlanControllerCreateUrl(),
+    {
+      ...options,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...options?.headers },
+      body: JSON.stringify(createLicensePlanDto),
     }
-
-
-export const getLicensePlanControllerCreateQueryOptions = <TData = Awaited<ReturnType<typeof LicensePlanController_create>>, TError = unknown>(createLicensePlanDto: CreateLicensePlanDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LicensePlanController_create>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getLicensePlanControllerCreateQueryKey(createLicensePlanDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof LicensePlanController_create>>> = ({ signal }) => LicensePlanController_create(createLicensePlanDto, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof LicensePlanController_create>>, TError, TData> & { queryKey: QueryKey }
+  )
 }
 
-export type LicensePlanControllerCreateQueryResult = NonNullable<Awaited<ReturnType<typeof LicensePlanController_create>>>
-export type LicensePlanControllerCreateQueryError = unknown
+export const getLicensePlanControllerCreateQueryKey = (
+  createLicensePlanDto?: CreateLicensePlanDto
+) => {
+  return ['POST', `/api/v1/license-plans`, createLicensePlanDto] as const
+}
 
+export const getLicensePlanControllerCreateQueryOptions = <
+  TData = Awaited<ReturnType<typeof LicensePlanController_create>>,
+  TError = unknown,
+>(
+  createLicensePlanDto: CreateLicensePlanDto,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof LicensePlanController_create>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getLicensePlanControllerCreateQueryKey(createLicensePlanDto)
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof LicensePlanController_create>>
+  > = ({ signal }) =>
+    LicensePlanController_create(createLicensePlanDto, {
+      signal,
+      ...requestOptions,
+    })
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof LicensePlanController_create>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey }
+}
+
+export type LicensePlanControllerCreateQueryResult = NonNullable<
+  Awaited<ReturnType<typeof LicensePlanController_create>>
+>
+export type LicensePlanControllerCreateQueryError = unknown
 
 /**
  * @summary Create a new license plan (system only)
  */
 
-export function useLicensePlanControllerCreate<TData = Awaited<ReturnType<typeof LicensePlanController_create>>, TError = unknown>(
- createLicensePlanDto: CreateLicensePlanDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LicensePlanController_create>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+export function useLicensePlanControllerCreate<
+  TData = Awaited<ReturnType<typeof LicensePlanController_create>>,
+  TError = unknown,
+>(
+  createLicensePlanDto: CreateLicensePlanDto,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof LicensePlanController_create>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getLicensePlanControllerCreateQueryOptions(
+    createLicensePlanDto,
+    options
+  )
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey
+  }
 
-  const queryOptions = getLicensePlanControllerCreateQueryOptions(createLicensePlanDto,options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  return { ...query, queryKey: queryOptions.queryKey };
+  return { ...query, queryKey: queryOptions.queryKey }
 }
-
-
-
-
-
 
 export type LicensePlanController_findOneResponse200 = {
   data: void
@@ -225,261 +253,325 @@ export type LicensePlanController_findOneResponse404 = {
   status: 404
 }
 
-export type LicensePlanController_findOneResponseSuccess = (LicensePlanController_findOneResponse200) & {
-  headers: Headers;
-};
-export type LicensePlanController_findOneResponseError = (LicensePlanController_findOneResponse404) & {
-  headers: Headers;
-};
+export type LicensePlanController_findOneResponseSuccess =
+  LicensePlanController_findOneResponse200 & {
+    headers: Headers
+  }
+export type LicensePlanController_findOneResponseError =
+  LicensePlanController_findOneResponse404 & {
+    headers: Headers
+  }
 
-export type LicensePlanController_findOneResponse = (LicensePlanController_findOneResponseSuccess | LicensePlanController_findOneResponseError)
+export type LicensePlanController_findOneResponse =
+  | LicensePlanController_findOneResponseSuccess
+  | LicensePlanController_findOneResponseError
 
-export const getLicensePlanControllerFindOneUrl = (id: string,) => {
-
-
-
-
+export const getLicensePlanControllerFindOneUrl = (id: string) => {
   return `/api/v1/license-plans/${id}`
 }
 
 /**
  * @summary Get license plan by ID
  */
-export const LicensePlanController_findOne = async (id: string, options?: RequestInit): Promise<LicensePlanController_findOneResponse> => {
+export const LicensePlanController_findOne = async (
+  id: string,
+  options?: RequestInit
+): Promise<LicensePlanController_findOneResponse> => {
+  return customInstance<LicensePlanController_findOneResponse>(
+    getLicensePlanControllerFindOneUrl(id),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<LicensePlanController_findOneResponse>(getLicensePlanControllerFindOneUrl(id),
-  {
-    ...options,
-    method: 'GET'
+export const getLicensePlanControllerFindOneMutationOptions = <
+  TError = void,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof LicensePlanController_findOne>>,
+    TError,
+    { id: string },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof LicensePlanController_findOne>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ['licensePlanControllerFindOne']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof LicensePlanController_findOne>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {}
 
+    return LicensePlanController_findOne(id, requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type LicensePlanControllerFindOneMutationResult = NonNullable<
+  Awaited<ReturnType<typeof LicensePlanController_findOne>>
+>
 
+export type LicensePlanControllerFindOneMutationError = void
 
-export const getLicensePlanControllerFindOneMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof LicensePlanController_findOne>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof LicensePlanController_findOne>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['licensePlanControllerFindOne'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof LicensePlanController_findOne>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  LicensePlanController_findOne(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type LicensePlanControllerFindOneMutationResult = NonNullable<Awaited<ReturnType<typeof LicensePlanController_findOne>>>
-
-    export type LicensePlanControllerFindOneMutationError = void
-
-    /**
+/**
  * @summary Get license plan by ID
  */
-export const useLicensePlanControllerFindOne = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof LicensePlanController_findOne>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof LicensePlanController_findOne>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getLicensePlanControllerFindOneMutationOptions(options));
-    }
-    export type LicensePlanController_updateResponse200 = {
+export const useLicensePlanControllerFindOne = <
+  TError = void,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof LicensePlanController_findOne>>,
+    TError,
+    { id: string },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof LicensePlanController_findOne>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getLicensePlanControllerFindOneMutationOptions(options))
+}
+export type LicensePlanController_updateResponse200 = {
   data: void
   status: 200
 }
 
-export type LicensePlanController_updateResponseSuccess = (LicensePlanController_updateResponse200) & {
-  headers: Headers;
-};
-;
+export type LicensePlanController_updateResponseSuccess =
+  LicensePlanController_updateResponse200 & {
+    headers: Headers
+  }
+export type LicensePlanController_updateResponse =
+  LicensePlanController_updateResponseSuccess
 
-export type LicensePlanController_updateResponse = (LicensePlanController_updateResponseSuccess)
-
-export const getLicensePlanControllerUpdateUrl = (id: string,) => {
-
-
-
-
+export const getLicensePlanControllerUpdateUrl = (id: string) => {
   return `/api/v1/license-plans/${id}`
 }
 
 /**
  * @summary Update a license plan (system only)
  */
-export const LicensePlanController_update = async (id: string,
-    updateLicensePlanDto: UpdateLicensePlanDto, options?: RequestInit): Promise<LicensePlanController_updateResponse> => {
-
-  return customInstance<LicensePlanController_updateResponse>(getLicensePlanControllerUpdateUrl(id),
-  {
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(updateLicensePlanDto)
-  }
-);}
-
-
-
-
-
-export const getLicensePlanControllerUpdateQueryKey = (id: string,
-    updateLicensePlanDto?: UpdateLicensePlanDto,) => {
-    return [
-    'PATCH', `/api/v1/license-plans/${id}`, updateLicensePlanDto
-    ] as const;
+export const LicensePlanController_update = async (
+  id: string,
+  updateLicensePlanDto: UpdateLicensePlanDto,
+  options?: RequestInit
+): Promise<LicensePlanController_updateResponse> => {
+  return customInstance<LicensePlanController_updateResponse>(
+    getLicensePlanControllerUpdateUrl(id),
+    {
+      ...options,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...options?.headers },
+      body: JSON.stringify(updateLicensePlanDto),
     }
-
-
-export const getLicensePlanControllerUpdateQueryOptions = <TData = Awaited<ReturnType<typeof LicensePlanController_update>>, TError = unknown>(id: string,
-    updateLicensePlanDto: UpdateLicensePlanDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LicensePlanController_update>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getLicensePlanControllerUpdateQueryKey(id,updateLicensePlanDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof LicensePlanController_update>>> = ({ signal }) => LicensePlanController_update(id,updateLicensePlanDto, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof LicensePlanController_update>>, TError, TData> & { queryKey: QueryKey }
+  )
 }
 
-export type LicensePlanControllerUpdateQueryResult = NonNullable<Awaited<ReturnType<typeof LicensePlanController_update>>>
-export type LicensePlanControllerUpdateQueryError = unknown
+export const getLicensePlanControllerUpdateQueryKey = (
+  id: string,
+  updateLicensePlanDto?: UpdateLicensePlanDto
+) => {
+  return ['PATCH', `/api/v1/license-plans/${id}`, updateLicensePlanDto] as const
+}
 
+export const getLicensePlanControllerUpdateQueryOptions = <
+  TData = Awaited<ReturnType<typeof LicensePlanController_update>>,
+  TError = unknown,
+>(
+  id: string,
+  updateLicensePlanDto: UpdateLicensePlanDto,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof LicensePlanController_update>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getLicensePlanControllerUpdateQueryKey(id, updateLicensePlanDto)
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof LicensePlanController_update>>
+  > = ({ signal }) =>
+    LicensePlanController_update(id, updateLicensePlanDto, {
+      signal,
+      ...requestOptions,
+    })
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof LicensePlanController_update>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey }
+}
+
+export type LicensePlanControllerUpdateQueryResult = NonNullable<
+  Awaited<ReturnType<typeof LicensePlanController_update>>
+>
+export type LicensePlanControllerUpdateQueryError = unknown
 
 /**
  * @summary Update a license plan (system only)
  */
 
-export function useLicensePlanControllerUpdate<TData = Awaited<ReturnType<typeof LicensePlanController_update>>, TError = unknown>(
- id: string,
-    updateLicensePlanDto: UpdateLicensePlanDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LicensePlanController_update>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+export function useLicensePlanControllerUpdate<
+  TData = Awaited<ReturnType<typeof LicensePlanController_update>>,
+  TError = unknown,
+>(
+  id: string,
+  updateLicensePlanDto: UpdateLicensePlanDto,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof LicensePlanController_update>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getLicensePlanControllerUpdateQueryOptions(
+    id,
+    updateLicensePlanDto,
+    options
+  )
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey
+  }
 
-  const queryOptions = getLicensePlanControllerUpdateQueryOptions(id,updateLicensePlanDto,options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  return { ...query, queryKey: queryOptions.queryKey };
+  return { ...query, queryKey: queryOptions.queryKey }
 }
-
-
-
-
-
 
 export type LicensePlanController_removeResponse200 = {
   data: void
   status: 200
 }
 
-export type LicensePlanController_removeResponseSuccess = (LicensePlanController_removeResponse200) & {
-  headers: Headers;
-};
-;
+export type LicensePlanController_removeResponseSuccess =
+  LicensePlanController_removeResponse200 & {
+    headers: Headers
+  }
+export type LicensePlanController_removeResponse =
+  LicensePlanController_removeResponseSuccess
 
-export type LicensePlanController_removeResponse = (LicensePlanController_removeResponseSuccess)
-
-export const getLicensePlanControllerRemoveUrl = (id: string,) => {
-
-
-
-
+export const getLicensePlanControllerRemoveUrl = (id: string) => {
   return `/api/v1/license-plans/${id}`
 }
 
 /**
  * @summary Deactivate a license plan (system only)
  */
-export const LicensePlanController_remove = async (id: string, options?: RequestInit): Promise<LicensePlanController_removeResponse> => {
-
-  return customInstance<LicensePlanController_removeResponse>(getLicensePlanControllerRemoveUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-
-export const getLicensePlanControllerRemoveQueryKey = (id: string,) => {
-    return [
-    'DELETE', `/api/v1/license-plans/${id}`
-    ] as const;
+export const LicensePlanController_remove = async (
+  id: string,
+  options?: RequestInit
+): Promise<LicensePlanController_removeResponse> => {
+  return customInstance<LicensePlanController_removeResponse>(
+    getLicensePlanControllerRemoveUrl(id),
+    {
+      ...options,
+      method: 'DELETE',
     }
-
-
-export const getLicensePlanControllerRemoveQueryOptions = <TData = Awaited<ReturnType<typeof LicensePlanController_remove>>, TError = unknown>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LicensePlanController_remove>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getLicensePlanControllerRemoveQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof LicensePlanController_remove>>> = ({ signal }) => LicensePlanController_remove(id, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof LicensePlanController_remove>>, TError, TData> & { queryKey: QueryKey }
+  )
 }
 
-export type LicensePlanControllerRemoveQueryResult = NonNullable<Awaited<ReturnType<typeof LicensePlanController_remove>>>
-export type LicensePlanControllerRemoveQueryError = unknown
+export const getLicensePlanControllerRemoveQueryKey = (id: string) => {
+  return ['DELETE', `/api/v1/license-plans/${id}`] as const
+}
 
+export const getLicensePlanControllerRemoveQueryOptions = <
+  TData = Awaited<ReturnType<typeof LicensePlanController_remove>>,
+  TError = unknown,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof LicensePlanController_remove>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey =
+    queryOptions?.queryKey ?? getLicensePlanControllerRemoveQueryKey(id)
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof LicensePlanController_remove>>
+  > = ({ signal }) =>
+    LicensePlanController_remove(id, { signal, ...requestOptions })
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof LicensePlanController_remove>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey }
+}
+
+export type LicensePlanControllerRemoveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof LicensePlanController_remove>>
+>
+export type LicensePlanControllerRemoveQueryError = unknown
 
 /**
  * @summary Deactivate a license plan (system only)
  */
 
-export function useLicensePlanControllerRemove<TData = Awaited<ReturnType<typeof LicensePlanController_remove>>, TError = unknown>(
- id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LicensePlanController_remove>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+export function useLicensePlanControllerRemove<
+  TData = Awaited<ReturnType<typeof LicensePlanController_remove>>,
+  TError = unknown,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof LicensePlanController_remove>>,
+      TError,
+      TData
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getLicensePlanControllerRemoveQueryOptions(id, options)
 
- ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey
+  }
 
-  const queryOptions = getLicensePlanControllerRemoveQueryOptions(id,options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  return { ...query, queryKey: queryOptions.queryKey };
+  return { ...query, queryKey: queryOptions.queryKey }
 }
-
-
-
-
-
-

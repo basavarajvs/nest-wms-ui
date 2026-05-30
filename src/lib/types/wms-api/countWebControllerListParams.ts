@@ -7,6 +7,6 @@
  */
 
 export type CountWebControllerListParams = {
-status: string;
-facilityId: string;
-};
+  status: string
+  facilityId: string
+}

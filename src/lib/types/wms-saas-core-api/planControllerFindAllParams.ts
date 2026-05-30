@@ -22,5 +22,5 @@
  */
 
 export type PlanControllerFindAllParams = {
-includeInactive: string;
-};
+  includeInactive: string
+}

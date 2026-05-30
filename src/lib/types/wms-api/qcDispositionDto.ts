@@ -7,7 +7,7 @@
  */
 
 export interface QcDispositionDto {
-  action: string;
-  grnLineId: string;
-  notes?: string;
+  action: string
+  grnLineId: string
+  notes?: string
 }

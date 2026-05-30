@@ -5,9 +5,9 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { CreateWaveDtoSelectionCriteria } from './createWaveDtoSelectionCriteria.js';
+import type { CreateWaveDtoSelectionCriteria } from './createWaveDtoSelectionCriteria.js'
 
 export interface CreateWaveDto {
-  facilityId: string;
-  selectionCriteria?: CreateWaveDtoSelectionCriteria;
+  facilityId: string
+  selectionCriteria?: CreateWaveDtoSelectionCriteria
 }

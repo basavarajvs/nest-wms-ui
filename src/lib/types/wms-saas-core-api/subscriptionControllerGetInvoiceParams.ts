@@ -22,5 +22,5 @@
  */
 
 export type SubscriptionControllerGetInvoiceParams = {
-tenantId: string;
-};
+  tenantId: string
+}

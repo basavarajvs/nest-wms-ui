@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -9,6 +9,9 @@ export const queryClient = new QueryClient({
     },
     mutations: {
       retry: 0,
+      onError: (error: unknown) => {
+        console.error('[Mutation Error]', error)
+      },
     },
   },
-});
+})

@@ -29,25 +29,23 @@ export interface WaveTask {
   assignedToUserId?: string
   status?: string
   facilityId?: string
-  [key: string]: any
 }
 
-export function useWaveBoard(params: Partial<OutboundWebControllerGetWaveBoardParams> = {}) {
+export function useWaveBoard(
+  params: Partial<OutboundWebControllerGetWaveBoardParams> = {}
+) {
   const queryParams: OutboundWebControllerGetWaveBoardParams = {
     status: params.status || '',
     facilityId: params.facilityId || '',
   }
 
+  const stableKey = JSON.stringify(queryParams)
   return useQuery({
-    queryKey: ['wms', 'outbound', 'wave-board', queryParams],
+    queryKey: ['wms', 'outbound', 'wave-board', stableKey],
     queryFn: async () => {
-      const res = await OutboundWebController_getWaveBoard(queryParams as any)
-      return res as unknown
+      const res = await OutboundWebController_getWaveBoard(queryParams)
+      return safeList<WaveTask>(res)
     },
-    select: (data) => ({
-      waves: safeList<WaveTask>(data),
-      raw: data,
-    }),
     staleTime: 1000 * 30,
   })
 }
@@ -59,7 +57,9 @@ export function useCreateWave() {
       return OutboundWebController_createWave(dto)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wms', 'outbound', 'wave-board'] })
+      queryClient.invalidateQueries({
+        queryKey: ['wms', 'outbound', 'wave-board'],
+      })
     },
   })
 }

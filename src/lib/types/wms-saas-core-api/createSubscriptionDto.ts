@@ -20,19 +20,19 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreateSubscriptionDtoBillingType } from './createSubscriptionDtoBillingType.js';
+import type { CreateSubscriptionDtoBillingType } from './createSubscriptionDtoBillingType.js'
 
 export interface CreateSubscriptionDto {
   /** Billing type */
-  billingType: CreateSubscriptionDtoBillingType;
+  billingType: CreateSubscriptionDtoBillingType
   /** Currency */
-  currency?: string;
+  currency?: string
   /** Admin notes */
-  notes?: string;
+  notes?: string
   /** Plan ID */
-  planId: string;
+  planId: string
   /** Start date (ISO 8601) */
-  startDate: string;
+  startDate: string
   /** Tenant ID */
-  tenantId: string;
+  tenantId: string
 }

@@ -20,20 +20,20 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { CreateReportDtoParameters } from './createReportDtoParameters.js';
-import type { CreateReportDtoSchedule } from './createReportDtoSchedule.js';
+import type { CreateReportDtoParameters } from './createReportDtoParameters.js'
+import type { CreateReportDtoSchedule } from './createReportDtoSchedule.js'
 
 export interface CreateReportDto {
   /** Report description */
-  description?: string;
+  description?: string
   /** Output format */
-  format?: string;
+  format?: string
   /** Report parameters JSON */
-  parameters?: CreateReportDtoParameters;
+  parameters?: CreateReportDtoParameters
   /** Report name */
-  reportName: string;
+  reportName: string
   /** Report type */
-  reportType: string;
+  reportType: string
   /** Schedule config for recurring reports */
-  schedule?: CreateReportDtoSchedule;
+  schedule?: CreateReportDtoSchedule
 }

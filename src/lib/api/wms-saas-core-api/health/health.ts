@@ -20,100 +20,108 @@
  *
  * OpenAPI spec version: 1.0
  */
-import {
-  useMutation
-} from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query'
 import type {
   MutationFunction,
   UseMutationOptions,
-  UseMutationResult
-} from '@tanstack/react-query';
+  UseMutationResult,
+} from '@tanstack/react-query'
+import { customInstance } from '../../../httpSaasClient'
 
-import { customInstance } from '../../../httpClient';
-
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export type HealthController_checkResponse200 = {
   data: void
   status: 200
 }
 
-export type HealthController_checkResponseSuccess = (HealthController_checkResponse200) & {
-  headers: Headers;
-};
-;
-
-export type HealthController_checkResponse = (HealthController_checkResponseSuccess)
+export type HealthController_checkResponseSuccess =
+  HealthController_checkResponse200 & {
+    headers: Headers
+  }
+export type HealthController_checkResponse =
+  HealthController_checkResponseSuccess
 
 export const getHealthControllerCheckUrl = () => {
-
-
-
-
   return `/api/v1/health`
 }
 
 /**
  * @summary Check application health
  */
-export const HealthController_check = async ( options?: RequestInit): Promise<HealthController_checkResponse> => {
+export const HealthController_check = async (
+  options?: RequestInit
+): Promise<HealthController_checkResponse> => {
+  return customInstance<HealthController_checkResponse>(
+    getHealthControllerCheckUrl(),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<HealthController_checkResponse>(getHealthControllerCheckUrl(),
-  {
-    ...options,
-    method: 'GET'
+export const getHealthControllerCheckMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof HealthController_check>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof HealthController_check>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['healthControllerCheck']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
-
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof HealthController_check>>,
+    void
+  > = () => {
+    return HealthController_check(requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type HealthControllerCheckMutationResult = NonNullable<
+  Awaited<ReturnType<typeof HealthController_check>>
+>
 
+export type HealthControllerCheckMutationError = unknown
 
-export const getHealthControllerCheckMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof HealthController_check>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof HealthController_check>>, TError,void, TContext> => {
-
-const mutationKey = ['healthControllerCheck'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof HealthController_check>>, void> = () => {
-
-
-          return  HealthController_check(requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type HealthControllerCheckMutationResult = NonNullable<Awaited<ReturnType<typeof HealthController_check>>>
-
-    export type HealthControllerCheckMutationError = unknown
-
-    /**
+/**
  * @summary Check application health
  */
-export const useHealthControllerCheck = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof HealthController_check>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof HealthController_check>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getHealthControllerCheckMutationOptions(options));
-    }
+export const useHealthControllerCheck = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof HealthController_check>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof HealthController_check>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getHealthControllerCheckMutationOptions(options))
+}

@@ -7,5 +7,5 @@
  */
 
 export type NotificationAdminControllerGetComplianceOverridesParams = {
-tenantId: string;
-};
+  tenantId: string
+}

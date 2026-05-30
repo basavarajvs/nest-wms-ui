@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Waves } from '@/features/outbound/waves'
+import { Waves } from '@/pages/outbound/Waves'
 
-// @ts-ignore - route will be valid after TanStack Router generator runs
 export const Route = createFileRoute('/_authenticated/outbound/waves')({
   component: Waves,
 })

@@ -20,20 +20,20 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { RegisterDtoLocale } from './registerDtoLocale.js';
-import type { RegisterDtoTimezone } from './registerDtoTimezone.js';
+import type { RegisterDtoLocale } from './registerDtoLocale.js'
+import type { RegisterDtoTimezone } from './registerDtoTimezone.js'
 
 export interface RegisterDto {
   /** Email address */
-  email: string;
+  email: string
   /** First name */
-  firstName: string;
+  firstName: string
   /** Last name */
-  lastName: string;
+  lastName: string
   /** Locale */
-  locale?: RegisterDtoLocale;
+  locale?: RegisterDtoLocale
   /** Password (min 8 chars) */
-  password: string;
+  password: string
   /** Timezone */
-  timezone?: RegisterDtoTimezone;
+  timezone?: RegisterDtoTimezone
 }

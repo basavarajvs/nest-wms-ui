@@ -23,11 +23,11 @@
 
 export interface UpdateTenantSettingDto {
   /** Description */
-  description?: string;
+  description?: string
   /** Is encrypted */
-  isEncrypted?: boolean;
+  isEncrypted?: boolean
   /** Setting type */
-  settingType?: string;
+  settingType?: string
   /** Setting value */
-  settingValue?: string;
+  settingValue?: string
 }

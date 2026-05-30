@@ -5,14 +5,14 @@
  * Warehouse Management System API - Web, RF, and Integration endpoints
  * OpenAPI spec version: 1.0.0
  */
-import type { CreateOrderDtoDeliveryAddress } from './createOrderDtoDeliveryAddress.js';
+import type { CreateOrderDtoDeliveryAddress } from './createOrderDtoDeliveryAddress.js'
 
 export interface CreateOrderDto {
-  clientCode: string;
-  deliveryAddress?: CreateOrderDtoDeliveryAddress;
-  facilityId: string;
-  notes?: string;
-  orderType?: string;
-  priority?: number;
-  requestedDeliveryDate?: string;
+  clientCode: string
+  deliveryAddress?: CreateOrderDtoDeliveryAddress
+  facilityId: string
+  notes?: string
+  orderType?: string
+  priority?: number
+  requestedDeliveryDate?: string
 }

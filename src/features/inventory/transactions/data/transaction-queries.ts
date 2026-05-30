@@ -1,8 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 
-// Placeholder - no dedicated Inventory Transactions list endpoint exposed in current WMS Web API
-// Transactions are typically available via SaaS Core audit logs or item movement history views.
-
 export interface InventoryTransaction {
   id: string
   type?: string
@@ -12,21 +9,34 @@ export interface InventoryTransaction {
   quantity?: number
   reference?: string
   createdAt?: string
-  [key: string]: any
 }
 
-export function useInventoryTransactions(_params: any = {}) {
-  // Returns empty until a real endpoint (e.g. audit or dedicated history) is added to web controller
+interface TransactionQueryParams {
+  page?: number
+  limit?: number
+  type?: string
+  productSku?: string
+  facilityId?: string
+}
+
+export function useInventoryTransactions(_params?: TransactionQueryParams) {
   return useQuery({
-    queryKey: ['wms', 'inventory', 'transactions', _params],
+    queryKey: ['wms', 'inventory', 'transactions', JSON.stringify(_params ?? {})],
     queryFn: async () => {
-      // Future: call a real controller when available, e.g. InventoryTransactionController or audit
-      return { items: [], message: 'No direct transactions list in current web API surface' } as unknown
+      const res: { message?: string } = {
+        message: 'No direct transactions list in current web API surface',
+      }
+      return res
     },
-    select: (data: any) => ({
+    select: (data) => ({
       transactions: [] as InventoryTransaction[],
-      note: data?.message || 'Transaction history is viewable in audit logs or per-item history (not yet exposed via /web/inventory/transactions).',
+      total: 0,
+      note:
+        data?.message ||
+        'Transaction history is viewable in audit logs or per-item history.',
     }),
     staleTime: 1000 * 60,
   })
 }
+
+export { useInventoryTransactions as useTransactions }

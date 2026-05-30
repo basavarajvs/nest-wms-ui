@@ -1,10 +1,20 @@
 import { useState } from 'react'
+import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { toast } from 'sonner'
 import { Plus, Search, Edit, Trash2 } from 'lucide-react'
-
+import { toast } from 'sonner'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -24,6 +34,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -32,19 +43,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-
 import {
   useProducts,
   useCreateProduct,
@@ -157,7 +155,8 @@ export function Products() {
       reset()
       refetch()
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Operation failed'
+      const msg =
+        err?.response?.data?.message || err?.message || 'Operation failed'
       toast.error(msg)
     }
   }
@@ -175,11 +174,11 @@ export function Products() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className='space-y-6'>
+      <div className='flex items-center justify-between'>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Products</h1>
-          <p className="text-muted-foreground">
+          <h1 className='text-2xl font-bold tracking-tight'>Products</h1>
+          <p className='text-muted-foreground'>
             Manage master product data for the warehouse
           </p>
         </div>
@@ -187,63 +186,106 @@ export function Products() {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => openDialog()}>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className='mr-2 h-4 w-4' />
               New Product
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[520px]">
+          <DialogContent className='sm:max-w-[520px]'>
             <form onSubmit={handleSubmit(onSubmit)}>
               <DialogHeader>
-                <DialogTitle>{editingProduct ? 'Edit Product' : 'Create New Product'}</DialogTitle>
+                <DialogTitle>
+                  {editingProduct ? 'Edit Product' : 'Create New Product'}
+                </DialogTitle>
                 <DialogDescription>
-                  {editingProduct ? 'Update the product details below.' : 'Add a new product to the master data.'}
+                  {editingProduct
+                    ? 'Update the product details below.'
+                    : 'Add a new product to the master data.'}
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="productCode">Product Code *</Label>
-                  <Input id="productCode" {...register('productCode')} disabled={!!editingProduct} />
-                  {errors.productCode && <p className="text-sm text-destructive">{errors.productCode.message}</p>}
+              <div className='grid gap-4 py-4'>
+                <div className='grid gap-2'>
+                  <Label htmlFor='productCode'>Product Code *</Label>
+                  <Input
+                    id='productCode'
+                    {...register('productCode')}
+                    disabled={!!editingProduct}
+                  />
+                  {errors.productCode && (
+                    <p className='text-sm text-destructive'>
+                      {errors.productCode.message}
+                    </p>
+                  )}
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Name *</Label>
-                  <Input id="name" {...register('name')} />
-                  {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+                <div className='grid gap-2'>
+                  <Label htmlFor='name'>Name *</Label>
+                  <Input id='name' {...register('name')} />
+                  {errors.name && (
+                    <p className='text-sm text-destructive'>
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Input id="description" {...register('description')} />
+                <div className='grid gap-2'>
+                  <Label htmlFor='description'>Description</Label>
+                  <Input id='description' {...register('description')} />
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" {...register('trackLot')} id="trackLot" />
-                    <Label htmlFor="trackLot">Track Lot</Label>
+                <div className='grid grid-cols-3 gap-4'>
+                  <div className='flex items-center gap-2'>
+                    <input
+                      type='checkbox'
+                      {...register('trackLot')}
+                      id='trackLot'
+                    />
+                    <Label htmlFor='trackLot'>Track Lot</Label>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" {...register('trackSerial')} id="trackSerial" />
-                    <Label htmlFor="trackSerial">Track Serial</Label>
+                  <div className='flex items-center gap-2'>
+                    <input
+                      type='checkbox'
+                      {...register('trackSerial')}
+                      id='trackSerial'
+                    />
+                    <Label htmlFor='trackSerial'>Track Serial</Label>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" {...register('trackExpiry')} id="trackExpiry" />
-                    <Label htmlFor="trackExpiry">Track Expiry</Label>
+                  <div className='flex items-center gap-2'>
+                    <input
+                      type='checkbox'
+                      {...register('trackExpiry')}
+                      id='trackExpiry'
+                    />
+                    <Label htmlFor='trackExpiry'>Track Expiry</Label>
                   </div>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="velocityClass">Velocity Class</Label>
-                  <Input id="velocityClass" {...register('velocityClass')} placeholder="A, B, C..." />
+                <div className='grid gap-2'>
+                  <Label htmlFor='velocityClass'>Velocity Class</Label>
+                  <Input
+                    id='velocityClass'
+                    {...register('velocityClass')}
+                    placeholder='A, B, C...'
+                  />
                 </div>
               </div>
 
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => setDialogOpen(false)}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}>
+                <Button
+                  type='submit'
+                  disabled={
+                    isSubmitting ||
+                    createMutation.isPending ||
+                    updateMutation.isPending
+                  }
+                >
                   {editingProduct ? 'Save Changes' : 'Create Product'}
                 </Button>
               </DialogFooter>
@@ -253,12 +295,12 @@ export function Products() {
       </div>
 
       {/* Search */}
-      <div className="flex gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+      <div className='flex gap-4'>
+        <div className='relative max-w-sm flex-1'>
+          <Search className='absolute top-3 left-3 h-4 w-4 text-muted-foreground' />
           <Input
-            placeholder="Search products..."
-            className="pl-9"
+            placeholder='Search products...'
+            className='pl-9'
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
@@ -266,7 +308,9 @@ export function Products() {
             }}
           />
         </div>
-        <Button variant="outline" onClick={() => refetch()}>Refresh</Button>
+        <Button variant='outline' onClick={() => refetch()}>
+          Refresh
+        </Button>
       </div>
 
       {/* Table */}
@@ -277,13 +321,23 @@ export function Products() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-2">
-              {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
+            <div className='space-y-2'>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className='h-12 w-full' />
+              ))}
             </div>
           ) : error ? (
-            <div className="text-destructive py-4">Failed to load products.</div>
+            <div className="flex flex-col items-center gap-2 py-8 text-center">
+              <p className="text-destructive font-medium">Failed to load products</p>
+              <p className="text-sm text-muted-foreground">
+                {(error as any)?.message || 'An unexpected error occurred'}
+              </p>
+              <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+            </div>
           ) : products.length === 0 ? (
-            <div className="text-muted-foreground py-8 text-center">No products found.</div>
+            <div className='py-8 text-center text-muted-foreground'>
+              No products found.
+            </div>
           ) : (
             <>
               <Table>
@@ -293,36 +347,52 @@ export function Products() {
                     <TableHead>Name</TableHead>
                     <TableHead>Tracking</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className='text-right'>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {products.map((product: Product) => (
                     <TableRow key={product.id}>
-                      <TableCell className="font-medium">{product.productCode}</TableCell>
+                      <TableCell className='font-medium'>
+                        {product.productCode}
+                      </TableCell>
                       <TableCell>{product.name}</TableCell>
                       <TableCell>
-                        <div className="flex gap-1 text-xs">
-                          {product.trackLot && <Badge variant="outline">Lot</Badge>}
-                          {product.trackSerial && <Badge variant="outline">Serial</Badge>}
-                          {product.trackExpiry && <Badge variant="outline">Expiry</Badge>}
+                        <div className='flex gap-1 text-xs'>
+                          {product.trackLot && (
+                            <Badge variant='outline'>Lot</Badge>
+                          )}
+                          {product.trackSerial && (
+                            <Badge variant='outline'>Serial</Badge>
+                          )}
+                          {product.trackExpiry && (
+                            <Badge variant='outline'>Expiry</Badge>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={product.isActive !== false ? 'default' : 'secondary'}>
+                        <Badge
+                          variant={
+                            product.isActive !== false ? 'default' : 'secondary'
+                          }
+                        >
                           {product.isActive !== false ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button variant="ghost" size="icon" onClick={() => openDialog(product)}>
-                          <Edit className="h-4 w-4" />
+                      <TableCell className='space-x-2 text-right'>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={() => openDialog(product)}
+                        >
+                          <Edit className='h-4 w-4' />
                         </Button>
                         <Button
-                          variant="ghost"
-                          size="icon"
+                          variant='ghost'
+                          size='icon'
                           onClick={() => setDeleteId(product.id)}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          <Trash2 className='h-4 w-4 text-destructive' />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -331,22 +401,24 @@ export function Products() {
               </Table>
 
               {/* Pagination */}
-              <div className="mt-4 flex justify-between text-sm">
-                <span>Page {page} of {totalPages}</span>
-                <div className="space-x-2">
+              <div className='mt-4 flex justify-between text-sm'>
+                <span>
+                  Page {page} of {totalPages}
+                </span>
+                <div className='space-x-2'>
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant='outline'
+                    size='sm'
                     disabled={page <= 1}
-                    onClick={() => setPage(p => p - 1)}
+                    onClick={() => setPage((p) => p - 1)}
                   >
                     Previous
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant='outline'
+                    size='sm'
                     disabled={page >= totalPages}
-                    onClick={() => setPage(p => p + 1)}
+                    onClick={() => setPage((p) => p + 1)}
                   >
                     Next
                   </Button>
@@ -363,12 +435,16 @@ export function Products() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Product?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. The product will be removed from the system.
+              This action cannot be undone. The product will be removed from the
+              system.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className='bg-destructive'
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

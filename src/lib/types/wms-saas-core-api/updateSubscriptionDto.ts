@@ -20,16 +20,16 @@
  *
  * OpenAPI spec version: 1.0
  */
-import type { UpdateSubscriptionDtoStatus } from './updateSubscriptionDtoStatus.js';
+import type { UpdateSubscriptionDtoStatus } from './updateSubscriptionDtoStatus.js'
 
 export interface UpdateSubscriptionDto {
   /** Currency */
-  currency?: string;
+  currency?: string
   /** End date */
-  endDate?: string;
+  endDate?: string
   /** Next billing date */
-  nextBillingDate?: string;
+  nextBillingDate?: string
   /** Price */
-  price?: number;
-  status?: UpdateSubscriptionDtoStatus;
+  price?: number
+  status?: UpdateSubscriptionDtoStatus
 }

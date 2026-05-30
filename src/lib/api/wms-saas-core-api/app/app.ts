@@ -20,100 +20,108 @@
  *
  * OpenAPI spec version: 1.0
  */
-import {
-  useMutation
-} from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query'
 import type {
   MutationFunction,
   UseMutationOptions,
-  UseMutationResult
-} from '@tanstack/react-query';
+  UseMutationResult,
+} from '@tanstack/react-query'
+import { customInstance } from '../../../httpSaasClient'
 
-import { customInstance } from '../../../httpClient';
-
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export type AppController_getHelloResponse200 = {
   data: void
   status: 200
 }
 
-export type AppController_getHelloResponseSuccess = (AppController_getHelloResponse200) & {
-  headers: Headers;
-};
-;
-
-export type AppController_getHelloResponse = (AppController_getHelloResponseSuccess)
+export type AppController_getHelloResponseSuccess =
+  AppController_getHelloResponse200 & {
+    headers: Headers
+  }
+export type AppController_getHelloResponse =
+  AppController_getHelloResponseSuccess
 
 export const getAppControllerGetHelloUrl = () => {
-
-
-
-
   return `/api/v1`
 }
 
 /**
  * @summary Health check / welcome
  */
-export const AppController_getHello = async ( options?: RequestInit): Promise<AppController_getHelloResponse> => {
+export const AppController_getHello = async (
+  options?: RequestInit
+): Promise<AppController_getHelloResponse> => {
+  return customInstance<AppController_getHelloResponse>(
+    getAppControllerGetHelloUrl(),
+    {
+      ...options,
+      method: 'GET',
+    }
+  )
+}
 
-  return customInstance<AppController_getHelloResponse>(getAppControllerGetHelloUrl(),
-  {
-    ...options,
-    method: 'GET'
+export const getAppControllerGetHelloMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof AppController_getHello>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof AppController_getHello>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['appControllerGetHello']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
-
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof AppController_getHello>>,
+    void
+  > = () => {
+    return AppController_getHello(requestOptions)
   }
-);}
 
+  return { mutationFn, ...mutationOptions }
+}
 
+export type AppControllerGetHelloMutationResult = NonNullable<
+  Awaited<ReturnType<typeof AppController_getHello>>
+>
 
+export type AppControllerGetHelloMutationError = unknown
 
-export const getAppControllerGetHelloMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof AppController_getHello>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof AppController_getHello>>, TError,void, TContext> => {
-
-const mutationKey = ['appControllerGetHello'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof AppController_getHello>>, void> = () => {
-
-
-          return  AppController_getHello(requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AppControllerGetHelloMutationResult = NonNullable<Awaited<ReturnType<typeof AppController_getHello>>>
-
-    export type AppControllerGetHelloMutationError = unknown
-
-    /**
+/**
  * @summary Health check / welcome
  */
-export const useAppControllerGetHello = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof AppController_getHello>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof AppController_getHello>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getAppControllerGetHelloMutationOptions(options));
-    }
+export const useAppControllerGetHello = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof AppController_getHello>>,
+    TError,
+    void,
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<
+  Awaited<ReturnType<typeof AppController_getHello>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getAppControllerGetHelloMutationOptions(options))
+}

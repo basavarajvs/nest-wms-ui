@@ -23,5 +23,5 @@
 
 export interface ForgotPasswordDto {
   /** Email address */
-  email: string;
+  email: string
 }

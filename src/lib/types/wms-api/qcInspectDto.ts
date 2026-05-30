@@ -7,7 +7,7 @@
  */
 
 export interface QcInspectDto {
-  grnLineId: string;
-  notes?: string;
-  qcResult: string;
+  grnLineId: string
+  notes?: string
+  qcResult: string
 }
