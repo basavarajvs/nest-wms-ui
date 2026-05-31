@@ -1,8 +1,20 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Search, Edit, Trash2 } from 'lucide-react'
+import {
+  type ColumnDef,
+  type SortingState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  flexRender,
+} from '@tanstack/react-table'
+import { useNavigate, useRouter } from '@tanstack/react-router'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
+import { Plus, Edit, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
   AlertDialog,
@@ -43,6 +55,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import { DataTablePagination } from '@/components/data-table/pagination'
+import { DataTableToolbar } from '@/components/data-table/toolbar'
 import {
   useClients,
   useCreateClient,
@@ -60,9 +75,17 @@ const clientSchema = z.object({
 type ClientForm = z.infer<typeof clientSchema>
 
 export function Clients() {
-  const [page, setPage] = useState(1)
-  const [limit] = useState(10)
-  const [search, setSearch] = useState('')
+  const [sorting, setSorting] = useState<SortingState>([])
+  const navigate = useNavigate()
+  const router = useRouter()
+  const search = router.state.location.search as Record<string, unknown>
+
+  const tableUrlState = useTableUrlState({
+    search,
+    navigate,
+    pagination: { defaultPage: 1, defaultPageSize: 10 },
+    globalFilter: { enabled: true, key: 'q' },
+  })
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingClient, setEditingClient] = useState<Client | null>(null)
@@ -88,14 +111,84 @@ export function Clients() {
   })
 
   const clients = data?.clients ?? []
-  const filtered = clients.filter((c) => {
-    if (!search) return true
-    const q = search.toLowerCase()
-    return c.clientCode.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)
+
+  const columns: ColumnDef<Client, any>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'clientCode',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Code' />
+        ),
+        cell: ({ row }) => (
+          <span className='font-medium'>{row.getValue('clientCode')}</span>
+        ),
+      },
+      {
+        accessorKey: 'name',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Name' />
+        ),
+      },
+      {
+        accessorKey: 'isActive',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Status' />
+        ),
+        cell: ({ row }) => (
+          <Badge
+            variant={
+              row.getValue('isActive') !== false ? 'default' : 'secondary'
+            }
+          >
+            {row.getValue('isActive') !== false ? 'Active' : 'Inactive'}
+          </Badge>
+        ),
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        cell: ({ row }) => {
+          const client = row.original
+          return (
+            <div className='space-x-2 text-right'>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => openDialog(client)}
+              >
+                <Edit className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => setDeleteId(client.id)}
+              >
+                <Trash2 className='h-4 w-4 text-destructive' />
+              </Button>
+            </div>
+          )
+        },
+      },
+    ],
+    []
+  )
+
+  const table = useReactTable({
+    data: clients,
+    columns,
+    state: {
+      sorting,
+      globalFilter: tableUrlState.globalFilter ?? '',
+      pagination: tableUrlState.pagination,
+    },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: tableUrlState.onGlobalFilterChange,
+    onPaginationChange: tableUrlState.onPaginationChange,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   })
-  const total = filtered.length
-  const totalPages = Math.max(1, Math.ceil(total / limit))
-  const paginatedClients = filtered.slice((page - 1) * limit, page * limit)
 
   const openDialog = (client?: Client) => {
     if (client) {
@@ -115,7 +208,10 @@ export function Clients() {
   const onSubmit = async (values: ClientForm) => {
     try {
       if (editingClient) {
-        await updateMutation.mutateAsync({ id: editingClient.id, dto: values as any })
+        await updateMutation.mutateAsync({
+          id: editingClient.id,
+          dto: values as any,
+        })
         toast.success('Client updated')
       } else {
         await createMutation.mutateAsync(values as any)
@@ -126,7 +222,9 @@ export function Clients() {
       reset()
       refetch()
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || 'Operation failed')
+      toast.error(
+        err?.response?.data?.message || err?.message || 'Operation failed'
+      )
     }
   }
 
@@ -147,7 +245,9 @@ export function Clients() {
       <div className='flex items-center justify-between'>
         <div>
           <h1 className='text-2xl font-bold tracking-tight'>Clients</h1>
-          <p className='text-muted-foreground'>Manage warehouse client accounts</p>
+          <p className='text-muted-foreground'>
+            Manage warehouse client accounts
+          </p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
@@ -158,30 +258,63 @@ export function Clients() {
           <DialogContent className='sm:max-w-[520px]'>
             <form onSubmit={handleSubmit(onSubmit)}>
               <DialogHeader>
-                <DialogTitle>{editingClient ? 'Edit Client' : 'Create New Client'}</DialogTitle>
+                <DialogTitle>
+                  {editingClient ? 'Edit Client' : 'Create New Client'}
+                </DialogTitle>
                 <DialogDescription>
-                  {editingClient ? 'Update the client details below.' : 'Add a new client to the system.'}
+                  {editingClient
+                    ? 'Update the client details below.'
+                    : 'Add a new client to the system.'}
                 </DialogDescription>
               </DialogHeader>
               <div className='grid gap-4 py-4'>
                 <div className='grid gap-2'>
                   <Label htmlFor='clientCode'>Client Code *</Label>
-                  <Input id='clientCode' {...register('clientCode')} disabled={!!editingClient} />
-                  {errors.clientCode && <p className='text-sm text-destructive'>{errors.clientCode.message}</p>}
+                  <Input
+                    id='clientCode'
+                    {...register('clientCode')}
+                    disabled={!!editingClient}
+                  />
+                  {errors.clientCode && (
+                    <p className='text-sm text-destructive'>
+                      {errors.clientCode.message}
+                    </p>
+                  )}
                 </div>
                 <div className='grid gap-2'>
                   <Label htmlFor='name'>Name *</Label>
                   <Input id='name' {...register('name')} />
-                  {errors.name && <p className='text-sm text-destructive'>{errors.name.message}</p>}
+                  {errors.name && (
+                    <p className='text-sm text-destructive'>
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
                 <div className='flex items-center gap-2'>
-                  <input type='checkbox' {...register('isActive')} id='isActive' />
+                  <input
+                    type='checkbox'
+                    {...register('isActive')}
+                    id='isActive'
+                  />
                   <Label htmlFor='isActive'>Active</Label>
                 </div>
               </div>
               <DialogFooter>
-                <Button type='button' variant='outline' onClick={() => setDialogOpen(false)}>Cancel</Button>
-                <Button type='submit' disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => setDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type='submit'
+                  disabled={
+                    isSubmitting ||
+                    createMutation.isPending ||
+                    updateMutation.isPending
+                  }
+                >
                   {editingClient ? 'Save Changes' : 'Create Client'}
                 </Button>
               </DialogFooter>
@@ -190,64 +323,76 @@ export function Clients() {
         </Dialog>
       </div>
 
-      <div className='relative max-w-sm flex-1'>
-        <Search className='absolute top-3 left-3 h-4 w-4 text-muted-foreground' />
-        <Input placeholder='Search clients...' className='pl-9' value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1) }} />
-      </div>
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder='Search clients...'
+      />
 
       <Card>
         <CardHeader>
           <CardTitle>Client Master</CardTitle>
-          <CardDescription>{total} clients</CardDescription>
+          <CardDescription>{clients.length} clients</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className='space-y-2'>{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className='h-12 w-full' />)}</div>
+            <div className='space-y-2'>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className='h-12 w-full' />
+              ))}
+            </div>
           ) : error ? (
             <div className='flex flex-col items-center gap-2 py-8 text-center'>
-              <p className='text-destructive font-medium'>Failed to load clients</p>
-              <p className='text-sm text-muted-foreground'>{(error as any)?.message || 'An unexpected error occurred'}</p>
-              <Button variant='outline' size='sm' onClick={() => refetch()}>Retry</Button>
+              <p className='font-medium text-destructive'>
+                Failed to load clients
+              </p>
+              <p className='text-sm text-muted-foreground'>
+                {(error as any)?.message || 'An unexpected error occurred'}
+              </p>
+              <Button variant='outline' size='sm' onClick={() => refetch()}>
+                Retry
+              </Button>
             </div>
-          ) : paginatedClients.length === 0 ? (
-            <div className='py-8 text-center text-muted-foreground'>No clients found.</div>
+          ) : table.getRowModel().rows.length === 0 ? (
+            <div className='py-8 text-center text-muted-foreground'>
+              No clients found.
+            </div>
           ) : (
             <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className='text-right'>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedClients.map((client) => (
-                    <TableRow key={client.id}>
-                      <TableCell className='font-medium'>{client.clientCode}</TableCell>
-                      <TableCell>{client.name}</TableCell>
-                      <TableCell>
-                        <Badge variant={client.isActive !== false ? 'default' : 'secondary'}>
-                          {client.isActive !== false ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className='space-x-2 text-right'>
-                        <Button variant='ghost' size='icon' onClick={() => openDialog(client)}><Edit className='h-4 w-4' /></Button>
-                        <Button variant='ghost' size='icon' onClick={() => setDeleteId(client.id)}><Trash2 className='h-4 w-4 text-destructive' /></Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <div className='mt-4 flex justify-between text-sm'>
-                <span>Page {page} of {totalPages}</span>
-                <div className='space-x-2'>
-                  <Button variant='outline' size='sm' disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Previous</Button>
-                  <Button variant='outline' size='sm' disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>Next</Button>
-                </div>
+              <div className='rounded-md border'>
+                <Table>
+                  <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
+              <DataTablePagination table={table} className='mt-4' />
             </>
           )}
         </CardContent>
@@ -257,11 +402,18 @@ export function Clients() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Client?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className='bg-destructive'>Delete</AlertDialogAction>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className='bg-destructive'
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

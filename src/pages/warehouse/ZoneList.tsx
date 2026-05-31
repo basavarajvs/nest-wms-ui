@@ -1,9 +1,22 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  type ColumnDef,
+  type SortingState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  flexRender,
+} from '@tanstack/react-table'
+import { useNavigate, useRouter } from '@tanstack/react-router'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { Plus, RefreshCw, MapPin, Edit, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useFacility } from '@/hooks/useFacility'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,6 +56,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import { DataTablePagination } from '@/components/data-table/pagination'
+import { DataTableToolbar } from '@/components/data-table/toolbar'
 import {
   useZones,
   useFacilities,
@@ -51,25 +67,33 @@ import {
   useDeleteZone,
   type Zone,
 } from '@/features/warehouse/data/warehouse-queries'
-import { useFacility } from '@/hooks/useFacility'
 
 const zoneSchema = z.object({
   zoneCode: z.string().min(1, 'Zone code is required'),
   name: z.string().min(1, 'Name is required'),
   zoneType: z.string().optional(),
-  facilityId: z.string().min(1, 'Facility is required'),
   isActive: z.boolean().optional().default(true),
 })
 
 type ZoneForm = z.infer<typeof zoneSchema>
 
 export function ZoneList() {
+  const [sorting, setSorting] = useState<SortingState>([])
+  const navigate = useNavigate()
+  const router = useRouter()
+  const search = router.state.location.search as Record<string, unknown>
+
+  const tableUrlState = useTableUrlState({
+    search,
+    navigate,
+    pagination: { defaultPage: 1, defaultPageSize: 10 },
+    globalFilter: { enabled: true, key: 'q' },
+  })
   const { selectedFacility } = useFacility()
   const { data, isLoading, isError, error, refetch } = useZones()
   const { data: facilitiesData } = useFacilities()
   const facilities = facilitiesData?.facilities ?? []
   const zones = data?.zones ?? []
-  const total = data?.total ?? 0
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingZone, setEditingZone] = useState<Zone | null>(null)
@@ -86,13 +110,7 @@ export function ZoneList() {
     formState: { errors, isSubmitting },
   } = useForm<ZoneForm>({
     resolver: zodResolver(zoneSchema) as any,
-    defaultValues: {
-      zoneCode: '',
-      name: '',
-      zoneType: '',
-      facilityId: selectedFacility?.id || '',
-      isActive: true,
-    },
+    defaultValues: { zoneCode: '', name: '', zoneType: '', isActive: true },
   })
 
   const getFacilityName = (id: string | null | undefined) => {
@@ -101,6 +119,87 @@ export function ZoneList() {
     return f ? f.facilityName : id
   }
 
+  const columns: ColumnDef<Zone, any>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'zoneCode',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Code' />
+        ),
+        cell: ({ row }) => (
+          <span className='font-medium'>{row.getValue('zoneCode')}</span>
+        ),
+      },
+      {
+        accessorKey: 'zoneName',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Name' />
+        ),
+      },
+      {
+        accessorKey: 'zoneType',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Type' />
+        ),
+        cell: ({ row }) => (
+          <span className='text-muted-foreground'>
+            {row.getValue('zoneType') || '—'}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'facilityId',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Facility' />
+        ),
+        cell: ({ row }) => (
+          <Badge variant='outline'>
+            {getFacilityName(row.getValue('facilityId'))}
+          </Badge>
+        ),
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        cell: ({ row }) => {
+          const z = row.original
+          return (
+            <div className='space-x-2 text-right'>
+              <Button variant='ghost' size='icon' onClick={() => openDialog(z)}>
+                <Edit className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => setDeleteId(z.id)}
+              >
+                <Trash2 className='h-4 w-4 text-destructive' />
+              </Button>
+            </div>
+          )
+        },
+      },
+    ],
+    []
+  )
+
+  const table = useReactTable({
+    data: zones,
+    columns,
+    state: {
+      sorting,
+      globalFilter: tableUrlState.globalFilter ?? '',
+      pagination: tableUrlState.pagination,
+    },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: tableUrlState.onGlobalFilterChange,
+    onPaginationChange: tableUrlState.onPaginationChange,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  })
+
   const openDialog = (zone?: Zone) => {
     if (zone) {
       setEditingZone(zone)
@@ -108,18 +207,11 @@ export function ZoneList() {
         zoneCode: zone.zoneCode,
         name: zone.zoneName,
         zoneType: zone.zoneType || '',
-        facilityId: zone.facilityId || selectedFacility?.id || '',
         isActive: true,
       })
     } else {
       setEditingZone(null)
-      reset({
-        zoneCode: '',
-        name: '',
-        zoneType: '',
-        facilityId: selectedFacility?.id || '',
-        isActive: true,
-      })
+      reset({ zoneCode: '', name: '', zoneType: '', isActive: true })
     }
     setDialogOpen(true)
   }
@@ -127,10 +219,16 @@ export function ZoneList() {
   const onSubmit = async (values: ZoneForm) => {
     try {
       if (editingZone) {
-        await updateMutation.mutateAsync({ id: editingZone.id, dto: values as any })
+        await updateMutation.mutateAsync({
+          id: editingZone.id,
+          dto: { ...values, facilityId: selectedFacility?.id } as any,
+        })
         toast.success('Zone updated')
       } else {
-        await createMutation.mutateAsync(values as any)
+        await createMutation.mutateAsync({
+          ...values,
+          facilityId: selectedFacility?.id,
+        } as any)
         toast.success('Zone created')
       }
       setDialogOpen(false)
@@ -138,7 +236,9 @@ export function ZoneList() {
       reset()
       refetch()
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || 'Operation failed')
+      toast.error(
+        err?.response?.data?.message || err?.message || 'Operation failed'
+      )
     }
   }
 
@@ -155,123 +255,202 @@ export function ZoneList() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className='space-y-6'>
+      <div className='flex items-center justify-between'>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Zones</h1>
-          <p className="text-muted-foreground">Manage warehouse zones and areas</p>
+          <h1 className='text-2xl font-bold tracking-tight'>Zones</h1>
+          <p className='text-muted-foreground'>
+            Manage warehouse zones and areas
+          </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" onClick={() => openDialog()}>
-                <Plus className="mr-2 h-4 w-4" /> New Zone
+              <Button size='sm' onClick={() => openDialog()}>
+                <Plus className='mr-2 h-4 w-4' /> New Zone
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[520px]">
+            <DialogContent className='sm:max-w-[520px]'>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <DialogHeader>
-                  <DialogTitle>{editingZone ? 'Edit Zone' : 'Create New Zone'}</DialogTitle>
+                  <DialogTitle>
+                    {editingZone ? 'Edit Zone' : 'Create New Zone'}
+                  </DialogTitle>
                   <DialogDescription>
-                    {editingZone ? 'Update zone details.' : 'Add a new warehouse zone.'}
+                    {editingZone
+                      ? 'Update zone details.'
+                      : 'Add a new warehouse zone.'}
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="zoneCode">Zone Code *</Label>
-                    <Input id="zoneCode" {...register('zoneCode')} disabled={!!editingZone} />
-                    {errors.zoneCode && <p className="text-sm text-destructive">{errors.zoneCode.message}</p>}
+                <div className='grid gap-4 py-4'>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='zoneCode'>Zone Code *</Label>
+                    <Input
+                      id='zoneCode'
+                      {...register('zoneCode')}
+                      disabled={!!editingZone}
+                    />
+                    {errors.zoneCode && (
+                      <p className='text-sm text-destructive'>
+                        {errors.zoneCode.message}
+                      </p>
+                    )}
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Name *</Label>
-                    <Input id="name" {...register('name')} />
-                    {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+                  <div className='grid gap-2'>
+                    <Label htmlFor='name'>Name *</Label>
+                    <Input id='name' {...register('name')} />
+                    {errors.name && (
+                      <p className='text-sm text-destructive'>
+                        {errors.name.message}
+                      </p>
+                    )}
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="zoneType">Zone Type</Label>
-                    <Input id="zoneType" {...register('zoneType')} placeholder="Storage, Picking, Shipping..." />
+                  <div className='grid gap-2'>
+                    <Label htmlFor='zoneType'>Zone Type</Label>
+                    <Input
+                      id='zoneType'
+                      {...register('zoneType')}
+                      placeholder='Storage, Picking, Shipping...'
+                    />
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="facilityId">Facility ID</Label>
-                    <Input id="facilityId" {...register('facilityId')} disabled />
-                  </div>
+                  {selectedFacility && (
+                    <div className='rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground'>
+                      Facility:{' '}
+                      <span className='font-medium text-foreground'>
+                        {selectedFacility.facilityCode} —{' '}
+                        {selectedFacility.facilityName}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                  <Button type="submit" disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}>
+                  <Button
+                    type='button'
+                    variant='outline'
+                    onClick={() => setDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type='submit'
+                    disabled={
+                      isSubmitting ||
+                      createMutation.isPending ||
+                      updateMutation.isPending
+                    }
+                  >
                     {editingZone ? 'Save Changes' : 'Create Zone'}
                   </Button>
                 </DialogFooter>
               </form>
             </DialogContent>
           </Dialog>
-          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isLoading}>
-            <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={() => refetch()}
+            disabled={isLoading}
+          >
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+            />{' '}
             Refresh
           </Button>
         </div>
       </div>
 
       {selectedFacility && (
-        <div className="rounded-md bg-muted px-4 py-2 text-sm text-muted-foreground">
-          Showing zones for: <span className="font-medium text-foreground">{selectedFacility.facilityCode} — {selectedFacility.facilityName}</span>
+        <div className='rounded-md bg-muted px-4 py-2 text-sm text-muted-foreground'>
+          Showing zones for:{' '}
+          <span className='font-medium text-foreground'>
+            {selectedFacility.facilityCode} — {selectedFacility.facilityName}
+          </span>
         </div>
       )}
 
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder='Search by code, name, or type...'
+      />
+
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader className='pb-3'>
           <CardTitle>Zone Master</CardTitle>
-          <CardDescription>{total} zone{total !== 1 ? 's' : ''} found</CardDescription>
+          <CardDescription>
+            {zones.length} zone{zones.length !== 1 ? 's' : ''} found
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {!selectedFacility ? (
-            <div className="flex flex-col items-center gap-3 py-12 text-center">
-              <MapPin className="h-12 w-12 text-muted-foreground/30" />
-              <p className="text-muted-foreground">Select a facility to view zones</p>
+            <div className='flex flex-col items-center gap-3 py-12 text-center'>
+              <MapPin className='h-12 w-12 text-muted-foreground/30' />
+              <p className='text-muted-foreground'>
+                Select a facility to view zones
+              </p>
             </div>
           ) : isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (<Skeleton key={i} className="h-12 w-full" />))}
+            <div className='space-y-3'>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className='h-12 w-full' />
+              ))}
             </div>
           ) : isError ? (
-            <div className="flex flex-col items-center gap-2 py-8 text-center">
-              <p className="text-destructive font-medium">Failed to load zones</p>
-              <p className="text-sm text-muted-foreground">{(error as any)?.message || 'An unexpected error occurred'}</p>
-              <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+            <div className='flex flex-col items-center gap-2 py-8 text-center'>
+              <p className='font-medium text-destructive'>
+                Failed to load zones
+              </p>
+              <p className='text-sm text-muted-foreground'>
+                {(error as any)?.message || 'An unexpected error occurred'}
+              </p>
+              <Button variant='outline' size='sm' onClick={() => refetch()}>
+                Retry
+              </Button>
             </div>
-          ) : zones.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 py-8 text-center">
-              <MapPin className="h-12 w-12 text-muted-foreground/50" />
-              <p className="text-muted-foreground">No zones found for this facility</p>
+          ) : table.getRowModel().rows.length === 0 ? (
+            <div className='flex flex-col items-center gap-2 py-8 text-center'>
+              <MapPin className='h-12 w-12 text-muted-foreground/50' />
+              <p className='text-muted-foreground'>
+                No zones found for this facility
+              </p>
             </div>
           ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead className="hidden md:table-cell">Type</TableHead>
-                    <TableHead>Facility</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {zones.map((z: Zone) => (
-                    <TableRow key={z.id}>
-                      <TableCell className="font-medium">{z.zoneCode}</TableCell>
-                      <TableCell>{z.zoneName}</TableCell>
-                      <TableCell className="hidden md:table-cell text-muted-foreground">{z.zoneType || '—'}</TableCell>
-                      <TableCell><Badge variant="outline">{getFacilityName(z.facilityId)}</Badge></TableCell>
-                      <TableCell className="space-x-2 text-right">
-                        <Button variant="ghost" size="icon" onClick={() => openDialog(z)}><Edit className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon" onClick={() => setDeleteId(z.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <>
+              <div className='rounded-md border'>
+                <Table>
+                  <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <DataTablePagination table={table} className='mt-4' />
+            </>
           )}
         </CardContent>
       </Card>
@@ -280,11 +459,18 @@ export function ZoneList() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Zone?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive">Delete</AlertDialogAction>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className='bg-destructive'
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -1,28 +1,63 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Search, Edit, Trash2 } from 'lucide-react'
+import {
+  type ColumnDef,
+  type SortingState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  flexRender,
+} from '@tanstack/react-table'
+import { useNavigate, useRouter } from '@tanstack/react-router'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
+import { Plus, Edit, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
-  Card, CardContent, CardDescription, CardHeader, CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card'
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle, DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table'
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import { DataTablePagination } from '@/components/data-table/pagination'
+import { DataTableToolbar } from '@/components/data-table/toolbar'
 import {
   useCarriers,
   useCreateCarrier,
@@ -43,9 +78,17 @@ const carrierSchema = z.object({
 type CarrierForm = z.infer<typeof carrierSchema>
 
 export function Carriers() {
-  const [page, setPage] = useState(1)
-  const [limit] = useState(10)
-  const [search, setSearch] = useState('')
+  const [sorting, setSorting] = useState<SortingState>([])
+  const navigate = useNavigate()
+  const router = useRouter()
+  const search = router.state.location.search as Record<string, unknown>
+
+  const tableUrlState = useTableUrlState({
+    search,
+    navigate,
+    pagination: { defaultPage: 1, defaultPageSize: 10 },
+    globalFilter: { enabled: true, key: 'q' },
+  })
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingCarrier, setEditingCarrier] = useState<Carrier | null>(null)
@@ -74,14 +117,96 @@ export function Carriers() {
   })
 
   const carriers = data?.carriers ?? []
-  const filtered = carriers.filter((c) => {
-    if (!search) return true
-    const q = search.toLowerCase()
-    return c.carrierCode.toLowerCase().includes(q) || c.name.toLowerCase().includes(q) || (c.scac && c.scac.toLowerCase().includes(q))
+
+  const columns: ColumnDef<Carrier, any>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'carrierCode',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Code' />
+        ),
+        cell: ({ row }) => (
+          <span className='font-medium'>{row.getValue('carrierCode')}</span>
+        ),
+      },
+      {
+        accessorKey: 'name',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Name' />
+        ),
+      },
+      {
+        accessorKey: 'scac',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='SCAC' />
+        ),
+      },
+      {
+        accessorKey: 'phone',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Phone' />
+        ),
+      },
+      {
+        accessorKey: 'isActive',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Status' />
+        ),
+        cell: ({ row }) => (
+          <Badge
+            variant={
+              row.getValue('isActive') !== false ? 'default' : 'secondary'
+            }
+          >
+            {row.getValue('isActive') !== false ? 'Active' : 'Inactive'}
+          </Badge>
+        ),
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        cell: ({ row }) => {
+          const carrier = row.original
+          return (
+            <div className='space-x-2 text-right'>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => openDialog(carrier)}
+              >
+                <Edit className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => setDeleteId(carrier.id)}
+              >
+                <Trash2 className='h-4 w-4 text-destructive' />
+              </Button>
+            </div>
+          )
+        },
+      },
+    ],
+    []
+  )
+
+  const table = useReactTable({
+    data: carriers,
+    columns,
+    state: {
+      sorting,
+      globalFilter: tableUrlState.globalFilter ?? '',
+      pagination: tableUrlState.pagination,
+    },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: tableUrlState.onGlobalFilterChange,
+    onPaginationChange: tableUrlState.onPaginationChange,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   })
-  const total = filtered.length
-  const totalPages = Math.max(1, Math.ceil(total / limit))
-  const paginated = filtered.slice((page - 1) * limit, page * limit)
 
   const openDialog = (carrier?: Carrier) => {
     if (carrier) {
@@ -96,7 +221,14 @@ export function Carriers() {
       })
     } else {
       setEditingCarrier(null)
-      reset({ carrierCode: '', name: '', scac: '', phone: '', website: '', isActive: true })
+      reset({
+        carrierCode: '',
+        name: '',
+        scac: '',
+        phone: '',
+        website: '',
+        isActive: true,
+      })
     }
     setDialogOpen(true)
   }
@@ -104,7 +236,10 @@ export function Carriers() {
   const onSubmit = async (values: CarrierForm) => {
     try {
       if (editingCarrier) {
-        await updateMutation.mutateAsync({ id: editingCarrier.id, dto: values as any })
+        await updateMutation.mutateAsync({
+          id: editingCarrier.id,
+          dto: values as any,
+        })
         toast.success('Carrier updated')
       } else {
         await createMutation.mutateAsync(values as any)
@@ -115,7 +250,9 @@ export function Carriers() {
       reset()
       refetch()
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || 'Operation failed')
+      toast.error(
+        err?.response?.data?.message || err?.message || 'Operation failed'
+      )
     }
   }
 
@@ -147,21 +284,37 @@ export function Carriers() {
           <DialogContent className='sm:max-w-[520px]'>
             <form onSubmit={handleSubmit(onSubmit)}>
               <DialogHeader>
-                <DialogTitle>{editingCarrier ? 'Edit Carrier' : 'Create New Carrier'}</DialogTitle>
+                <DialogTitle>
+                  {editingCarrier ? 'Edit Carrier' : 'Create New Carrier'}
+                </DialogTitle>
                 <DialogDescription>
-                  {editingCarrier ? 'Update the carrier details below.' : 'Add a new carrier to the system.'}
+                  {editingCarrier
+                    ? 'Update the carrier details below.'
+                    : 'Add a new carrier to the system.'}
                 </DialogDescription>
               </DialogHeader>
               <div className='grid gap-4 py-4'>
                 <div className='grid gap-2'>
                   <Label htmlFor='carrierCode'>Carrier Code *</Label>
-                  <Input id='carrierCode' {...register('carrierCode')} disabled={!!editingCarrier} />
-                  {errors.carrierCode && <p className='text-sm text-destructive'>{errors.carrierCode.message}</p>}
+                  <Input
+                    id='carrierCode'
+                    {...register('carrierCode')}
+                    disabled={!!editingCarrier}
+                  />
+                  {errors.carrierCode && (
+                    <p className='text-sm text-destructive'>
+                      {errors.carrierCode.message}
+                    </p>
+                  )}
                 </div>
                 <div className='grid gap-2'>
                   <Label htmlFor='name'>Name *</Label>
                   <Input id='name' {...register('name')} />
-                  {errors.name && <p className='text-sm text-destructive'>{errors.name.message}</p>}
+                  {errors.name && (
+                    <p className='text-sm text-destructive'>
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
                 <div className='grid gap-2'>
                   <Label htmlFor='scac'>SCAC</Label>
@@ -176,13 +329,30 @@ export function Carriers() {
                   <Input id='website' {...register('website')} />
                 </div>
                 <div className='flex items-center gap-2'>
-                  <input type='checkbox' {...register('isActive')} id='isActive' />
+                  <input
+                    type='checkbox'
+                    {...register('isActive')}
+                    id='isActive'
+                  />
                   <Label htmlFor='isActive'>Active</Label>
                 </div>
               </div>
               <DialogFooter>
-                <Button type='button' variant='outline' onClick={() => setDialogOpen(false)}>Cancel</Button>
-                <Button type='submit' disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => setDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type='submit'
+                  disabled={
+                    isSubmitting ||
+                    createMutation.isPending ||
+                    updateMutation.isPending
+                  }
+                >
                   {editingCarrier ? 'Save Changes' : 'Create Carrier'}
                 </Button>
               </DialogFooter>
@@ -191,68 +361,76 @@ export function Carriers() {
         </Dialog>
       </div>
 
-      <div className='relative max-w-sm flex-1'>
-        <Search className='absolute top-3 left-3 h-4 w-4 text-muted-foreground' />
-        <Input placeholder='Search carriers...' className='pl-9' value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1) }} />
-      </div>
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder='Search carriers...'
+      />
 
       <Card>
         <CardHeader>
           <CardTitle>Carriers</CardTitle>
-          <CardDescription>{total} carriers</CardDescription>
+          <CardDescription>{carriers.length} carriers</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className='space-y-2'>{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className='h-12 w-full' />)}</div>
+            <div className='space-y-2'>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className='h-12 w-full' />
+              ))}
+            </div>
           ) : error ? (
             <div className='flex flex-col items-center gap-2 py-8 text-center'>
-              <p className='text-destructive font-medium'>Failed to load carriers</p>
-              <p className='text-sm text-muted-foreground'>{(error as any)?.message || 'An unexpected error occurred'}</p>
-              <Button variant='outline' size='sm' onClick={() => refetch()}>Retry</Button>
+              <p className='font-medium text-destructive'>
+                Failed to load carriers
+              </p>
+              <p className='text-sm text-muted-foreground'>
+                {(error as any)?.message || 'An unexpected error occurred'}
+              </p>
+              <Button variant='outline' size='sm' onClick={() => refetch()}>
+                Retry
+              </Button>
             </div>
-          ) : paginated.length === 0 ? (
-            <div className='py-8 text-center text-muted-foreground'>No carriers found.</div>
+          ) : table.getRowModel().rows.length === 0 ? (
+            <div className='py-8 text-center text-muted-foreground'>
+              No carriers found.
+            </div>
           ) : (
             <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>SCAC</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className='text-right'>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginated.map((carrier) => (
-                    <TableRow key={carrier.id}>
-                      <TableCell className='font-medium'>{carrier.carrierCode}</TableCell>
-                      <TableCell>{carrier.name}</TableCell>
-                      <TableCell>{carrier.scac || '—'}</TableCell>
-                      <TableCell>{carrier.phone || '—'}</TableCell>
-                      <TableCell>
-                        <Badge variant={carrier.isActive !== false ? 'default' : 'secondary'}>
-                          {carrier.isActive !== false ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className='space-x-2 text-right'>
-                        <Button variant='ghost' size='icon' onClick={() => openDialog(carrier)}><Edit className='h-4 w-4' /></Button>
-                        <Button variant='ghost' size='icon' onClick={() => setDeleteId(carrier.id)}><Trash2 className='h-4 w-4 text-destructive' /></Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <div className='mt-4 flex justify-between text-sm'>
-                <span>Page {page} of {totalPages}</span>
-                <div className='space-x-2'>
-                  <Button variant='outline' size='sm' disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Previous</Button>
-                  <Button variant='outline' size='sm' disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>Next</Button>
-                </div>
+              <div className='rounded-md border'>
+                <Table>
+                  <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
+              <DataTablePagination table={table} className='mt-4' />
             </>
           )}
         </CardContent>
@@ -262,11 +440,18 @@ export function Carriers() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Carrier?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className='bg-destructive'>Delete</AlertDialogAction>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className='bg-destructive'
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
