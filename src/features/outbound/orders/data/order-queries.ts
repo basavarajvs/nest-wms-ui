@@ -2,9 +2,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   OutboundWebController_listOrders,
   OutboundWebController_createOrder,
+  OutboundWebController_overrideAllocation,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   CreateOrderDto,
+  AllocationOverrideDto,
   OutboundWebControllerListOrdersParams,
 } from '@/lib/types/wms-api'
 
@@ -76,6 +78,19 @@ export function useCreateOrder() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'outbound', 'orders'] })
+    },
+  })
+}
+
+export function useOverrideAllocation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (dto: AllocationOverrideDto) => {
+      return OutboundWebController_overrideAllocation(dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'outbound', 'orders'] })
+      queryClient.invalidateQueries({ queryKey: ['wms', 'outbound', 'allocations'] })
     },
   })
 }

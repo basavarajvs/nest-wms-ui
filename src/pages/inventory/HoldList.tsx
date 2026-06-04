@@ -11,7 +11,7 @@ import {
 } from '@tanstack/react-table'
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
-import { RefreshCw, Ban } from 'lucide-react'
+import { RefreshCw, Ban, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { useFacility } from '@/hooks/useFacility'
 import { Badge } from '@/components/ui/badge'
@@ -33,6 +33,8 @@ import {
   useHolds,
   type Hold,
 } from '@/features/inventory/holds/data/hold-queries'
+import { ApplyHoldDialog } from '@/features/inventory/holds/components/ApplyHoldDialog'
+import { ReleaseHoldDialog } from '@/features/inventory/holds/components/ReleaseHoldDialog'
 
 const STATUS_FILTER_OPTIONS = [
   { label: 'Active', value: 'active' },
@@ -50,10 +52,16 @@ const STATUS_BADGE: Record<
 }
 
 const TYPE_FILTER_OPTIONS = [
-  { label: 'Quality', value: 'quality' },
-  { label: 'Compliance', value: 'compliance' },
-  { label: 'Customer', value: 'customer' },
-  { label: 'Other', value: 'other' },
+  { label: 'QA', value: 'QA' },
+  { label: 'Damage', value: 'DAMAGE' },
+  { label: 'Customer Hold', value: 'CUSTOMER_HOLD' },
+  { label: 'Customer Request', value: 'CUSTOMER_REQUEST' },
+  { label: 'Dispute', value: 'DISPUTE' },
+  { label: 'QC Pending', value: 'QC_PENDING' },
+  { label: 'QC Failed', value: 'QC_FAILED' },
+  { label: 'Quarantine', value: 'QUARANTINE' },
+  { label: 'Credit Hold', value: 'CREDIT_HOLD' },
+  { label: 'Other', value: 'OTHER' },
 ]
 
 export function HoldList() {
@@ -69,13 +77,17 @@ export function HoldList() {
     globalFilter: { enabled: true, key: 'q' },
   })
 
+  const { selectedFacility } = useFacility()
   const { data, isLoading, isError, error, refetch, isFetching } = useHolds({
     page: 1,
     limit: 100,
+    facilityId: selectedFacility?.id,
   })
-  const { selectedFacility } = useFacility()
 
   const holds: Hold[] = data?.holds || []
+
+  const [applyDialogOpen, setApplyDialogOpen] = useState(false)
+  const [releaseHold, setReleaseHold] = useState<Hold | null>(null)
 
   const columns: ColumnDef<Hold, any>[] = useMemo(
     () => [
@@ -192,8 +204,7 @@ export function HoldList() {
                 <Button
                   size='sm'
                   variant='outline'
-                  disabled
-                  title='Release hold endpoint not available'
+                  onClick={() => setReleaseHold(h)}
                 >
                   Release
                 </Button>
@@ -234,19 +245,26 @@ export function HoldList() {
             View and manage stock that has been placed on hold
           </p>
         </div>
-        <Button
-          variant='outline'
-          onClick={() => {
-            refetch()
-            toast.info('Refreshing holds...')
-          }}
-          disabled={isFetching}
-        >
-          <RefreshCw
-            className={`mr-2 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`}
-          />{' '}
-          Refresh
-        </Button>
+        <div className='flex gap-2'>
+          <Button
+            variant='outline'
+            onClick={() => {
+              refetch()
+              toast.info('Refreshing holds...')
+            }}
+            disabled={isFetching}
+          >
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`}
+            />
+            {' '}
+            Refresh
+          </Button>
+          <Button onClick={() => setApplyDialogOpen(true)}>
+            <Plus className='mr-2 h-4 w-4' />
+            Create Hold
+          </Button>
+        </div>
       </div>
 
       <DataTableToolbar
@@ -337,6 +355,17 @@ export function HoldList() {
           )}
         </CardContent>
       </Card>
+      <ApplyHoldDialog
+        open={applyDialogOpen}
+        onOpenChange={setApplyDialogOpen}
+      />
+      {releaseHold && (
+        <ReleaseHoldDialog
+          hold={releaseHold}
+          open={!!releaseHold}
+          onOpenChange={(open) => { if (!open) setReleaseHold(null) }}
+        />
+      )}
     </div>
   )
 }

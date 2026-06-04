@@ -54,6 +54,8 @@ const BG_CYAN =
   'bg-cyan-100 text-cyan-800 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-400'
 const BG_GRAY =
   'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400'
+const BG_YELLOW =
+  'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400'
 const BG_ORANGE =
   'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400'
 const BG_INDIGO =
@@ -458,10 +460,20 @@ export function WaveStatusBadge({ status }: { status: WaveStatus }) {
 // ---------------------------------------------------------------------------
 
 const LOAD_STATUS_CONFIG: Record<LoadStatus, StatusConfig> = {
+  [LoadStatus.CREATED]: {
+    variant: 'outline',
+    label: 'Created',
+    className: BG_SLATE,
+  },
   [LoadStatus.PLANNED]: {
     variant: 'outline',
     label: 'Planned',
     className: BG_SLATE,
+  },
+  [LoadStatus.LOADING]: {
+    variant: 'default',
+    label: 'Loading',
+    className: BG_YELLOW,
   },
   [LoadStatus.LOADED]: {
     variant: 'default',

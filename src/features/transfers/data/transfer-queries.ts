@@ -3,10 +3,16 @@ import {
   TransferWebController_create,
   TransferWebController_list,
   TransferWebController_dispatch,
+  TransferWebController_receive,
+  TransferWebController_listLines,
+  TransferWebController_updateLine,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   CreateTransferDto,
   TransferWebControllerListParams,
+  TransferWebControllerListLinesParams,
+  WebReceiveTransferDto,
+  UpdateTransferLineDto,
 } from '@/lib/types/wms-api'
 
 function safeList<T>(data: unknown): T[] {
@@ -99,6 +105,100 @@ export function useDispatchTransfer() {
   return useMutation({
     mutationFn: async (id: string) => {
       return TransferWebController_dispatch(id)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'transfers'] })
+    },
+  })
+}
+
+export function useReceiveTransfer() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, dto }: { id: string; dto: WebReceiveTransferDto }) => {
+      return TransferWebController_receive(id, dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'transfers'] })
+    },
+  })
+}
+
+export interface TransferLine {
+  id: string
+  transferId?: string
+  productId?: string
+  productName?: string
+  productSku?: string
+  quantityRequested?: number
+  quantityShipped?: number
+  quantityReceived?: number
+  status?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export function useTransferLines(transferId: string, params?: TransferWebControllerListLinesParams) {
+  const stableKey = JSON.stringify({ transferId, ...params })
+  return useQuery({
+    queryKey: ['wms', 'transfers', 'lines', stableKey],
+    queryFn: async () => {
+      const res = await TransferWebController_listLines({
+        transferId,
+        ...params,
+      } as TransferWebControllerListLinesParams)
+      return res as unknown
+    },
+    select: (data) => ({
+      lines: safeList<TransferLine>(data),
+      total: safeTotal(data),
+    }),
+    enabled: !!transferId,
+    staleTime: 1000 * 30,
+  })
+}
+
+export function useUpdateTransferLine() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, dto }: { id: string; dto: UpdateTransferLineDto }) => {
+      return TransferWebController_updateLine(id, dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'transfers'] })
+    },
+  })
+}
+
+export interface CreateTransferLineDto {
+  productId: string
+  quantityRequested: number
+  uomId?: string
+}
+
+export function useCreateTransferLine() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (_dto: CreateTransferLineDto) => {
+      console.warn(
+        '[GAP] useCreateTransferLine: No backend endpoint POST /api/v1/wms/web/transfers/lines exists yet. Returned empty placeholder.'
+      )
+      return {} as unknown
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'transfers'] })
+    },
+  })
+}
+
+export function useDeleteTransferLine() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (_id: string) => {
+      console.warn(
+        '[GAP] useDeleteTransferLine: No backend endpoint DELETE /api/v1/wms/web/transfers/lines/{id} exists yet. Returned empty placeholder.'
+      )
+      return {} as unknown
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'transfers'] })

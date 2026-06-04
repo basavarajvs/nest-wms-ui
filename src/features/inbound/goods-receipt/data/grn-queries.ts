@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
+  InboundWebController_listGrns,
   InboundWebController_createGrnFromAsn,
   InboundWebController_createGrnAdHoc,
   InboundWebController_getGrnProgress,
@@ -15,7 +16,59 @@ import type {
   CreateGrnAdHocDto,
   MarkGrnArrivedDto,
   CompleteInspectionDto,
+  InboundWebControllerListGrnsParams,
 } from '@/lib/types/wms-api'
+
+function safeList<T>(data: unknown): T[] {
+  if (Array.isArray(data)) return data as T[]
+  if (data && typeof data === 'object') {
+    const obj = data as Record<string, unknown>
+    if (Array.isArray(obj.items)) return obj.items as T[]
+    if (Array.isArray(obj.data)) return obj.data as T[]
+    if (Array.isArray(obj.grns)) return obj.grns as T[]
+  }
+  return []
+}
+
+function safeTotal(data: unknown, fallback = 0): number {
+  if (data && typeof data === 'object') {
+    const obj = data as Record<string, unknown>
+    if (typeof obj.total === 'number') return obj.total
+    if (typeof obj.count === 'number') return obj.count
+    return safeList(data).length || fallback
+  }
+  return fallback
+}
+
+export interface Grn {
+  id: string
+  receiptNumber?: string
+  status?: string
+  facilityId?: string
+  asnId?: string
+  asnNumber?: string
+  poNumber?: string
+  supplier?: string
+  receivedDate?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export function useGrns(params?: InboundWebControllerListGrnsParams) {
+  const stableKey = JSON.stringify(params ?? {})
+  return useQuery({
+    queryKey: ['wms', 'inbound', 'grn', stableKey],
+    queryFn: async () => {
+      const res = await InboundWebController_listGrns(params)
+      return res as unknown
+    },
+    select: (data) => ({
+      grns: safeList<Grn>(data),
+      total: safeTotal(data),
+    }),
+    staleTime: 1000 * 30,
+  })
+}
 
 export function useCreateGrnFromAsn() {
   const queryClient = useQueryClient()
@@ -41,7 +94,7 @@ export function useCreateGrnAdHoc() {
   })
 }
 
-export function useGrnProgress(id: string) {
+export function useGrnProgress(id: string, options?: { refetchInterval?: number }) {
   return useQuery({
     queryKey: ['wms', 'inbound', 'grn', 'progress', id],
     queryFn: async () => {
@@ -51,6 +104,7 @@ export function useGrnProgress(id: string) {
     enabled: !!id,
     staleTime: 1000 * 30,
     retry: 1,
+    refetchInterval: options?.refetchInterval,
   })
 }
 

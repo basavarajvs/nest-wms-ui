@@ -31,10 +31,11 @@ import {
   usePendingPicksCount,
   useLowStockCount,
   useRecentOrders,
-  useRecentAdjustments,
   type RecentOrder,
-  type RecentAdjustment,
 } from './data/dashboard-queries'
+import { Overview } from './components/overview'
+import { AnalyticsChart } from './components/analytics-chart'
+import { RecentSales } from './components/recent-sales'
 
 interface KpiCardProps {
   title: string
@@ -128,53 +129,6 @@ function RecentOrdersList({
   )
 }
 
-function RecentAdjustmentsList({
-  adjustments,
-  isLoading,
-  error,
-}: {
-  adjustments: RecentAdjustment[]
-  isLoading: boolean
-  error?: unknown
-}) {
-  if (isLoading) {
-    return (
-      <div className='space-y-3'>
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className='h-8 w-full' />
-        ))}
-      </div>
-    )
-  }
-  if (error != null) {
-    return (
-      <p className='text-sm text-destructive'>
-        Unable to load recent adjustments.
-      </p>
-    )
-  }
-  if (!adjustments.length) {
-    return (
-      <p className='text-sm text-muted-foreground'>No recent adjustments.</p>
-    )
-  }
-  return (
-    <div className='space-y-4'>
-      {adjustments.map((adj) => (
-        <div key={adj.id} className='flex items-center justify-between text-sm'>
-          <div>
-            <div className='font-medium'>{adj.reference}</div>
-            <div className='text-xs text-muted-foreground'>{adj.reason}</div>
-          </div>
-          <div className='text-xs text-muted-foreground'>
-            {adj.createdAt ? new Date(adj.createdAt).toLocaleDateString() : ''}
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
 export function Dashboard() {
   const queryClient = useQueryClient()
 
@@ -184,7 +138,6 @@ export function Dashboard() {
   const pendingPicks = usePendingPicksCount()
   const lowStock = useLowStockCount()
   const recentOrdersQ = useRecentOrders()
-  const recentAdjsQ = useRecentAdjustments()
 
   const isAnyLoading =
     openOrders.isLoading ||
@@ -192,8 +145,7 @@ export function Dashboard() {
     pendingPutaways.isLoading ||
     pendingPicks.isLoading ||
     lowStock.isLoading ||
-    recentOrdersQ.isLoading ||
-    recentAdjsQ.isLoading
+    recentOrdersQ.isLoading
 
   const hasAnyError =
     openOrders.error ||
@@ -201,8 +153,7 @@ export function Dashboard() {
     pendingPutaways.error ||
     pendingPicks.error ||
     lowStock.error ||
-    recentOrdersQ.error ||
-    recentAdjsQ.error
+    recentOrdersQ.error
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ['wms', 'dashboard'] })
@@ -319,8 +270,46 @@ export function Dashboard() {
           </Card>
         </div>
 
+        {/* Charts */}
+        <div className='mb-6 grid gap-4 lg:grid-cols-7'>
+          <Card className='col-span-1 lg:col-span-4'>
+            <CardHeader>
+              <CardTitle>Orders per Month</CardTitle>
+              <CardDescription>
+                Order volume grouped by month
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='pl-2'>
+              <Overview />
+            </CardContent>
+          </Card>
+          <Card className='col-span-1 lg:col-span-3'>
+            <CardHeader>
+              <CardTitle>Inventory Trends</CardTitle>
+              <CardDescription>
+                Stock distribution across all locations
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='pl-2'>
+              <AnalyticsChart />
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Recent Activity */}
-        <div className='grid gap-4 lg:grid-cols-2'>
+        <div className='grid gap-4 lg:grid-cols-3'>
+          <Card className='lg:col-span-2'>
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>
+                Latest orders, adjustments, and stock alerts
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RecentSales />
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Recent Orders</CardTitle>
@@ -331,20 +320,6 @@ export function Dashboard() {
                 orders={recentOrdersQ.data ?? []}
                 isLoading={recentOrdersQ.isLoading}
                 error={recentOrdersQ.error}
-              />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Adjustments</CardTitle>
-              <CardDescription>Latest 5 inventory adjustments</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RecentAdjustmentsList
-                adjustments={recentAdjsQ.data ?? []}
-                isLoading={recentAdjsQ.isLoading}
-                error={recentAdjsQ.error}
               />
             </CardContent>
           </Card>

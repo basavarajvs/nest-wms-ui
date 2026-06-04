@@ -12,7 +12,7 @@ import {
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import type { WaveStatus } from '@/types/warehouse-statuses'
-import { Plus, RefreshCw } from 'lucide-react'
+import { RefreshCw, MoreHorizontal, Eye, Package, Play, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useFacility } from '@/hooks/useFacility'
 import { Button } from '@/components/ui/button'
@@ -23,14 +23,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -45,10 +37,19 @@ import { DataTablePagination } from '@/components/data-table/pagination'
 import { DataTableToolbar } from '@/components/data-table/toolbar'
 import { WaveStatusBadge } from '@/components/status-badges'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
   useWaveBoard,
-  useCreateWave,
   type WaveTask,
 } from '@/features/outbound/waves/data/wave-queries'
+import { WaveCreateDialog } from '@/features/outbound/waves/components/WaveCreateDialog'
+import { WaveDetailDialog } from '@/features/outbound/waves/components/WaveDetailDialog'
+import { GeneratePickTasksDialog } from '@/features/outbound/waves/components/GeneratePickTasksDialog'
 
 const STATUS_FILTER_OPTIONS = [
   { label: 'Pending', value: 'pending' },
@@ -64,11 +65,13 @@ export function WaveList() {
 
   const tableUrlState = useTableUrlState({
     search,
-    navigate,
+    navigate: navigate as any,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: true, key: 'q' },
   })
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [detailTask, setDetailTask] = useState<WaveTask | null>(null)
+  const [generateTask, setGenerateTask] = useState<WaveTask | null>(null)
 
   const {
     data: waves,
@@ -78,10 +81,12 @@ export function WaveList() {
     refetch,
     isFetching,
   } = useWaveBoard({})
-  const createMutation = useCreateWave()
   const { selectedFacility } = useFacility()
 
   const waveTasks: WaveTask[] = waves || []
+
+  const isReleased = (status?: string) =>
+    status?.toLowerCase() === 'released' || status?.toLowerCase() === 'in_progress'
 
   const columns: ColumnDef<WaveTask, any>[] = useMemo(
     () => [
@@ -153,6 +158,52 @@ export function WaveList() {
           </span>
         ),
       },
+      {
+        id: 'actions',
+        cell: ({ row }) => {
+          const task = row.original
+          const canGenerate = isReleased(task.status)
+          const isCompleted = task.status?.toLowerCase() === 'completed'
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='ghost' className='h-8 w-8 p-0'>
+                  <MoreHorizontal className='h-4 w-4' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end'>
+                <DropdownMenuItem onClick={() => setDetailTask(task)}>
+                  <Eye className='mr-2 h-4 w-4' />
+                  View Details
+                </DropdownMenuItem>
+                {canGenerate && (
+                  <DropdownMenuItem onClick={() => setGenerateTask(task)}>
+                    <Package className='mr-2 h-4 w-4' />
+                    Generate Pick Tasks
+                  </DropdownMenuItem>
+                )}
+                {!isCompleted && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => toast.info('Wave release endpoint not yet available.')}
+                    >
+                      <Play className='mr-2 h-4 w-4' />
+                      Release
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => toast.info('Wave complete endpoint not yet available.')}
+                    >
+                      <CheckCircle2 className='mr-2 h-4 w-4' />
+                      Mark Completed
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
     ],
     []
   )
@@ -176,23 +227,6 @@ export function WaveList() {
     getFilteredRowModel: getFilteredRowModel(),
   })
 
-  const onCreate = async () => {
-    if (!selectedFacility) {
-      toast.error('Please select a facility from the top bar first')
-      return
-    }
-    try {
-      await createMutation.mutateAsync({ facilityId: selectedFacility.id })
-      toast.success('Picking Wave created successfully')
-      setDialogOpen(false)
-      refetch()
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || err?.message || 'Failed to create wave'
-      )
-    }
-  }
-
   return (
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
@@ -213,50 +247,9 @@ export function WaveList() {
             />{' '}
             Refresh
           </Button>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <Button onClick={() => setDialogOpen(true)}>
-              <Plus className='mr-2 h-4 w-4' /> New Wave
-            </Button>
-            <DialogContent className='sm:max-w-[440px]'>
-              <DialogHeader>
-                <DialogTitle>Create Picking Wave</DialogTitle>
-                <DialogDescription>
-                  Generate a new picking wave for the selected facility
-                </DialogDescription>
-              </DialogHeader>
-              <div className='grid gap-4 py-4'>
-                {selectedFacility && (
-                  <div className='rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground'>
-                    Facility:{' '}
-                    <span className='font-medium text-foreground'>
-                      {selectedFacility.facilityCode} —{' '}
-                      {selectedFacility.facilityName}
-                    </span>
-                  </div>
-                )}
-                {!selectedFacility && (
-                  <p className='text-sm text-muted-foreground'>
-                    Select a facility from the top bar first
-                  </p>
-                )}
-              </div>
-              <DialogFooter>
-                <Button
-                  type='button'
-                  variant='outline'
-                  onClick={() => setDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={onCreate}
-                  disabled={createMutation.isPending || !selectedFacility}
-                >
-                  {createMutation.isPending ? 'Creating...' : 'Create Wave'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Button onClick={() => setCreateDialogOpen(true)}>
+            <Package className='mr-2 h-4 w-4' /> New Wave
+          </Button>
         </div>
       </div>
 
@@ -303,6 +296,11 @@ export function WaveList() {
           ) : table.getRowModel().rows.length === 0 ? (
             <div className='flex flex-col items-center gap-3 py-12 text-center'>
               <p className='text-muted-foreground'>No wave tasks found</p>
+              <p className='max-w-md text-sm text-muted-foreground'>
+                {tableUrlState.globalFilter || tableUrlState.columnFilters.length > 0
+                  ? 'No tasks match the current filters.'
+                  : 'Create a wave to get started.'}
+              </p>
             </div>
           ) : (
             <>
@@ -345,6 +343,28 @@ export function WaveList() {
           )}
         </CardContent>
       </Card>
+
+      <WaveCreateDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
+
+      {detailTask && (
+        <WaveDetailDialog
+          task={detailTask}
+          open={!!detailTask}
+          onOpenChange={(open) => { if (!open) setDetailTask(null) }}
+        />
+      )}
+
+      {generateTask && (
+        <GeneratePickTasksDialog
+          taskId={generateTask.id!}
+          taskLabel={generateTask.id?.substring(0, 12)}
+          open={!!generateTask}
+          onOpenChange={(open) => { if (!open) setGenerateTask(null) }}
+        />
+      )}
     </div>
   )
 }

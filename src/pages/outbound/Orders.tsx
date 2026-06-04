@@ -4,7 +4,7 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { OrderList } from './OrderList'
+import { OrderWorkbenchPage } from '@/features/outbound/orders/pages/OrderWorkbenchPage'
 
 export function Orders() {
   return (
@@ -16,7 +16,7 @@ export function Orders() {
         <ProfileDropdown />
       </Header>
       <Main>
-        <OrderList />
+        <OrderWorkbenchPage />
       </Main>
     </>
   )

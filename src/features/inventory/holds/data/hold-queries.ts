@@ -1,6 +1,14 @@
-import { useQuery } from '@tanstack/react-query'
-import { InventoryWebController_listHolds } from '@/lib/api/wms-api/wms-web/wms-web'
-import type { InventoryWebControllerListHoldsParams } from '@/lib/types/wms-api'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  InventoryWebController_listHolds,
+  InventoryWebController_createHold,
+  InventoryWebController_releaseHold,
+} from '@/lib/api/wms-api/wms-web/wms-web'
+import type {
+  InventoryWebControllerListHoldsParams,
+  CreateHoldDto,
+  ReleaseHoldDto,
+} from '@/lib/types/wms-api'
 
 function safeList<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[]
@@ -73,5 +81,29 @@ export function useHolds(
       total: safeTotal(data),
     }),
     staleTime: 1000 * 30,
+  })
+}
+
+export function useCreateHold() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (dto: CreateHoldDto) => {
+      return InventoryWebController_createHold(dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inventory', 'holds'] })
+    },
+  })
+}
+
+export function useReleaseHold() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, dto }: { id: string; dto?: ReleaseHoldDto }) => {
+      return InventoryWebController_releaseHold(id, dto ?? {})
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inventory', 'holds'] })
+    },
   })
 }

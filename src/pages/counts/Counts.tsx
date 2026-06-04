@@ -5,9 +5,11 @@ import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { ProfileDropdown } from '@/components/profile-dropdown'
-import { CountList } from './CountList'
+import { CycleCountExecutionPage } from '@/features/cycle-counts/pages/CycleCountExecutionPage'
 import { ScheduleCountForm } from './ScheduleCount'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 
 export function CycleCounts() {
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -19,10 +21,14 @@ export function CycleCounts() {
         <ThemeSwitch />
         <ConfigDrawer />
         <ProfileDropdown />
+        <Button size='sm' onClick={() => setDialogOpen(true)}>
+          <Plus className='mr-2 h-4 w-4' />
+          Schedule Count
+        </Button>
       </Header>
       <Main>
         <div className="space-y-6">
-          <CountList onCreateClick={() => setDialogOpen(true)} />
+          <CycleCountExecutionPage />
         </div>
       </Main>
 

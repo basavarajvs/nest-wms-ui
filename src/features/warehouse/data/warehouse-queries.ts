@@ -5,6 +5,7 @@ import {
   WarehouseFacilityController_create,
   WarehouseFacilityController_update,
   WarehouseFacilityController_delete,
+  WarehouseFacilityController_generateLocations,
   WarehouseZoneController_findAllWeb,
   WarehouseZoneController_findById,
   WarehouseZoneController_create,
@@ -16,6 +17,24 @@ import {
   StorageLocationController_getChildrenWeb,
   StorageLocationController_findByCodeWeb,
 } from '@/lib/api/wms-api/master-data/master-data'
+import {
+  AisleController_list,
+  AisleController_create,
+  AisleController_update,
+  AisleController_delete,
+  BayController_list,
+  BayController_create,
+  BayController_update,
+  BayController_delete,
+  RackController_list,
+  RackController_create,
+  RackController_update,
+  RackController_delete,
+  LevelController_list,
+  LevelController_create,
+  LevelController_update,
+  LevelController_delete,
+} from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   CreateFacilityDto,
   UpdateFacilityDto,
@@ -24,7 +43,12 @@ import type {
   CreateLocationDto,
   UpdateLocationDto,
   StorageLocationControllerFindByCodeWebParams,
+  AisleControllerListParams,
+  BayControllerListParams,
+  RackControllerListParams,
+  LevelControllerListParams,
 } from '@/lib/types/wms-api'
+import type { GenerateLocationsDto } from '@/lib/types/wms-api/generateLocationsDto'
 import { useFacility } from '@/hooks/useFacility'
 
 function safeArray<T>(data: unknown): T[] {
@@ -36,6 +60,10 @@ function safeArray<T>(data: unknown): T[] {
     if (Array.isArray(obj.facilities)) return obj.facilities as T[]
     if (Array.isArray(obj.zones)) return obj.zones as T[]
     if (Array.isArray(obj.locations)) return obj.locations as T[]
+    if (Array.isArray(obj.aisles)) return obj.aisles as T[]
+    if (Array.isArray(obj.bays)) return obj.bays as T[]
+    if (Array.isArray(obj.racks)) return obj.racks as T[]
+    if (Array.isArray(obj.levels)) return obj.levels as T[]
   }
   return []
 }
@@ -249,6 +277,248 @@ export function useUpdateLocation() {
       StorageLocationController_updateWeb(id, dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'locations'] })
+    },
+  })
+}
+
+export function useGenerateLocations() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ facilityId, dto }: { facilityId: string; dto: GenerateLocationsDto }) =>
+      WarehouseFacilityController_generateLocations(facilityId, dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'locations'] })
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'zones'] })
+    },
+  })
+}
+
+export interface Aisle {
+  id: string
+  code: string
+  zoneId: string
+  zoneName?: string
+  isActive?: boolean
+}
+
+export interface Bay {
+  id: string
+  code: string
+  aisleId: string
+  aisleCode?: string
+  isActive?: boolean
+}
+
+export interface Rack {
+  id: string
+  code: string
+  bayId: string
+  bayCode?: string
+  isActive?: boolean
+}
+
+export interface Level {
+  id: string
+  code: string
+  rackId: string
+  rackCode?: string
+  locationPrefix?: string
+  locationsPerLevel?: number
+  isActive?: boolean
+}
+
+export function useAisles(params: AisleControllerListParams) {
+  return useQuery({
+    queryKey: ['wms', 'warehouse', 'aisles', params],
+    queryFn: async () => {
+      const res = await AisleController_list(params)
+      return res as unknown
+    },
+    select: (data) => ({
+      aisles: safeArray<Aisle>(data),
+      total: safeTotal(data),
+    }),
+    enabled: !!params.zoneId,
+    staleTime: 1000 * 60 * 2,
+  })
+}
+
+export function useBays(params: BayControllerListParams) {
+  return useQuery({
+    queryKey: ['wms', 'warehouse', 'bays', params],
+    queryFn: async () => {
+      const res = await BayController_list(params)
+      return res as unknown
+    },
+    select: (data) => ({
+      bays: safeArray<Bay>(data),
+      total: safeTotal(data),
+    }),
+    enabled: !!params.aisleId,
+    staleTime: 1000 * 60 * 2,
+  })
+}
+
+export function useRacks(params: RackControllerListParams) {
+  return useQuery({
+    queryKey: ['wms', 'warehouse', 'racks', params],
+    queryFn: async () => {
+      const res = await RackController_list(params)
+      return res as unknown
+    },
+    select: (data) => ({
+      racks: safeArray<Rack>(data),
+      total: safeTotal(data),
+    }),
+    enabled: !!params.bayId,
+    staleTime: 1000 * 60 * 2,
+  })
+}
+
+export function useLevels(params: LevelControllerListParams) {
+  return useQuery({
+    queryKey: ['wms', 'warehouse', 'levels', params],
+    queryFn: async () => {
+      const res = await LevelController_list(params)
+      return res as unknown
+    },
+    select: (data) => ({
+      levels: safeArray<Level>(data),
+      total: safeTotal(data),
+    }),
+    enabled: !!params.rackId,
+    staleTime: 1000 * 60 * 2,
+  })
+}
+
+export function useCreateAisle() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (dto: Record<string, unknown>) =>
+      AisleController_create({ ...{ body: JSON.stringify(dto) }, method: 'POST' } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'aisles'] })
+    },
+  })
+}
+
+export function useUpdateAisle() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Record<string, unknown> }) =>
+      AisleController_update(id, { ...{ body: JSON.stringify(dto) }, method: 'PATCH' } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'aisles'] })
+    },
+  })
+}
+
+export function useDeleteAisle() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) =>
+      AisleController_delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'aisles'] })
+    },
+  })
+}
+
+export function useCreateBay() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (dto: Record<string, unknown>) =>
+      BayController_create({ ...{ body: JSON.stringify(dto) }, method: 'POST' } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'bays'] })
+    },
+  })
+}
+
+export function useUpdateBay() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Record<string, unknown> }) =>
+      BayController_update(id, { ...{ body: JSON.stringify(dto) }, method: 'PATCH' } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'bays'] })
+    },
+  })
+}
+
+export function useDeleteBay() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) =>
+      BayController_delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'bays'] })
+    },
+  })
+}
+
+export function useCreateRack() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (dto: Record<string, unknown>) =>
+      RackController_create({ ...{ body: JSON.stringify(dto) }, method: 'POST' } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'racks'] })
+    },
+  })
+}
+
+export function useUpdateRack() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Record<string, unknown> }) =>
+      RackController_update(id, { ...{ body: JSON.stringify(dto) }, method: 'PATCH' } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'racks'] })
+    },
+  })
+}
+
+export function useDeleteRack() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) =>
+      RackController_delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'racks'] })
+    },
+  })
+}
+
+export function useCreateLevel() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (dto: Record<string, unknown>) =>
+      LevelController_create({ ...{ body: JSON.stringify(dto) }, method: 'POST' } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'levels'] })
+    },
+  })
+}
+
+export function useUpdateLevel() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Record<string, unknown> }) =>
+      LevelController_update(id, { ...{ body: JSON.stringify(dto) }, method: 'PATCH' } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'levels'] })
+    },
+  })
+}
+
+export function useDeleteLevel() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) =>
+      LevelController_delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'levels'] })
     },
   })
 }

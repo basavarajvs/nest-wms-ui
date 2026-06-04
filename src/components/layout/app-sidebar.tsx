@@ -11,9 +11,17 @@ import { sidebarData } from './data/sidebar-data'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
 import { TeamSwitcher } from './team-switcher'
+import { useAuth } from '@/hooks/useAuth'
+import { filterSidebar } from './filter-sidebar'
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout()
+  const { user } = useAuth()
+
+  const filteredNavGroups = user?.roles?.length
+    ? filterSidebar(sidebarData.navGroups, user.roles)
+    : sidebarData.navGroups
+
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>
@@ -24,7 +32,7 @@ export function AppSidebar() {
         {/* <AppTitle /> */}
       </SidebarHeader>
       <SidebarContent>
-        {sidebarData.navGroups.map((props) => (
+        {filteredNavGroups.map((props) => (
           <NavGroup key={props.title} {...props} />
         ))}
       </SidebarContent>

@@ -8,8 +8,14 @@ import {
   LoadWebController_delete,
   LoadWebController_markLoaded,
   LoadWebController_markDeparted,
+  OutboundWebController_assignShipmentToLoad,
 } from '@/lib/api/wms-api/wms-web/wms-web'
-import type { CreateLoadDto, UpdateLoadDto } from '@/lib/types/wms-api'
+import type {
+  CreateLoadDto,
+  UpdateLoadDto,
+  ShipmentLoadDto,
+  LoadWebControllerFindAllParams,
+} from '@/lib/types/wms-api'
 
 function safeArray<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[]
@@ -32,6 +38,14 @@ function safeTotal(data: unknown, fallback = 0): number {
   return fallback
 }
 
+export interface LoadShipment {
+  id: string
+  shipmentId?: string
+  orderNumber?: string
+  carrierCode?: string
+  status?: string
+}
+
 export interface Load {
   id: string
   loadNumber: string
@@ -43,15 +57,22 @@ export interface Load {
   vehiclePlate?: string
   status?: string
   notes?: string
+  shipmentIds?: string[]
+  shipments?: LoadShipment[]
   createdAt?: string
   updatedAt?: string
 }
 
-export function useLoads() {
+export function useLoads(params?: Partial<LoadWebControllerFindAllParams>) {
+  const queryParams: LoadWebControllerFindAllParams = {
+    facilityId: params?.facilityId || '',
+    status: params?.status || '',
+  }
+  const stableKey = JSON.stringify(queryParams)
   return useQuery({
-    queryKey: ['wms', 'loads', 'list'],
+    queryKey: ['wms', 'loads', 'list', stableKey],
     queryFn: async () => {
-      const res = await LoadWebController_findAll()
+      const res = await LoadWebController_findAll(queryParams)
       return res as unknown
     },
     select: (data) => ({
@@ -74,6 +95,21 @@ export function useLoad(id: string) {
       return items[0] ?? null
     },
     enabled: !!id,
+  })
+}
+
+export function useLoadShipments(loadId: string) {
+  return useQuery({
+    queryKey: ['wms', 'loads', 'shipments', loadId],
+    queryFn: async () => {
+      const res = await LoadWebController_findById(loadId)
+      return res as unknown
+    },
+    select: (data) => {
+      const items = safeArray<LoadShipment>(data)
+      return items
+    },
+    enabled: !!loadId,
   })
 }
 
@@ -105,7 +141,19 @@ export function useCreateLoad() {
 export function useUpdateLoad() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, dto }: { id: string; dto: UpdateLoadDto }) => LoadWebController_update(id, dto),
+    mutationFn: ({ id, dto }: { id: string; dto: UpdateLoadDto }) =>
+      LoadWebController_update(id, dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'loads'] })
+    },
+  })
+}
+
+export function useUpdateLoadStatus() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      LoadWebController_update(id, { status } as UpdateLoadDto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'loads'] })
     },
@@ -138,6 +186,18 @@ export function useMarkLoadDeparted() {
     mutationFn: (id: string) => LoadWebController_markDeparted(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'loads'] })
+    },
+  })
+}
+
+export function useAssignShipmentToLoad() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (dto: ShipmentLoadDto) =>
+      OutboundWebController_assignShipmentToLoad(dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'loads'] })
+      queryClient.invalidateQueries({ queryKey: ['wms', 'outbound', 'shipments'] })
     },
   })
 }

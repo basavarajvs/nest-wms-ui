@@ -1,9 +1,27 @@
-import { useState } from 'react'
-import * as z from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useState, useMemo, useCallback } from 'react'
+import {
+  type ColumnDef,
+  type SortingState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  flexRender,
+} from '@tanstack/react-table'
 import type { LoadStatus } from '@/types/warehouse-statuses'
-import { Plus, Search, Edit, Trash2, Truck, Ship } from 'lucide-react'
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Truck,
+  Ship,
+  Eye,
+  Package,
+  MoreHorizontal,
+  Play,
+  Loader2,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import {
   AlertDialog,
@@ -24,16 +42,12 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -43,129 +57,61 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import { DataTablePagination } from '@/components/data-table/pagination'
+import { DataTableToolbar } from '@/components/data-table/toolbar'
 import { LoadStatusBadge } from '@/components/status-badges'
+import { useFacility } from '@/hooks/useFacility'
 import {
   useLoads,
-  useCreateLoad,
-  useUpdateLoad,
   useDeleteLoad,
+  useUpdateLoadStatus,
   useMarkLoadLoaded,
   useMarkLoadDeparted,
   type Load,
 } from './data/load-queries'
-
-const loadSchema = z.object({
-  loadNumber: z.string().min(1, 'Load number is required'),
-  facilityId: z.string().min(1, 'Facility ID is required'),
-  carrierCode: z.string().optional(),
-  dockDoorCode: z.string().optional(),
-  driverName: z.string().optional(),
-  driverPhone: z.string().optional(),
-  vehiclePlate: z.string().optional(),
-  notes: z.string().optional(),
-})
-
-type LoadForm = z.infer<typeof loadSchema>
+import { LoadCreateDialog } from './components/LoadCreateDialog'
+import { LoadDetailDialog } from './components/LoadDetailDialog'
+import { AddShipmentToLoadDialog } from './components/AddShipmentToLoadDialog'
 
 export function Loads() {
-  const [page, setPage] = useState(1)
-  const [limit] = useState(10)
-  const [search, setSearch] = useState('')
+  const [sorting, setSorting] = useState<SortingState>([])
+  const { selectedFacility } = useFacility()
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingLoad, setEditingLoad] = useState<Load | null>(null)
+  const [detailLoad, setDetailLoad] = useState<Load | null>(null)
+  const [assignShipmentLoad, setAssignShipmentLoad] = useState<Load | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  const { data, isLoading, error, refetch } = useLoads()
-  const createMutation = useCreateLoad()
-  const updateMutation = useUpdateLoad()
+  const facilityId = selectedFacility?.id ?? ''
+
+  const { data, isLoading, error, refetch } = useLoads({ facilityId })
   const deleteMutation = useDeleteLoad()
+  const updateStatusMutation = useUpdateLoadStatus()
   const markLoadedMutation = useMarkLoadLoaded()
   const markDepartedMutation = useMarkLoadDeparted()
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<LoadForm>({
-    resolver: zodResolver(loadSchema) as any,
-    defaultValues: {
-      loadNumber: '',
-      facilityId: '',
-      carrierCode: '',
-      dockDoorCode: '',
-      driverName: '',
-      driverPhone: '',
-      vehiclePlate: '',
-      notes: '',
-    },
-  })
-
   const loads = data?.loads ?? []
-  const filtered = loads.filter((l) => {
-    if (!search) return true
-    const q = search.toLowerCase()
-    return (
-      l.loadNumber.toLowerCase().includes(q) ||
-      (l.carrierCode && l.carrierCode.toLowerCase().includes(q))
-    )
-  })
-  const total = filtered.length
-  const totalPages = Math.max(1, Math.ceil(total / limit))
-  const paginated = filtered.slice((page - 1) * limit, page * limit)
+  const isPending =
+    updateStatusMutation.isPending ||
+    markLoadedMutation.isPending ||
+    markDepartedMutation.isPending
 
-  const openDialog = (load?: Load) => {
-    if (load) {
-      setEditingLoad(load)
-      reset({
-        loadNumber: load.loadNumber,
-        facilityId: load.facilityId,
-        carrierCode: load.carrierCode || '',
-        dockDoorCode: load.dockDoorCode || '',
-        driverName: load.driverName || '',
-        driverPhone: load.driverPhone || '',
-        vehiclePlate: load.vehiclePlate || '',
-        notes: load.notes || '',
-      })
-    } else {
-      setEditingLoad(null)
-      reset({
-        loadNumber: '',
-        facilityId: '',
-        carrierCode: '',
-        dockDoorCode: '',
-        driverName: '',
-        driverPhone: '',
-        vehiclePlate: '',
-        notes: '',
-      })
+  const getAvailableTransitions = useCallback((currentStatus?: string) => {
+    const s = currentStatus?.toUpperCase() || 'CREATED'
+    switch (s) {
+      case 'CREATED':
+      case 'PLANNED':
+        return [{ value: 'LOADING', label: 'Start Loading', icon: Play }]
+      case 'LOADING':
+        return [{ value: 'LOADED', label: 'Mark Loaded', icon: Truck }]
+      case 'LOADED':
+        return [{ value: 'DEPARTED', label: 'Mark Departed', icon: Ship }]
+      default:
+        return []
     }
-    setDialogOpen(true)
-  }
-
-  const onSubmit = async (values: LoadForm) => {
-    try {
-      if (editingLoad) {
-        await updateMutation.mutateAsync({
-          id: editingLoad.id,
-          dto: values as any,
-        })
-        toast.success('Load updated')
-      } else {
-        await createMutation.mutateAsync(values as any)
-        toast.success('Load created')
-      }
-      setDialogOpen(false)
-      setEditingLoad(null)
-      reset()
-      refetch()
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || err?.message || 'Operation failed'
-      )
-    }
-  }
+  }, [])
 
   const handleDelete = async () => {
     if (!deleteId) return
@@ -179,23 +125,155 @@ export function Loads() {
     }
   }
 
-  const handleMarkLoaded = async (id: string) => {
+  const handleStatusUpdate = async (id: string, status: string) => {
     try {
-      await markLoadedMutation.mutateAsync(id)
-      toast.success('Load marked as Loaded')
+      if (status === 'LOADED') {
+        await markLoadedMutation.mutateAsync(id)
+      } else if (status === 'DEPARTED') {
+        await markDepartedMutation.mutateAsync(id)
+      } else {
+        await updateStatusMutation.mutateAsync({ id, status })
+      }
+      toast.success(`Load status updated to ${status}`)
     } catch (err: any) {
-      toast.error(err?.message || 'Failed to mark loaded')
+      toast.error(err?.message || `Failed to update status to ${status}`)
     }
   }
 
-  const handleMarkDeparted = async (id: string) => {
-    try {
-      await markDepartedMutation.mutateAsync(id)
-      toast.success('Load marked as Departed')
-    } catch (err: any) {
-      toast.error(err?.message || 'Failed to mark departed')
-    }
-  }
+  const columns: ColumnDef<Load, any>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'loadNumber',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Load Number' />
+        ),
+        cell: ({ row }) => (
+          <span className='font-medium'>{row.original.loadNumber}</span>
+        ),
+      },
+      {
+        accessorKey: 'facilityId',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Facility' />
+        ),
+      },
+      {
+        accessorKey: 'dockDoorCode',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Dock Door' />
+        ),
+        cell: ({ row }) => (
+          <span className='font-mono text-xs'>{row.original.dockDoorCode || '—'}</span>
+        ),
+      },
+      {
+        accessorKey: 'carrierCode',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Carrier' />
+        ),
+        cell: ({ row }) => (
+          <span>{row.original.carrierCode || '—'}</span>
+        ),
+      },
+      {
+        id: 'driverInfo',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Driver / Plate' />
+        ),
+        cell: ({ row }) => (
+          <span className='text-sm'>
+            {[row.original.driverName, row.original.vehiclePlate]
+              .filter(Boolean)
+              .join(' / ') || '—'}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'status',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Status' />
+        ),
+        cell: ({ row }) => (
+          <LoadStatusBadge
+            status={
+              (row.original.status?.toUpperCase() as LoadStatus) ||
+              (row.original.status as LoadStatus)
+            }
+          />
+        ),
+        filterFn: 'arrIncludesSome',
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => {
+          const load = row.original
+          const transitions = getAvailableTransitions(load.status)
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='ghost' className='h-8 w-8 p-0'>
+                  <MoreHorizontal className='h-4 w-4' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end'>
+                <DropdownMenuItem onClick={() => setDetailLoad(load)}>
+                  <Eye className='mr-2 h-4 w-4' />
+                  View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setAssignShipmentLoad(load)}>
+                  <Package className='mr-2 h-4 w-4' />
+                  Add Shipment
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setEditingLoad(load); setDialogOpen(true) }}>
+                  <Edit className='mr-2 h-4 w-4' />
+                  Edit
+                </DropdownMenuItem>
+                {transitions.length > 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    {transitions.map((t) => (
+                      <DropdownMenuItem
+                        key={t.value}
+                        onClick={() => handleStatusUpdate(load.id, t.value)}
+                        disabled={isPending}
+                      >
+                        {isPending ? (
+                          <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                        ) : (
+                          <t.icon className='mr-2 h-4 w-4' />
+                        )}
+                        {t.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className='text-destructive'
+                  onClick={() => setDeleteId(load.id)}
+                >
+                  <Trash2 className='mr-2 h-4 w-4' />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
+    ],
+    [getAvailableTransitions, isPending]
+  )
+
+  const table = useReactTable({
+    data: loads,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  })
 
   return (
     <div className='space-y-6'>
@@ -206,126 +284,49 @@ export function Loads() {
             Manage outbound loads and shipments
           </p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => openDialog()}>
-              <Plus className='mr-2 h-4 w-4' /> New Load
-            </Button>
-          </DialogTrigger>
-          <DialogContent className='sm:max-w-[520px]'>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <DialogHeader>
-                <DialogTitle>
-                  {editingLoad ? 'Edit Load' : 'Create New Load'}
-                </DialogTitle>
-                <DialogDescription>
-                  {editingLoad
-                    ? 'Update the load details below.'
-                    : 'Add a new load to the system.'}
-                </DialogDescription>
-              </DialogHeader>
-              <div className='grid gap-4 py-4'>
-                <div className='grid gap-2'>
-                  <Label htmlFor='loadNumber'>Load Number *</Label>
-                  <Input
-                    id='loadNumber'
-                    {...register('loadNumber')}
-                    disabled={!!editingLoad}
-                  />
-                  {errors.loadNumber && (
-                    <p className='text-sm text-destructive'>
-                      {errors.loadNumber.message}
-                    </p>
-                  )}
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='facilityId'>Facility ID *</Label>
-                  <Input id='facilityId' {...register('facilityId')} />
-                  {errors.facilityId && (
-                    <p className='text-sm text-destructive'>
-                      {errors.facilityId.message}
-                    </p>
-                  )}
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='carrierCode'>Carrier Code</Label>
-                  <Input id='carrierCode' {...register('carrierCode')} />
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='dockDoorCode'>Dock Door Code</Label>
-                  <Input id='dockDoorCode' {...register('dockDoorCode')} />
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='driverName'>Driver Name</Label>
-                  <Input id='driverName' {...register('driverName')} />
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='driverPhone'>Driver Phone</Label>
-                  <Input id='driverPhone' {...register('driverPhone')} />
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='vehiclePlate'>Vehicle Plate</Label>
-                  <Input id='vehiclePlate' {...register('vehiclePlate')} />
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='notes'>Notes</Label>
-                  <Input id='notes' {...register('notes')} />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  type='button'
-                  variant='outline'
-                  onClick={() => setDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type='submit'
-                  disabled={
-                    isSubmitting ||
-                    createMutation.isPending ||
-                    updateMutation.isPending
-                  }
-                >
-                  {editingLoad ? 'Save Changes' : 'Create Load'}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      <div className='relative max-w-sm flex-1'>
-        <Search className='absolute top-3 left-3 h-4 w-4 text-muted-foreground' />
-        <Input
-          placeholder='Search loads...'
-          className='pl-9'
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value)
-            setPage(1)
-          }}
-        />
+        <Button onClick={() => { setEditingLoad(null); setDialogOpen(true) }}>
+          <Plus className='mr-2 h-4 w-4' /> New Load
+        </Button>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Loads</CardTitle>
-          <CardDescription>{total} loads</CardDescription>
+        <CardHeader className='pb-3'>
+          <CardTitle>Loads ({loads.length})</CardTitle>
+          <CardDescription>
+            {selectedFacility
+              ? `Facility: ${selectedFacility.facilityCode || selectedFacility.id}`
+              : 'Select a facility from the top bar'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
+          <DataTableToolbar
+            table={table}
+            searchKey='loadNumber'
+            searchPlaceholder='Filter by load number...'
+            filters={[
+              {
+                columnId: 'status',
+                title: 'Status',
+                options: [
+                  { label: 'Created', value: 'created' },
+                  { label: 'Planned', value: 'planned' },
+                  { label: 'Loading', value: 'loading' },
+                  { label: 'Loaded', value: 'loaded' },
+                  { label: 'Departed', value: 'departed' },
+                  { label: 'Cancelled', value: 'cancelled' },
+                ],
+              },
+            ]}
+          />
           {isLoading ? (
-            <div className='space-y-2'>
+            <div className='mt-4 space-y-2'>
               {Array.from({ length: 5 }).map((_, i) => (
                 <Skeleton key={i} className='h-12 w-full' />
               ))}
             </div>
           ) : error ? (
             <div className='flex flex-col items-center gap-2 py-8 text-center'>
-              <p className='font-medium text-destructive'>
-                Failed to load loads
-              </p>
+              <p className='font-medium text-destructive'>Failed to load loads</p>
               <p className='text-sm text-muted-foreground'>
                 {(error as any)?.message || 'An unexpected error occurred'}
               </p>
@@ -333,103 +334,79 @@ export function Loads() {
                 Retry
               </Button>
             </div>
-          ) : paginated.length === 0 ? (
-            <div className='py-8 text-center text-muted-foreground'>
-              No loads found.
+          ) : table.getRowModel().rows.length === 0 ? (
+            <div className='flex flex-col items-center gap-3 py-12 text-center'>
+              <p className='font-medium text-muted-foreground'>No loads found</p>
+              <p className='max-w-md text-sm text-muted-foreground'>
+                Create a new load to get started.
+              </p>
             </div>
           ) : (
             <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Load Number</TableHead>
-                    <TableHead>Facility</TableHead>
-                    <TableHead>Carrier</TableHead>
-                    <TableHead>Driver</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className='text-right'>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginated.map((load) => (
-                    <TableRow key={load.id}>
-                      <TableCell className='font-medium'>
-                        {load.loadNumber}
-                      </TableCell>
-                      <TableCell>{load.facilityId}</TableCell>
-                      <TableCell>{load.carrierCode || '—'}</TableCell>
-                      <TableCell>{load.driverName || '—'}</TableCell>
-                      <TableCell>
-                        <LoadStatusBadge
-                          status={
-                            (load.status?.toUpperCase() as LoadStatus) ||
-                            (load.status as LoadStatus)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell className='space-x-1 text-right'>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          onClick={() => openDialog(load)}
-                        >
-                          <Edit className='h-4 w-4' />
-                        </Button>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          onClick={() => handleMarkLoaded(load.id)}
-                          title='Mark Loaded'
-                        >
-                          <Truck className='h-4 w-4' />
-                        </Button>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          onClick={() => handleMarkDeparted(load.id)}
-                          title='Mark Departed'
-                        >
-                          <Ship className='h-4 w-4' />
-                        </Button>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          onClick={() => setDeleteId(load.id)}
-                        >
-                          <Trash2 className='h-4 w-4 text-destructive' />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <div className='mt-4 flex justify-between text-sm'>
-                <span>
-                  Page {page} of {totalPages}
-                </span>
-                <div className='space-x-2'>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    disabled={page <= 1}
-                    onClick={() => setPage((p) => p - 1)}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    disabled={page >= totalPages}
-                    onClick={() => setPage((p) => p + 1)}
-                  >
-                    Next
-                  </Button>
-                </div>
+              <div className='mt-4 rounded-md border'>
+                <Table>
+                  <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
+              <DataTablePagination table={table} className='mt-4' />
             </>
           )}
         </CardContent>
       </Card>
+
+      <LoadCreateDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          setDialogOpen(open)
+          if (!open) setEditingLoad(null)
+        }}
+        editingLoad={editingLoad}
+      />
+
+      {detailLoad && (
+        <LoadDetailDialog
+          load={detailLoad}
+          open={!!detailLoad}
+          onOpenChange={(open) => { if (!open) setDetailLoad(null) }}
+          onAssignShipments={() => {
+            const l = detailLoad
+            setDetailLoad(null)
+            setAssignShipmentLoad(l)
+          }}
+        />
+      )}
+
+      {assignShipmentLoad && (
+        <AddShipmentToLoadDialog
+          loadId={assignShipmentLoad.id}
+          dockDoorCode={assignShipmentLoad.dockDoorCode}
+          open={!!assignShipmentLoad}
+          onOpenChange={(open) => { if (!open) setAssignShipmentLoad(null) }}
+        />
+      )}
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
@@ -441,10 +418,7 @@ export function Loads() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className='bg-destructive'
-            >
+            <AlertDialogAction onClick={handleDelete} className='bg-destructive'>
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

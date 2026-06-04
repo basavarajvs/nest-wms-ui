@@ -69,7 +69,7 @@ export default function InboundPage() {
                 <Card
                   key={link.href}
                   className="cursor-pointer transition-all hover:shadow-md hover:border-primary/30"
-                  onClick={() => navigate({ to: link.href as '/inbound/asns' | '/inbound/grns' | '/inbound/putaway-board' })}
+                  onClick={() => navigate({ to: link.href as any })}
                 >
                   <CardHeader>
                     <div className={`mb-2 inline-flex rounded-lg p-3 ${link.bgColor}`}>

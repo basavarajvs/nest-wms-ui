@@ -23,7 +23,7 @@ import type {
   LpnRfControllerProductQtyParams
 } from '../../../types/wms-api';
 
-import { customInstance } from '../../../httpClient';
+import { customInstance } from '../../../http/httpClient';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];

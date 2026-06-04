@@ -1,7 +1,4 @@
 import { useState, useMemo } from 'react'
-import * as z from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   type ColumnDef,
   type SortingState,
@@ -15,8 +12,7 @@ import {
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import type { OrderStatus } from '@/types/warehouse-statuses'
-import { Plus, Search, RefreshCw } from 'lucide-react'
-import { toast } from 'sonner'
+import { Plus, RefreshCw, Layers, MoreHorizontal, Eye } from 'lucide-react'
 import { useFacility } from '@/hooks/useFacility'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -27,23 +23,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -53,27 +32,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Textarea } from '@/components/ui/textarea'
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import { DataTablePagination } from '@/components/data-table/pagination'
 import { DataTableToolbar } from '@/components/data-table/toolbar'
 import { OrderStatusBadge } from '@/components/status-badges'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
   useOrders,
-  useCreateOrder,
   type Order,
 } from '@/features/outbound/orders/data/order-queries'
-
-const orderSchema = z.object({
-  clientCode: z.string().min(1, 'Client code is required'),
-  orderType: z.string().optional(),
-  priority: z.coerce.number().optional(),
-  requestedDeliveryDate: z.string().optional(),
-  deliveryAddress: z.string().optional(),
-  notes: z.string().optional(),
-})
-
-type OrderForm = z.infer<typeof orderSchema>
+import { OrderLineItemsDialog } from '@/features/outbound/orders/components/OrderLineItemsDialog'
+import { SalesOrderCreateWizard } from '@/features/outbound/orders/components/SalesOrderCreateWizard'
+import { SalesOrderDetailsDialog } from '@/features/outbound/orders/components/SalesOrderDetailsDialog'
 
 const STATUS_FILTER_OPTIONS = [
   { label: 'Created', value: 'created' },
@@ -85,14 +60,6 @@ const STATUS_FILTER_OPTIONS = [
   { label: 'Cancelled', value: 'cancelled' },
 ]
 
-const PRIORITY_OPTIONS = [
-  { value: '1', label: '1 - Lowest' },
-  { value: '2', label: '2 - Low' },
-  { value: '3', label: '3 - Normal' },
-  { value: '4', label: '4 - High' },
-  { value: '5', label: '5 - Critical' },
-]
-
 export function OrderList() {
   const [sorting, setSorting] = useState<SortingState>([])
   const navigate = useNavigate()
@@ -101,11 +68,13 @@ export function OrderList() {
 
   const tableUrlState = useTableUrlState({
     search,
-    navigate,
+    navigate: navigate as any,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: true, key: 'q' },
   })
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [createWizardOpen, setCreateWizardOpen] = useState(false)
+  const [detailsDialogOrder, setDetailsDialogOrder] = useState<Order | null>(null)
+  const [linesDialogOrder, setLinesDialogOrder] = useState<Order | null>(null)
 
   const { data, isLoading, isError, error, refetch, isFetching } = useOrders({
     page: 1,
@@ -113,20 +82,7 @@ export function OrderList() {
     status: '',
     clientCode: '',
   })
-  const createMutation = useCreateOrder()
   const { selectedFacility } = useFacility()
-
-  const form = useForm<OrderForm>({
-    resolver: zodResolver(orderSchema) as any,
-    defaultValues: {
-      clientCode: '',
-      orderType: 'standard',
-      priority: 3,
-      requestedDeliveryDate: '',
-      deliveryAddress: '',
-      notes: '',
-    },
-  })
 
   const orders: Order[] = data?.orders || []
 
@@ -214,6 +170,31 @@ export function OrderList() {
           return date ? new Date(date).toLocaleDateString() : '—'
         },
       },
+      {
+        id: 'actions',
+        cell: ({ row }) => {
+          const order = row.original
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setDetailsDialogOrder(order)}>
+                  <Eye className="mr-2 h-4 w-4" />
+                  View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLinesDialogOrder(order)}>
+                  <Layers className="mr-2 h-4 w-4" />
+                  Manage Lines
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
     ],
     []
   )
@@ -237,31 +218,6 @@ export function OrderList() {
     getFilteredRowModel: getFilteredRowModel(),
   })
 
-  const onCreateSubmit = async (formData: OrderForm) => {
-    if (!selectedFacility) {
-      toast.error('Please select a facility from the top bar first')
-      return
-    }
-    try {
-      await createMutation.mutateAsync({
-        facilityId: selectedFacility.id,
-        clientCode: formData.clientCode,
-        orderType: formData.orderType || undefined,
-        priority: formData.priority,
-        requestedDeliveryDate: formData.requestedDeliveryDate || undefined,
-        notes: formData.notes || undefined,
-      })
-      toast.success('Sales Order created successfully')
-      setDialogOpen(false)
-      form.reset()
-      refetch()
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || err?.message || 'Failed to create order'
-      )
-    }
-  }
-
   return (
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
@@ -282,8 +238,8 @@ export function OrderList() {
             />
             Refresh
           </Button>
-          <Button onClick={() => setDialogOpen(true)}>
-            <Plus className='mr-2 h-4 w-4' /> New Order
+          <Button onClick={() => setCreateWizardOpen(true)}>
+            <Plus className='mr-2 h-4 w-4' /> Create Order
           </Button>
         </div>
       </div>
@@ -340,7 +296,7 @@ export function OrderList() {
                   : 'Create your first sales order to get started.'}
               </p>
               {!tableUrlState.globalFilter && tableUrlState.columnFilters.length === 0 && (
-                <Button size='sm' onClick={() => setDialogOpen(true)}>
+                <Button size='sm' onClick={() => setCreateWizardOpen(true)}>
                   <Plus className='mr-2 h-4 w-4' /> Create Order
                 </Button>
               )}
@@ -387,112 +343,27 @@ export function OrderList() {
         </CardContent>
       </Card>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className='sm:max-w-[560px]'>
-          <form onSubmit={form.handleSubmit(onCreateSubmit)}>
-            <DialogHeader>
-              <DialogTitle>Create New Sales Order</DialogTitle>
-              <DialogDescription>
-                Enter order details. Inventory will be allocated upon creation.
-              </DialogDescription>
-            </DialogHeader>
-            <div className='grid gap-4 py-4'>
-              {selectedFacility && (
-                <div className='rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground'>
-                  Facility:{' '}
-                  <span className='font-medium text-foreground'>
-                    {selectedFacility.facilityCode} —{' '}
-                    {selectedFacility.facilityName}
-                  </span>
-                </div>
-              )}
-              <div className='grid gap-2'>
-                <Label htmlFor='clientCode'>Client Code *</Label>
-                <Input
-                  id='clientCode'
-                  {...form.register('clientCode')}
-                  placeholder='e.g. CLIENT-001'
-                />
-                {form.formState.errors.clientCode && (
-                  <p className='text-sm text-destructive'>
-                    {form.formState.errors.clientCode.message}
-                  </p>
-                )}
-              </div>
-              <div className='grid grid-cols-2 gap-4'>
-                <div className='grid gap-2'>
-                  <Label htmlFor='orderType'>Order Type</Label>
-                  <Input
-                    id='orderType'
-                    {...form.register('orderType')}
-                    placeholder='standard'
-                  />
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='priority'>Priority</Label>
-                  <Select
-                    value={String(form.watch('priority') ?? 3)}
-                    onValueChange={(v) =>
-                      form.setValue('priority', parseInt(v))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select priority' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PRIORITY_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className='grid gap-2'>
-                <Label htmlFor='requestedDeliveryDate'>
-                  Requested Delivery Date
-                </Label>
-                <Input
-                  id='requestedDeliveryDate'
-                  type='date'
-                  {...form.register('requestedDeliveryDate')}
-                />
-              </div>
-              <div className='grid gap-2'>
-                <Label htmlFor='deliveryAddress'>Delivery Address</Label>
-                <Textarea
-                  id='deliveryAddress'
-                  {...form.register('deliveryAddress')}
-                  rows={2}
-                  placeholder='Street, city, postal code...'
-                />
-              </div>
-              <div className='grid gap-2'>
-                <Label htmlFor='notes'>Notes</Label>
-                <Textarea
-                  id='notes'
-                  {...form.register('notes')}
-                  rows={2}
-                  placeholder='Additional notes...'
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={() => setDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type='submit' disabled={createMutation.isPending}>
-                {createMutation.isPending ? 'Creating...' : 'Create Order'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {detailsDialogOrder && (
+        <SalesOrderDetailsDialog
+          order={detailsDialogOrder}
+          open={!!detailsDialogOrder}
+          onOpenChange={(open) => { if (!open) setDetailsDialogOrder(null) }}
+        />
+      )}
+
+      {linesDialogOrder && (
+        <OrderLineItemsDialog
+          orderId={linesDialogOrder.id}
+          orderStatus={linesDialogOrder.status}
+          open={!!linesDialogOrder}
+          onOpenChange={(open) => { if (!open) setLinesDialogOrder(null) }}
+        />
+      )}
+
+      <SalesOrderCreateWizard
+        open={createWizardOpen}
+        onOpenChange={setCreateWizardOpen}
+      />
     </div>
   )
 }

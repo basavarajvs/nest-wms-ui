@@ -1,19 +1,18 @@
-import { useState, useCallback } from 'react'
-import * as z from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, FileText, RefreshCw, Truck } from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { useState, useMemo } from 'react'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+  type ColumnDef,
+  type SortingState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  flexRender,
+} from '@tanstack/react-table'
+import { useNavigate, useRouter } from '@tanstack/react-router'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
+import { Plus, Layers, MoreHorizontal, Eye, Radio } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -22,109 +21,188 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
-  useCreateAsn,
-  usePreviewAsn,
-  useUpdateAsnStatus,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import { DataTablePagination } from '@/components/data-table/pagination'
+import { DataTableToolbar } from '@/components/data-table/toolbar'
+import {
+  useAsns,
+  type Asn,
 } from '@/features/inbound/asns/data/asn-queries'
-import { useFacility } from '@/hooks/useFacility'
+import { AsnLineItemsDialog } from '@/features/inbound/asns/components/AsnLineItemsDialog'
+import { AsnCreateWizard } from '@/features/inbound/asns/components/AsnCreateWizard'
+import { AsnDetailsDialog } from '@/features/inbound/asns/components/AsnDetailsDialog'
+import { AsnReceivingDialog } from '@/features/inbound/asns/components/AsnReceivingDialog'
+import { Badge } from '@/components/ui/badge'
 
-const createAsnSchema = z.object({
-  vendorId: z.string().optional(),
-  poNumber: z.string().optional(),
-  carrierName: z.string().optional(),
-  trackingNumber: z.string().optional(),
-  expectedArrivalDate: z.string().optional(),
-  notes: z.string().optional(),
-})
+const ASN_STATUS_OPTIONS = ['draft', 'sent', 'in_transit', 'arrived', 'received', 'cancelled']
 
-type CreateAsnForm = z.infer<typeof createAsnSchema>
-
-const ASN_STATUS_OPTIONS = ['draft', 'sent', 'in_transit', 'received', 'cancelled']
+const STATUS_COLORS: Record<string, string> = {
+  draft: 'bg-yellow-100 text-yellow-700',
+  sent: 'bg-blue-100 text-blue-700',
+  in_transit: 'bg-purple-100 text-purple-700',
+  arrived: 'bg-indigo-100 text-indigo-700',
+  received: 'bg-green-100 text-green-700',
+  cancelled: 'bg-red-100 text-red-700',
+}
 
 export function AsnList() {
   const [createOpen, setCreateOpen] = useState(false)
-  const [toolId, setToolId] = useState('')
-  const [toolStatus, setToolStatus] = useState('received')
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [linesDialogAsn, setLinesDialogAsn] = useState<Asn | null>(null)
+  const [detailDialogAsn, setDetailDialogAsn] = useState<Asn | null>(null)
+  const [receivingDialogAsn, setReceivingDialogAsn] = useState<Asn | null>(null)
 
-  const createMutation = useCreateAsn()
-  const previewMutation = usePreviewAsn()
-  const updateStatusMutation = useUpdateAsnStatus()
-  const { selectedFacility } = useFacility()
+  const navigate = useNavigate()
+  const router = useRouter()
+  const search = router.state.location.search as Record<string, unknown>
 
-  const form = useForm<CreateAsnForm>({
-    resolver: zodResolver(createAsnSchema),
-    defaultValues: {
-      vendorId: '',
-      poNumber: '',
-      carrierName: '',
-      trackingNumber: '',
-      expectedArrivalDate: '',
-      notes: '',
-    },
+  const tableUrlState = useTableUrlState({
+    search,
+    navigate: navigate as any,
+    pagination: { defaultPage: 1, defaultPageSize: 10 },
+    globalFilter: { enabled: true, key: 'q' },
   })
 
-  const onCreateSubmit = useCallback(async (values: CreateAsnForm) => {
-    if (!selectedFacility) {
-      toast.error('Please select a facility from the top bar first')
-      return
-    }
-    try {
-      await createMutation.mutateAsync({
-        facilityId: selectedFacility.id,
-        vendorId: values.vendorId || undefined,
-        poNumber: values.poNumber || undefined,
-        carrierName: values.carrierName || undefined,
-        trackingNumber: values.trackingNumber || undefined,
-        expectedArrivalDate: values.expectedArrivalDate || undefined,
-        notes: values.notes || undefined,
-      })
-      toast.success('ASN created successfully')
-      setCreateOpen(false)
-      form.reset()
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to create ASN')
-    }
-  }, [createMutation, form, selectedFacility])
+  const { data, isLoading } = useAsns(tableUrlState.pagination as any)
 
-  const handlePreview = useCallback(async () => {
-    if (!toolId.trim()) {
-      toast.error('Enter an ASN ID')
-      return
-    }
-    try {
-      await previewMutation.mutateAsync(toolId.trim())
-      toast.success('ASN preview generated successfully')
-    } catch (err: any) {
-      toast.error(err?.message || 'Preview failed')
-    }
-  }, [toolId, previewMutation])
+  const asns = data?.asns ?? []
+  const total = data?.total ?? 0
 
-  const handleUpdateStatus = useCallback(async () => {
-    if (!toolId.trim()) {
-      toast.error('Enter an ASN ID')
-      return
-    }
-    try {
-      await updateStatusMutation.mutateAsync({
-        id: toolId.trim(),
-        dto: { status: toolStatus },
-      })
-      toast.success(`ASN status updated to ${toolStatus}`)
-    } catch (err: any) {
-      toast.error(err?.message || 'Status update failed')
-    }
-  }, [toolId, toolStatus, updateStatusMutation])
+  const columns: ColumnDef<Asn, any>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'asnNumber',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="ASN #" />
+        ),
+        cell: ({ row }) => (
+          <span className="font-mono text-sm">{row.original.asnNumber ?? '-'}</span>
+        ),
+      },
+      {
+        accessorKey: 'poNumber',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="PO #" />
+        ),
+      },
+      {
+        accessorKey: 'supplier',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Supplier" />
+        ),
+      },
+      {
+        accessorKey: 'status',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Status" />
+        ),
+        cell: ({ row }) => {
+          const status = row.original.status ?? 'draft'
+          return (
+            <Badge
+              variant="outline"
+              className={STATUS_COLORS[status] ?? 'bg-gray-100 text-gray-700'}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </Badge>
+          )
+        },
+        filterFn: 'equals',
+      },
+      {
+        accessorKey: 'expectedDate',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Expected" />
+        ),
+        cell: ({ row }) => (
+          <span className="text-sm text-muted-foreground">
+            {row.original.expectedDate
+              ? new Date(row.original.expectedDate).toLocaleDateString()
+              : '-'}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'createdAt',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Created" />
+        ),
+        cell: ({ row }) => (
+          <span className="text-sm text-muted-foreground">
+            {row.original.createdAt
+              ? new Date(row.original.createdAt).toLocaleDateString()
+              : '-'}
+          </span>
+        ),
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => {
+          const asn = row.original
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setDetailDialogAsn(asn)}>
+                  <Eye className="mr-2 h-4 w-4" />
+                  View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLinesDialogAsn(asn)}>
+                  <Layers className="mr-2 h-4 w-4" />
+                  Manage Lines
+                </DropdownMenuItem>
+                {(asn.status?.toLowerCase() === 'arrived' || asn.status?.toLowerCase() === 'in_transit') && (
+                  <DropdownMenuItem onClick={() => setReceivingDialogAsn(asn)}>
+                    <Radio className="mr-2 h-4 w-4" />
+                    Start Receiving
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
+    ],
+    []
+  )
 
-  const creating = createMutation.isPending
+  const table = useReactTable({
+    data: asns,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    onGlobalFilterChange: tableUrlState.onGlobalFilterChange,
+    onPaginationChange: tableUrlState.onPaginationChange,
+    onColumnFiltersChange: tableUrlState.onColumnFiltersChange,
+    state: {
+      sorting,
+      globalFilter: tableUrlState.globalFilter,
+      pagination: tableUrlState.pagination,
+      columnFilters: tableUrlState.columnFilters,
+    },
+    manualPagination: true,
+    pageCount: Math.ceil(total / tableUrlState.pagination.pageSize),
+  })
 
   return (
     <div className="space-y-6">
@@ -143,152 +221,121 @@ export function AsnList() {
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>Create ASN</CardTitle>
+          <CardTitle>All ASNs</CardTitle>
           <CardDescription>
-            Register an incoming shipment from a vendor
+            {total} ASN{total !== 1 ? 's' : ''} found
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Use the "New ASN" button above to open the creation dialog.
-            ASN listing from the API is not yet available — created ASNs
-            can be managed via the tools below.
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>ASN Actions</CardTitle>
-          <CardDescription>
-            Preview or update the status of an existing ASN by ID
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-4 md:flex-row md:items-end">
-            <div className="flex-1">
-              <Label htmlFor="toolId">ASN ID</Label>
-              <Input
-                id="toolId"
-                value={toolId}
-                onChange={(e) => setToolId(e.target.value)}
-                placeholder="Enter ASN UUID or number"
-              />
-            </div>
-            <div className="w-full md:w-44">
-              <Label htmlFor="toolStatus">New Status</Label>
-              <Select value={toolStatus} onValueChange={setToolStatus}>
-                <SelectTrigger id="toolStatus">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ASN_STATUS_OPTIONS.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s.charAt(0).toUpperCase() + s.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={handlePreview}
-                disabled={previewMutation.isPending || !toolId.trim()}
-              >
-                {previewMutation.isPending ? (
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+          <DataTableToolbar
+            table={table}
+            searchPlaceholder="Search ASNs..."
+            searchKey="asnNumber"
+            filters={[
+              {
+                columnId: 'status',
+                title: 'Status',
+                options: ASN_STATUS_OPTIONS.map((s) => ({
+                  label: s.charAt(0).toUpperCase() + s.slice(1),
+                  value: s,
+                })),
+              },
+            ]}
+          />
+          <div className="mt-4 rounded-md border">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : asns.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      No ASNs found.
+                    </TableCell>
+                  </TableRow>
                 ) : (
-                  <FileText className="mr-2 h-4 w-4" />
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
                 )}
-                Preview
-              </Button>
-              <Button
-                onClick={handleUpdateStatus}
-                disabled={updateStatusMutation.isPending || !toolId.trim()}
-              >
-                {updateStatusMutation.isPending ? 'Updating...' : 'Update Status'}
-              </Button>
-            </div>
+              </TableBody>
+            </Table>
           </div>
+          <DataTablePagination table={table} className="mt-4" />
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>ASN List</CardTitle>
-          <CardDescription>
-            Recent ASN records will appear here when the list endpoint becomes available
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center gap-3 py-12 text-center">
-            <Truck className="h-12 w-12 text-muted-foreground/30" />
-            <p className="text-muted-foreground">No ASN listing available</p>
-            <p className="text-sm text-muted-foreground max-w-md">
-              The WMS API does not currently expose a list endpoint for ASNs.
-              Use the "New ASN" button to create shipments and the tools above
-              to manage them by ID.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <AsnCreateWizard
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+      />
 
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-[520px]">
-          <form onSubmit={form.handleSubmit(onCreateSubmit)}>
-            <DialogHeader>
-              <DialogTitle>Create New ASN</DialogTitle>
-              <DialogDescription>
-                Register an Advance Ship Notice for an incoming delivery
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              {selectedFacility && (
-                <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                  Facility: <span className="font-medium text-foreground">{selectedFacility.facilityCode} — {selectedFacility.facilityName}</span>
-                </div>
-              )}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="poNumber">PO Number</Label>
-                  <Input id="poNumber" {...form.register('poNumber')} placeholder="e.g. PO-001" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="vendorId">Vendor ID</Label>
-                  <Input id="vendorId" {...form.register('vendorId')} placeholder="vendor-uuid" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="carrierName">Carrier</Label>
-                  <Input id="carrierName" {...form.register('carrierName')} placeholder="e.g. FedEx" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="trackingNumber">Tracking #</Label>
-                  <Input id="trackingNumber" {...form.register('trackingNumber')} />
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="expectedArrivalDate">Expected Arrival</Label>
-                <Input id="expectedArrivalDate" type="date" {...form.register('expectedArrivalDate')} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea id="notes" {...form.register('notes')} rows={3} placeholder="Additional notes..." />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={creating}>
-                {creating ? 'Creating...' : 'Create ASN'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {linesDialogAsn && (
+        <AsnLineItemsDialog
+          asnId={linesDialogAsn.id}
+          asnStatus={linesDialogAsn.status}
+          open={!!linesDialogAsn}
+          onOpenChange={(open) => {
+            if (!open) setLinesDialogAsn(null)
+          }}
+        />
+      )}
+
+      {detailDialogAsn && (
+        <AsnDetailsDialog
+          asnId={detailDialogAsn.id}
+          open={!!detailDialogAsn}
+          onOpenChange={(open) => {
+            if (!open) setDetailDialogAsn(null)
+          }}
+        />
+      )}
+
+      {receivingDialogAsn && (
+        <AsnReceivingDialog
+          asnId={receivingDialogAsn.id}
+          asnNumber={receivingDialogAsn.asnNumber}
+          open={!!receivingDialogAsn}
+          onOpenChange={(open) => {
+            if (!open) setReceivingDialogAsn(null)
+          }}
+        />
+      )}
     </div>
   )
 }

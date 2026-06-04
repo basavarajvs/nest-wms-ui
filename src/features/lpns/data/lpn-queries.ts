@@ -22,6 +22,7 @@ import type {
   UpdateLpnDto,
   UpdateLpnDtoStatus,
   LpnWebControllerListParams,
+  LpnWebControllerProductAvailableQtyParams,
 } from '@/lib/types/wms-api'
 
 function safeArray<T>(data: unknown): T[] {
@@ -203,5 +204,95 @@ export function useUnnestLpn() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'lpns'] })
     },
+  })
+}
+
+export interface LpnHierarchyNode {
+  id: string
+  lpnNumber: string
+  lpnType?: string
+  quantity?: number
+  productId?: string
+  productName?: string
+  productSku?: string
+  locationId?: string
+  children?: LpnHierarchyNode[]
+}
+
+export function useLpnHierarchy(id: string) {
+  return useQuery({
+    queryKey: ['wms', 'lpns', 'hierarchy', id],
+    queryFn: async () => {
+      const res = await LpnWebController_getHierarchy(id)
+      return res as unknown
+    },
+    enabled: !!id,
+    staleTime: 1000 * 60,
+  })
+}
+
+export interface LpnMovement {
+  id: string
+  lpnId: string
+  fromLocationId: string
+  fromLocationName?: string
+  toLocationId: string
+  toLocationName?: string
+  movedBy: string
+  movedAt: string
+  reason?: string
+}
+
+export function useLpnMovementHistory(lpnId: string) {
+  return useQuery({
+    queryKey: ['wms', 'lpns', 'movements', lpnId],
+    queryFn: async () => {
+      const res = await LpnWebController_findById(lpnId)
+      return res as unknown
+    },
+    select: (data) => {
+      if (data && typeof data === 'object') {
+        const obj = data as Record<string, unknown>
+        if (Array.isArray(obj.movements)) return obj.movements as LpnMovement[]
+        if (Array.isArray(obj.history)) return obj.history as LpnMovement[]
+      }
+      return [] as LpnMovement[]
+    },
+    enabled: false,
+    staleTime: 1000 * 60,
+  })
+}
+
+export interface AvailableQtyEntry {
+  locationId: string
+  locationName?: string
+  quantity: number
+  uom?: string
+}
+
+export function useProductAvailableQty(
+  productId: string,
+  params?: LpnWebControllerProductAvailableQtyParams
+) {
+  return useQuery({
+    queryKey: ['wms', 'lpns', 'product-available-qty', productId, params],
+    queryFn: async () => {
+      const res = await LpnWebController_productAvailableQty(
+        productId,
+        params as LpnWebControllerProductAvailableQtyParams
+      )
+      return res as unknown
+    },
+    select: (data) => {
+      if (Array.isArray(data)) return data as AvailableQtyEntry[]
+      if (data && typeof data === 'object') {
+        const obj = data as Record<string, unknown>
+        if (Array.isArray(obj.items)) return obj.items as AvailableQtyEntry[]
+        if (Array.isArray(obj.data)) return obj.data as AvailableQtyEntry[]
+      }
+      return []
+    },
+    enabled: !!productId,
+    staleTime: 1000 * 60,
   })
 }

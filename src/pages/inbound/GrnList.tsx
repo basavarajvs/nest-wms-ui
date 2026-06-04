@@ -1,12 +1,23 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Search, RefreshCw, ClipboardCheck } from 'lucide-react'
+import {
+  type ColumnDef,
+  type SortingState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  flexRender,
+} from '@tanstack/react-table'
+import { useNavigate, useRouter } from '@tanstack/react-router'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
+import { Plus, Layers, MoreHorizontal, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Card,
@@ -23,19 +34,40 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import { DataTablePagination } from '@/components/data-table/pagination'
+import { DataTableToolbar } from '@/components/data-table/toolbar'
+import {
+  useGrns,
   useCreateGrnFromAsn,
   useCreateGrnAdHoc,
-  useGrnProgress,
   useMarkGrnArrived,
   useStartReceiving,
   useMarkGrnReceived,
   useStartInspection,
   useCompleteInspection,
   useCancelGrn,
+  type Grn,
 } from '@/features/inbound/goods-receipt/data/grn-queries'
+import { GrnLineItemsDialog } from '@/features/inbound/goods-receipt/components/GrnLineItemsDialog'
+import { GrnDetailsDialog } from '@/features/inbound/goods-receipt/components/GrnDetailsDialog'
 import { useFacility } from '@/hooks/useFacility'
+import { Badge } from '@/components/ui/badge'
 
 const grnFromAsnSchema = z.object({
   asnNumber: z.string().min(1, 'ASN number is required'),
@@ -50,15 +82,38 @@ const grnAdHocSchema = z.object({
 type GrnFromAsnForm = z.infer<typeof grnFromAsnSchema>
 type GrnAdHocForm = z.infer<typeof grnAdHocSchema>
 
+const STATUS_COLORS: Record<string, string> = {
+  draft: 'bg-yellow-100 text-yellow-700',
+  arrived: 'bg-blue-100 text-blue-700',
+  receiving: 'bg-purple-100 text-purple-700',
+  received: 'bg-green-100 text-green-700',
+  inspecting: 'bg-orange-100 text-orange-700',
+  completed: 'bg-green-100 text-green-700',
+  cancelled: 'bg-red-100 text-red-700',
+}
+
+const GRN_STATUS_OPTIONS = ['draft', 'arrived', 'receiving', 'received', 'inspecting', 'completed', 'cancelled']
+
 export function GrnList() {
   const [fromAsnOpen, setFromAsnOpen] = useState(false)
   const [adHocOpen, setAdHocOpen] = useState(false)
-  const [progressInput, setProgressInput] = useState('')
-  const [activeProgressId, setActiveProgressId] = useState('')
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [linesDialogGrn, setLinesDialogGrn] = useState<Grn | null>(null)
+  const [detailDialogGrn, setDetailDialogGrn] = useState<Grn | null>(null)
+
+  const navigate = useNavigate()
+  const router = useRouter()
+  const search = router.state.location.search as Record<string, unknown>
+
+  const tableUrlState = useTableUrlState({
+    search,
+    navigate: navigate as any,
+    pagination: { defaultPage: 1, defaultPageSize: 10 },
+    globalFilter: { enabled: true, key: 'q' },
+  })
 
   const createFromAsn = useCreateGrnFromAsn()
   const createAdHoc = useCreateGrnAdHoc()
-  const { data: progressData, isLoading: progressLoading, isError: progressError, error: progressErr, refetch: refetchProgress } = useGrnProgress(activeProgressId)
   const { selectedFacility } = useFacility()
 
   const markArrived = useMarkGrnArrived()
@@ -68,48 +123,16 @@ export function GrnList() {
   const completeInspection = useCompleteInspection()
   const cancelGrn = useCancelGrn()
 
-  useEffect(() => {
-    if (markArrived.isSuccess) { toast.success('GRN marked as arrived'); refetchProgress() }
-    if (markArrived.isError) { toast.error('Failed: ' + ((markArrived.error as any)?.message || 'Unknown')) }
-  }, [markArrived.isSuccess, markArrived.isError, refetchProgress])
-
-  useEffect(() => {
-    if (startReceiving.isSuccess) { toast.success('Started receiving'); refetchProgress() }
-    if (startReceiving.isError) { toast.error('Failed: ' + ((startReceiving.error as any)?.message || 'Unknown')) }
-  }, [startReceiving.isSuccess, startReceiving.isError, refetchProgress])
-
-  useEffect(() => {
-    if (markReceived.isSuccess) { toast.success('GRN marked as received'); refetchProgress() }
-    if (markReceived.isError) { toast.error('Failed: ' + ((markReceived.error as any)?.message || 'Unknown')) }
-  }, [markReceived.isSuccess, markReceived.isError, refetchProgress])
-
-  useEffect(() => {
-    if (startInspection.isSuccess) { toast.success('Inspection started'); refetchProgress() }
-    if (startInspection.isError) { toast.error('Failed: ' + ((startInspection.error as any)?.message || 'Unknown')) }
-  }, [startInspection.isSuccess, startInspection.isError, refetchProgress])
-
-  useEffect(() => {
-    if (completeInspection.isSuccess) { toast.success('Inspection completed'); refetchProgress() }
-    if (completeInspection.isError) { toast.error('Failed: ' + ((completeInspection.error as any)?.message || 'Unknown')) }
-  }, [completeInspection.isSuccess, completeInspection.isError, refetchProgress])
-
-  useEffect(() => {
-    if (cancelGrn.isSuccess) { toast.success('GRN cancelled'); refetchProgress() }
-    if (cancelGrn.isError) { toast.error('Failed: ' + ((cancelGrn.error as any)?.message || 'Unknown')) }
-  }, [cancelGrn.isSuccess, cancelGrn.isError, refetchProgress])
+  const { data, isLoading } = useGrns(tableUrlState.pagination as any)
 
   const fromAsnForm = useForm<GrnFromAsnForm>({
-    resolver: zodResolver(grnFromAsnSchema),
+    resolver: zodResolver(grnFromAsnSchema) as any,
     defaultValues: { asnNumber: '' },
   })
 
   const adHocForm = useForm<GrnAdHocForm>({
-    resolver: zodResolver(grnAdHocSchema),
-    defaultValues: {
-      vendorId: '',
-      poNumber: '',
-      qcRequired: false,
-    },
+    resolver: zodResolver(grnAdHocSchema) as any,
+    defaultValues: { vendorId: '', poNumber: '', qcRequired: false },
   })
 
   const onCreateFromAsn = useCallback(async (values: GrnFromAsnForm) => {
@@ -143,13 +166,170 @@ export function GrnList() {
     }
   }, [createAdHoc, adHocForm, selectedFacility])
 
-  const handleLoadProgress = useCallback(() => {
-    if (!progressInput.trim()) {
-      toast.error('Enter a GRN ID')
-      return
-    }
-    setActiveProgressId(progressInput.trim())
-  }, [progressInput])
+  const grns = data?.grns ?? []
+  const total = data?.total ?? 0
+
+  const columns: ColumnDef<Grn, any>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'receiptNumber',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Receipt #" />
+        ),
+        cell: ({ row }) => (
+          <span className="font-mono text-sm">{row.original.receiptNumber ?? '-'}</span>
+        ),
+      },
+      {
+        accessorKey: 'asnNumber',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="ASN #" />
+        ),
+        cell: ({ row }) => (
+          <span className="font-mono text-sm">{row.original.asnNumber ?? '-'}</span>
+        ),
+      },
+      {
+        accessorKey: 'poNumber',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="PO #" />
+        ),
+      },
+      {
+        accessorKey: 'supplier',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Supplier" />
+        ),
+      },
+      {
+        accessorKey: 'status',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Status" />
+        ),
+        cell: ({ row }) => {
+          const status = row.original.status ?? 'draft'
+          return (
+            <Badge variant="outline" className={STATUS_COLORS[status] ?? 'bg-gray-100 text-gray-700'}>
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </Badge>
+          )
+        },
+        filterFn: 'equals',
+      },
+      {
+        accessorKey: 'createdAt',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Created" />
+        ),
+        cell: ({ row }) => (
+          <span className="text-sm text-muted-foreground">
+            {row.original.createdAt ? new Date(row.original.createdAt).toLocaleDateString() : '-'}
+          </span>
+        ),
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => {
+          const grn = row.original
+          const rn = grn.receiptNumber
+          const status = grn.status?.toLowerCase() ?? ''
+          const terminal = status === 'completed' || status === 'cancelled'
+
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setDetailDialogGrn(grn)}>
+                  <Eye className="mr-2 h-4 w-4" />
+                  View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLinesDialogGrn(grn)}>
+                  <Layers className="mr-2 h-4 w-4" />
+                  Manage Lines
+                </DropdownMenuItem>
+                {rn && !terminal && (
+                  <>
+                    {status === 'draft' && (
+                      <DropdownMenuItem onClick={async () => {
+                        try { await markArrived.mutateAsync({ receiptNumber: rn, dto: {} }); toast.success('GRN marked as arrived') }
+                        catch (e: any) { toast.error(e?.response?.data?.message || e?.message || 'Failed') }
+                      }}>
+                        Mark Arrived
+                      </DropdownMenuItem>
+                    )}
+                    {status === 'arrived' && (
+                      <DropdownMenuItem onClick={async () => {
+                        try { await startReceiving.mutateAsync(rn); toast.success('Started receiving') }
+                        catch (e: any) { toast.error(e?.response?.data?.message || e?.message || 'Failed') }
+                      }}>
+                        Start Receiving
+                      </DropdownMenuItem>
+                    )}
+                    {status === 'receiving' && (
+                      <DropdownMenuItem onClick={async () => {
+                        try { await markReceived.mutateAsync(rn); toast.success('GRN marked as received') }
+                        catch (e: any) { toast.error(e?.response?.data?.message || e?.message || 'Failed') }
+                      }}>
+                        Mark Received
+                      </DropdownMenuItem>
+                    )}
+                    {status === 'received' && (
+                      <DropdownMenuItem onClick={async () => {
+                        try { await startInspection.mutateAsync(rn); toast.success('Inspection started') }
+                        catch (e: any) { toast.error(e?.response?.data?.message || e?.message || 'Failed') }
+                      }}>
+                        Start Inspection
+                      </DropdownMenuItem>
+                    )}
+                    {status === 'inspecting' && (
+                      <DropdownMenuItem onClick={async () => {
+                        try { await completeInspection.mutateAsync({ receiptNumber: rn, dto: { result: 'PASS' } }); toast.success('Inspection completed') }
+                        catch (e: any) { toast.error(e?.response?.data?.message || e?.message || 'Failed') }
+                      }}>
+                        Complete Inspection
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={async () => {
+                      try { await cancelGrn.mutateAsync(rn); toast.success('GRN cancelled') }
+                      catch (e: any) { toast.error(e?.response?.data?.message || e?.message || 'Failed') }
+                    }}>
+                      Cancel GRN
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
+    ],
+    []
+  )
+
+  const table = useReactTable({
+    data: grns,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    onGlobalFilterChange: tableUrlState.onGlobalFilterChange,
+    onPaginationChange: tableUrlState.onPaginationChange,
+    onColumnFiltersChange: tableUrlState.onColumnFiltersChange,
+    state: {
+      sorting,
+      globalFilter: tableUrlState.globalFilter,
+      pagination: tableUrlState.pagination,
+      columnFilters: tableUrlState.columnFilters,
+    },
+    manualPagination: true,
+    pageCount: Math.ceil(total / tableUrlState.pagination.pageSize),
+  })
 
   return (
     <div className="space-y-6">
@@ -188,9 +368,7 @@ export function GrnList() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setFromAsnOpen(false)}>
-                    Cancel
-                  </Button>
+                  <Button type="button" variant="outline" onClick={() => setFromAsnOpen(false)}>Cancel</Button>
                   <Button type="submit" disabled={createFromAsn.isPending}>
                     {createFromAsn.isPending ? 'Creating...' : 'Create GRN'}
                   </Button>
@@ -238,9 +416,7 @@ export function GrnList() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setAdHocOpen(false)}>
-                    Cancel
-                  </Button>
+                  <Button type="button" variant="outline" onClick={() => setAdHocOpen(false)}>Cancel</Button>
                   <Button type="submit" disabled={createAdHoc.isPending}>
                     {createAdHoc.isPending ? 'Creating...' : 'Create GRN'}
                   </Button>
@@ -253,173 +429,82 @@ export function GrnList() {
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>View GRN Progress</CardTitle>
+          <CardTitle>All GRNs</CardTitle>
           <CardDescription>
-            Look up the detailed progress of a Goods Receipt Note by ID
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-2">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={progressInput}
-                onChange={(e) => setProgressInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleLoadProgress() }}
-                placeholder="Enter GRN ID to load progress..."
-                className="pl-9"
-              />
-            </div>
-            <Button
-              onClick={handleLoadProgress}
-              disabled={!progressInput.trim() || progressLoading}
-            >
-              <RefreshCw className={`mr-2 h-4 w-4 ${progressLoading ? 'animate-spin' : ''}`} />
-              {progressLoading ? 'Loading...' : 'Load Progress'}
-            </Button>
-          </div>
-
-          {progressLoading && (
-            <div className="space-y-2">
-              <Skeleton className="h-6 w-48" />
-              <Skeleton className="h-32 w-full" />
-            </div>
-          )}
-
-          {progressError && (
-            <Card className="border-destructive/50 bg-destructive/5">
-              <CardContent className="pt-6">
-                <p className="text-sm text-destructive font-medium">Failed to load GRN progress</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {(progressErr as any)?.message || 'An unexpected error occurred'}
-                </p>
-                <Button variant="outline" size="sm" className="mt-3" onClick={() => refetchProgress()}>
-                  <RefreshCw className="mr-2 h-3 w-3" /> Retry
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
-          {activeProgressId && progressData && !progressLoading && !progressError && (
-            <Card>
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <ClipboardCheck className="h-4 w-4 text-primary" />
-                    <CardTitle className="text-base">GRN Progress</CardTitle>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => { setActiveProgressId(''); setProgressInput('') }}
-                  >
-                    Clear
-                  </Button>
-                </div>
-                <CardDescription>ID: {activeProgressId}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <pre className="max-h-80 overflow-auto rounded-md bg-muted p-4 text-xs font-mono">
-                  {JSON.stringify(progressData, null, 2)}
-                </pre>
-
-                {/* GRN Status Actions */}
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="text-sm font-medium mb-3">Status Transitions</h4>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
-                        markArrived.mutate({ receiptNumber: progressInput.trim(), dto: {} })
-                      }}
-                      disabled={!activeProgressId || markArrived.isPending}
-                    >
-                      Mark Arrived
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
-                        startReceiving.mutate(progressInput.trim())
-                      }}
-                      disabled={!activeProgressId || startReceiving.isPending}
-                    >
-                      Start Receiving
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
-                        markReceived.mutate(progressInput.trim())
-                      }}
-                      disabled={!activeProgressId || markReceived.isPending}
-                    >
-                      Mark Received
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
-                        startInspection.mutate(progressInput.trim())
-                      }}
-                      disabled={!activeProgressId || startInspection.isPending}
-                    >
-                      Start Inspection
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
-                        completeInspection.mutate({ receiptNumber: progressInput.trim(), dto: { disposition: 'PASS' } })
-                      }}
-                      disabled={!activeProgressId || completeInspection.isPending}
-                    >
-                      Complete Inspection
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => {
-                        if (!progressInput.trim()) { toast.error('Enter a GRN ID first'); return }
-                        cancelGrn.mutate(progressInput.trim())
-                      }}
-                      disabled={!activeProgressId || cancelGrn.isPending}
-                    >
-                      Cancel GRN
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>GRN List</CardTitle>
-          <CardDescription>
-            GRN records will be listed here when the backend exposes a list endpoint
+            {total} GRN{total !== 1 ? 's' : ''} found
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center gap-3 py-12 text-center">
-            <ClipboardCheck className="h-12 w-12 text-muted-foreground/30" />
-            <p className="text-muted-foreground">No GRN listing available</p>
-            <p className="text-sm text-muted-foreground max-w-md">
-              The WMS API does not currently expose a list endpoint for GRNs.
-              Use the creation buttons above and the progress viewer to manage
-              individual receipts.
-            </p>
+          <DataTableToolbar
+            table={table}
+            searchPlaceholder="Search GRNs..."
+            searchKey="receiptNumber"
+            filters={[
+              {
+                columnId: 'status',
+                title: 'Status',
+                options: GRN_STATUS_OPTIONS.map((s) => ({
+                  label: s.charAt(0).toUpperCase() + s.slice(1),
+                  value: s,
+                })),
+              },
+            ]}
+          />
+          <div className="mt-4 rounded-md border">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">Loading...</TableCell>
+                  </TableRow>
+                ) : grns.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">No GRNs found.</TableCell>
+                  </TableRow>
+                ) : (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
+          <DataTablePagination table={table} className="mt-4" />
         </CardContent>
       </Card>
+
+      {linesDialogGrn && (
+        <GrnLineItemsDialog
+          grnId={linesDialogGrn.id}
+          open={!!linesDialogGrn}
+          onOpenChange={(open) => { if (!open) setLinesDialogGrn(null) }}
+        />
+      )}
+
+      {detailDialogGrn && (
+        <GrnDetailsDialog
+          grn={detailDialogGrn}
+          open={!!detailDialogGrn}
+          onOpenChange={(open) => { if (!open) setDetailDialogGrn(null) }}
+        />
+      )}
     </div>
   )
 }

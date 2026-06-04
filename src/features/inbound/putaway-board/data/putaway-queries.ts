@@ -1,5 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
-import { InboundWebController_getPutawayBoard } from '@/lib/api/wms-api/wms-web/wms-web'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  InboundWebController_getPutawayBoard,
+  InboundWebController_updatePutawayTaskStatus,
+} from '@/lib/api/wms-api/wms-web/wms-web'
 import type { InboundWebControllerGetPutawayBoardParams } from '@/lib/types/wms-api'
 
 export interface PutawayTask {
@@ -7,11 +10,18 @@ export interface PutawayTask {
   asnId?: string
   grnId?: string
   productId?: string
+  productName?: string
+  productSku?: string
   quantity?: number
+  sourceLocationId?: string
+  sourceLocationName?: string
   suggestedLocationId?: string
+  suggestedLocationName?: string
   assignedToUserId?: string
+  assignedToUserName?: string
   status?: string
   priority?: number
+  createdAt?: string
 }
 
 export interface PutawayBoardResponse {
@@ -72,5 +82,29 @@ export function usePutawayBoard(
       return extractBoard<PutawayTask>(res, fullParams)
     },
     staleTime: 1000 * 30,
+  })
+}
+
+export function useUpdatePutawayTaskStatus() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      return InboundWebController_updatePutawayTaskStatus(id, { status })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'putaway-board'] })
+    },
+  })
+}
+
+export function useAssignPutawayTask() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, assignedToUserId }: { id: string; assignedToUserId: string }) => {
+      return InboundWebController_updatePutawayTaskStatus(id, { status: 'assigned', assignedToUserId } as any)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'putaway-board'] })
+    },
   })
 }

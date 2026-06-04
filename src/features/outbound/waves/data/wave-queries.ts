@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   OutboundWebController_getWaveBoard,
   OutboundWebController_createWave,
+  OutboundWebController_generatePickTasks,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   CreateWaveDto,
@@ -29,6 +30,7 @@ export interface WaveTask {
   assignedToUserId?: string
   status?: string
   facilityId?: string
+  createdAt?: string
 }
 
 export function useWaveBoard(
@@ -55,6 +57,20 @@ export function useCreateWave() {
   return useMutation({
     mutationFn: async (dto: CreateWaveDto) => {
       return OutboundWebController_createWave(dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['wms', 'outbound', 'wave-board'],
+      })
+    },
+  })
+}
+
+export function useGeneratePickTasks() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      return OutboundWebController_generatePickTasks(id)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

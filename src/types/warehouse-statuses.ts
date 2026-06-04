@@ -214,7 +214,9 @@ export enum WaveStatus {
 // Load Status
 // -----------------------------------------------------------
 export enum LoadStatus {
+  CREATED = 'CREATED',
   PLANNED = 'PLANNED',
+  LOADING = 'LOADING',
   LOADED = 'LOADED',
   DEPARTED = 'DEPARTED',
   CANCELLED = 'CANCELLED',
