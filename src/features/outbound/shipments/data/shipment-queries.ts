@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { OutboundWebController_generateManifest } from '@/lib/api/wms-api/wms-web/wms-web'
-import type { GenerateManifestDto } from '@/lib/types/wms-api'
+import {
+  OutboundWebController_generateManifest,
+  OutboundWebController_listShipments,
+} from '@/lib/api/wms-api/wms-web/wms-web'
+import type { GenerateManifestDto, OutboundWebControllerListShipmentsParams } from '@/lib/types/wms-api'
 
 function safeList<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[]
@@ -30,16 +33,25 @@ export interface Shipment {
   facilityId?: string
 }
 
-export function useShipments() {
+export function useShipments(params?: Partial<OutboundWebControllerListShipmentsParams>) {
+  const queryParams: OutboundWebControllerListShipmentsParams = {
+    status: params?.status || '',
+    facilityId: params?.facilityId || '',
+    loadId: params?.loadId || '',
+    page: params?.page ?? 1,
+    limit: params?.limit ?? 20,
+  }
+
+  const stableKey = JSON.stringify(queryParams)
   return useQuery({
-    queryKey: ['wms', 'outbound', 'shipments'],
+    queryKey: ['wms', 'outbound', 'shipments', stableKey],
     queryFn: async () => {
-      return { items: [], total: 0 } as unknown
+      const res = await OutboundWebController_listShipments(queryParams)
+      return res as unknown
     },
     select: (data) => ({
       shipments: safeList<Shipment>(data),
       total: safeList<Shipment>(data).length || 0,
-      message: 'Full shipment listing is not currently exposed in the Web API client.',
     }),
     staleTime: 1000 * 60,
   })

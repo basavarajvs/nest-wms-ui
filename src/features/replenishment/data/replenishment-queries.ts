@@ -4,6 +4,7 @@ import {
   ReplenishmentWebController_listTasks,
   ReplenishmentWebController_createTask,
   ReplenishmentWebController_completeTask,
+  ReplenishmentWebController_cancelTask,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   ReplenishmentWebControllerGetSuggestionsParams,
@@ -108,6 +109,18 @@ export function useCreateReplenishmentTask() {
   return useMutation({
     mutationFn: async (dto: CreateReplenishmentTaskDto) => {
       return ReplenishmentWebController_createTask(dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'replenishment'] })
+    },
+  })
+}
+
+export function useCancelReplenishmentTask() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      return ReplenishmentWebController_cancelTask(id)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'replenishment'] })

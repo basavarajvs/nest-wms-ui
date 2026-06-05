@@ -6,6 +6,7 @@ import {
   LpnWebController_findByLocation,
   LpnWebController_getChildren,
   LpnWebController_getHierarchy,
+  LpnWebController_getMovements,
   LpnWebController_available,
   LpnWebController_availableForShipment,
   LpnWebController_productAvailableQty,
@@ -247,7 +248,7 @@ export function useLpnMovementHistory(lpnId: string) {
   return useQuery({
     queryKey: ['wms', 'lpns', 'movements', lpnId],
     queryFn: async () => {
-      const res = await LpnWebController_findById(lpnId)
+      const res = await LpnWebController_getMovements(lpnId)
       return res as unknown
     },
     select: (data) => {
@@ -255,10 +256,12 @@ export function useLpnMovementHistory(lpnId: string) {
         const obj = data as Record<string, unknown>
         if (Array.isArray(obj.movements)) return obj.movements as LpnMovement[]
         if (Array.isArray(obj.history)) return obj.history as LpnMovement[]
+        if (Array.isArray(obj.items)) return obj.items as LpnMovement[]
+        if (Array.isArray(obj.data)) return obj.data as LpnMovement[]
       }
       return [] as LpnMovement[]
     },
-    enabled: false,
+    enabled: !!lpnId,
     staleTime: 1000 * 60,
   })
 }

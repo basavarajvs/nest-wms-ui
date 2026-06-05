@@ -40,6 +40,7 @@ import {
   useReplenishmentTasks,
   useCreateReplenishmentTask,
   useCompleteReplenishmentTask,
+  useCancelReplenishmentTask,
   type ReplenishmentSuggestion,
   type ReplenishmentTask,
 } from '@/features/replenishment/data/replenishment-queries'
@@ -83,6 +84,7 @@ export function ReplenishmentPage() {
   const { selectedFacility } = useFacility()
   const createTask = useCreateReplenishmentTask()
   const completeTask = useCompleteReplenishmentTask()
+  const cancelTask = useCancelReplenishmentTask()
 
   const [activeTab, setActiveTab] = useState('suggestions')
   const [suggestionSorting, setSuggestionSorting] = useState<SortingState>([])
@@ -137,10 +139,15 @@ export function ReplenishmentPage() {
   }
 
   const handleCancelTask = async (task: ReplenishmentTask) => {
-    toast.info(`Cancel task ${task.id} — endpoint not yet available`)
+    try {
+      await cancelTask.mutateAsync(task.id)
+      toast.success('Task cancelled')
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to cancel task')
+    }
   }
 
-  const actionLoading = createTask.isPending || completeTask.isPending
+  const actionLoading = createTask.isPending || completeTask.isPending || cancelTask.isPending
 
   const suggestionColumns: ColumnDef<ReplenishmentSuggestion, any>[] = useMemo(
     () => [

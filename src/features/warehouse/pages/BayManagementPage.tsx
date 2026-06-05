@@ -177,10 +177,10 @@ export function BayManagementPage({ facilityId: _facilityId }: BayManagementPage
   const onSubmit = async (values: BayForm) => {
     try {
       if (editingItem) {
-        await updateMutation.mutateAsync({ id: editingItem.id, dto: values as any })
+        await updateMutation.mutateAsync({ id: editingItem.id, dto: { bayCode: values.code } })
         toast.success('Bay updated')
       } else {
-        await createMutation.mutateAsync(values as any)
+        await createMutation.mutateAsync({ bayCode: values.code, aisleId: values.aisleId, facilityId, zoneId: values.aisleId })
         toast.success('Bay created')
       }
       setDialogOpen(false)

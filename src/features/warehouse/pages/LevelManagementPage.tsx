@@ -177,10 +177,10 @@ export function LevelManagementPage({ facilityId: _facilityId }: LevelManagement
   const onSubmit = async (values: LevelForm) => {
     try {
       if (editingItem) {
-        await updateMutation.mutateAsync({ id: editingItem.id, dto: values as any })
+        await updateMutation.mutateAsync({ id: editingItem.id, dto: { levelCode: values.code } })
         toast.success('Level updated')
       } else {
-        await createMutation.mutateAsync(values as any)
+        await createMutation.mutateAsync({ levelCode: values.code, rackId: values.rackId, facilityId, aisleId: values.rackId, bayId: values.rackId, zoneId: values.rackId })
         toast.success('Level created')
       }
       setDialogOpen(false)

@@ -176,10 +176,10 @@ export function AisleManagementPage({ facilityId }: AisleManagementPageProps) {
   const onSubmit = async (values: AisleForm) => {
     try {
       if (editingItem) {
-        await updateMutation.mutateAsync({ id: editingItem.id, dto: values as any })
+        await updateMutation.mutateAsync({ id: editingItem.id, dto: { aisleCode: values.code, name: values.code } })
         toast.success('Aisle updated')
       } else {
-        await createMutation.mutateAsync(values as any)
+        await createMutation.mutateAsync({ aisleCode: values.code, name: values.code, zoneId: values.zoneId, facilityId })
         toast.success('Aisle created')
       }
       setDialogOpen(false)

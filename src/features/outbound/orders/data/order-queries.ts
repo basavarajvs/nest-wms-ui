@@ -3,6 +3,7 @@ import {
   OutboundWebController_listOrders,
   OutboundWebController_createOrder,
   OutboundWebController_overrideAllocation,
+  OutboundWebController_updateOrderStatus,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   CreateOrderDto,
@@ -75,6 +76,18 @@ export function useCreateOrder() {
   return useMutation({
     mutationFn: async (dto: CreateOrderDto) => {
       return OutboundWebController_createOrder(dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'outbound', 'orders'] })
+    },
+  })
+}
+
+export function useCancelOrder() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      return OutboundWebController_updateOrderStatus(id, { status: 'CANCELLED' as const })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'outbound', 'orders'] })

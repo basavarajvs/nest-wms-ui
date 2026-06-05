@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { useGeneratePickTasks } from '../data/wave-queries'
+import { useGeneratePickTasks, useUpdateWaveStatus } from '../data/wave-queries'
 
 interface GeneratePickTasksDialogProps {
   taskId: string
@@ -25,10 +25,12 @@ export function GeneratePickTasksDialog({
   onOpenChange,
 }: GeneratePickTasksDialogProps) {
   const generatePickTasks = useGeneratePickTasks()
+  const updateWaveStatus = useUpdateWaveStatus()
 
   const handleGenerate = async () => {
     try {
       await generatePickTasks.mutateAsync(taskId)
+      await updateWaveStatus.mutateAsync({ id: taskId, dto: { status: 'IN_PROGRESS' } })
       toast.success('Pick tasks generated successfully')
       onOpenChange(false)
     } catch (err: any) {

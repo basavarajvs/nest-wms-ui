@@ -167,10 +167,10 @@ export function RackManagementPage({ facilityId: _facilityId }: RackManagementPa
   const onSubmit = async (values: RackForm) => {
     try {
       if (editingItem) {
-        await updateMutation.mutateAsync({ id: editingItem.id, dto: values as any })
+        await updateMutation.mutateAsync({ id: editingItem.id, dto: { rackCode: values.code } })
         toast.success('Rack updated')
       } else {
-        await createMutation.mutateAsync(values as any)
+        await createMutation.mutateAsync({ rackCode: values.code, bayId: values.bayId, facilityId, aisleId: values.bayId, zoneId: values.bayId })
         toast.success('Rack created')
       }
       setDialogOpen(false)

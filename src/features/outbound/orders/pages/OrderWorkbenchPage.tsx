@@ -60,6 +60,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   useOrders,
+  useCancelOrder,
   type Order,
 } from '@/features/outbound/orders/data/order-queries'
 import { useOrderLines, type OrderLine } from '@/features/outbound/orders/data/order-line-queries'
@@ -257,6 +258,7 @@ export function OrderWorkbenchPage() {
   const [detailsDialogOrder, setDetailsDialogOrder] = useState<Order | null>(null)
   const [waveDialogOrder, setWaveDialogOrder] = useState<Order | null>(null)
   const [overrideDialogOrder, setOverrideDialogOrder] = useState<Order | null>(null)
+  const cancelOrder = useCancelOrder()
   const { data, isLoading, isError, error, refetch, isFetching } = useOrders({
     page: 1,
     limit: 100,
@@ -430,7 +432,15 @@ export function OrderWorkbenchPage() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className='text-destructive'
-                      onClick={() => toast.info('Cancel order endpoint not yet available.')}
+                      disabled={cancelOrder.isPending}
+                      onClick={async () => {
+                        try {
+                          await cancelOrder.mutateAsync(order.id)
+                          toast.success('Order cancelled')
+                        } catch (err: any) {
+                          toast.error(err?.response?.data?.message || err?.message || 'Failed to cancel order')
+                        }
+                      }}
                     >
                       <XCircle className='mr-2 h-4 w-4' />
                       Cancel Order

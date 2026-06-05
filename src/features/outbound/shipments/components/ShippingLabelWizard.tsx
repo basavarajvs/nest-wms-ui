@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react'
 import { toast } from 'sonner'
 import { StepperDialog } from '@/components/wizard/StepperDialog'
 import { useGenerateShippingLabel, usePrintLabel } from '../data/shipping-label-queries'
+import type { ShippingLabelResponseDto } from '@/lib/types/wms-api'
 import {
   ShipmentDetailsStep,
   type WizardShipmentData,
@@ -142,12 +143,16 @@ export function ShippingLabelWizard({ open, onOpenChange }: ShippingLabelWizardP
     if (submittingRef.current) return
     submittingRef.current = true
     try {
-      await generateLabel.mutateAsync({
+      const result = await generateLabel.mutateAsync({
         shipmentId: shipment.orderId,
         carrierCode: carrier.carrierCode || undefined,
         labelType: label.labelFormat,
         containerId: undefined,
       })
+      const labelData = result as unknown as ShippingLabelResponseDto | undefined
+      if (labelData?.id) {
+        setGeneratedLabelId(labelData.id)
+      }
       setGenerated(true)
       toast.success('Shipping label generated successfully')
     } catch (err: any) {

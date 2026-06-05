@@ -47,6 +47,14 @@ import type {
   BayControllerListParams,
   RackControllerListParams,
   LevelControllerListParams,
+  CreateAisleDto,
+  UpdateAisleDto,
+  CreateBayDto,
+  UpdateBayDto,
+  CreateRackDto,
+  UpdateRackDto,
+  CreateLevelDto,
+  UpdateLevelDto,
 } from '@/lib/types/wms-api'
 import type { GenerateLocationsDto } from '@/lib/types/wms-api/generateLocationsDto'
 import { useFacility } from '@/hooks/useFacility'
@@ -394,8 +402,8 @@ export function useLevels(params: LevelControllerListParams) {
 export function useCreateAisle() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (dto: Record<string, unknown>) =>
-      AisleController_create({ ...{ body: JSON.stringify(dto) }, method: 'POST' } as any),
+    mutationFn: (dto: CreateAisleDto) =>
+      AisleController_create(dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'aisles'] })
     },
@@ -405,8 +413,8 @@ export function useCreateAisle() {
 export function useUpdateAisle() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, dto }: { id: string; dto: Record<string, unknown> }) =>
-      AisleController_update(id, { ...{ body: JSON.stringify(dto) }, method: 'PATCH' } as any),
+    mutationFn: ({ id, dto }: { id: string; dto: UpdateAisleDto }) =>
+      AisleController_update(id, dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'aisles'] })
     },
@@ -427,8 +435,8 @@ export function useDeleteAisle() {
 export function useCreateBay() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (dto: Record<string, unknown>) =>
-      BayController_create({ ...{ body: JSON.stringify(dto) }, method: 'POST' } as any),
+    mutationFn: (dto: CreateBayDto) =>
+      BayController_create(dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'bays'] })
     },
@@ -438,8 +446,8 @@ export function useCreateBay() {
 export function useUpdateBay() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, dto }: { id: string; dto: Record<string, unknown> }) =>
-      BayController_update(id, { ...{ body: JSON.stringify(dto) }, method: 'PATCH' } as any),
+    mutationFn: ({ id, dto }: { id: string; dto: UpdateBayDto }) =>
+      BayController_update(id, dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'bays'] })
     },
@@ -460,8 +468,8 @@ export function useDeleteBay() {
 export function useCreateRack() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (dto: Record<string, unknown>) =>
-      RackController_create({ ...{ body: JSON.stringify(dto) }, method: 'POST' } as any),
+    mutationFn: (dto: CreateRackDto) =>
+      RackController_create(dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'racks'] })
     },
@@ -471,8 +479,8 @@ export function useCreateRack() {
 export function useUpdateRack() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, dto }: { id: string; dto: Record<string, unknown> }) =>
-      RackController_update(id, { ...{ body: JSON.stringify(dto) }, method: 'PATCH' } as any),
+    mutationFn: ({ id, dto }: { id: string; dto: UpdateRackDto }) =>
+      RackController_update(id, dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'racks'] })
     },
@@ -493,8 +501,8 @@ export function useDeleteRack() {
 export function useCreateLevel() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (dto: Record<string, unknown>) =>
-      LevelController_create({ ...{ body: JSON.stringify(dto) }, method: 'POST' } as any),
+    mutationFn: (dto: CreateLevelDto) =>
+      LevelController_create(dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'levels'] })
     },
@@ -504,8 +512,8 @@ export function useCreateLevel() {
 export function useUpdateLevel() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, dto }: { id: string; dto: Record<string, unknown> }) =>
-      LevelController_update(id, { ...{ body: JSON.stringify(dto) }, method: 'PATCH' } as any),
+    mutationFn: ({ id, dto }: { id: string; dto: UpdateLevelDto }) =>
+      LevelController_update(id, dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'warehouse', 'levels'] })
     },

@@ -3,10 +3,12 @@ import {
   OutboundWebController_getWaveBoard,
   OutboundWebController_createWave,
   OutboundWebController_generatePickTasks,
+  OutboundWebController_updateWaveStatus,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   CreateWaveDto,
   OutboundWebControllerGetWaveBoardParams,
+  UpdateWaveStatusDto,
 } from '@/lib/types/wms-api'
 
 function safeList<T>(data: unknown): T[] {
@@ -57,6 +59,20 @@ export function useCreateWave() {
   return useMutation({
     mutationFn: async (dto: CreateWaveDto) => {
       return OutboundWebController_createWave(dto)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['wms', 'outbound', 'wave-board'],
+      })
+    },
+  })
+}
+
+export function useUpdateWaveStatus() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, dto }: { id: string; dto: UpdateWaveStatusDto }) => {
+      return OutboundWebController_updateWaveStatus(id, dto)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
