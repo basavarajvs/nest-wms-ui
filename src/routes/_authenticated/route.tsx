@@ -5,7 +5,10 @@ import { ProtectedRoute } from '@/components/protected-route'
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context }) => {
     if (!context.auth.isLoading && !context.auth.isAuthenticated) {
-      throw redirect({ to: '/login' })
+      const hasToken = !!localStorage.getItem('auth_token')
+      if (!hasToken) {
+        throw redirect({ to: '/login' })
+      }
     }
   },
   component: () => (

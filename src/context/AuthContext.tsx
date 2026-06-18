@@ -36,6 +36,16 @@ export interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+function normalizeRoles(roles: any): string[] {
+  if (!roles || !Array.isArray(roles)) return []
+  return roles
+    .map((r: any) => {
+      if (typeof r === 'string') return r
+      return r.roleCode ?? r.code ?? r.name ?? ''
+    })
+    .filter(Boolean)
+}
+
 async function fetchUserProfile(): Promise<User> {
   const response = (await UserController_getMe()) as unknown as User
   const userData = (response as any)?.data ?? response
@@ -46,8 +56,23 @@ async function fetchUserProfile(): Promise<User> {
     lastName: userData.lastName,
     tenantCode:
       userData.tenantCode || localStorage.getItem('tenant_code') || undefined,
-    roles: userData.roles ?? [],
+    roles: normalizeRoles(userData.roles),
   }
+}
+
+function decodeTokenPayload(token: string): Record<string, unknown> | null {
+  try {
+    const payload = token.split('.')[1]
+    return JSON.parse(atob(payload))
+  } catch {
+    return null
+  }
+}
+
+function isTokenExpired(token: string): boolean {
+  const payload = decodeTokenPayload(token)
+  if (!payload || typeof payload.exp !== 'number') return true
+  return Date.now() >= payload.exp * 1000
 }
 
 function clearAuthState() {
@@ -63,8 +88,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token')
-    if (token) {
-      fetchUserProfile()
+    if (!token) {
+      setIsLoading(false)
+      return
+    }
+
+    if (isTokenExpired(token)) {
+      const storedRefreshToken = localStorage.getItem('refresh_token')
+      if (!storedRefreshToken) {
+        clearAuthState()
+        setIsLoading(false)
+        return
+      }
+
+      AuthController_refresh({ refreshToken: storedRefreshToken })
+        .then((refreshResponse: any) => {
+          const tokens = refreshResponse?.data ?? refreshResponse
+          localStorage.setItem('auth_token', tokens.accessToken)
+          localStorage.setItem('refresh_token', tokens.refreshToken)
+          return fetchUserProfile()
+        })
         .then((profile) => {
           setUser(profile)
         })
@@ -75,7 +118,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setIsLoading(false)
         })
     } else {
-      setIsLoading(false)
+      fetchUserProfile()
+        .then((profile) => {
+          setUser(profile)
+        })
+        .catch(() => {
+          clearAuthState()
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
     }
   }, [])
 

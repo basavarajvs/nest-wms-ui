@@ -2,7 +2,7 @@ import { useState } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { UserPlus, Search, MoreHorizontal, Shield } from 'lucide-react'
+import { UserPlus, Search, MoreHorizontal, Shield, Copy, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -68,9 +68,11 @@ export function AdminUsers() {
   const [page, setPage] = useState(1)
   const [limit] = useState(10)
   const [search, setSearch] = useState('')
-  const [roleFilter, setRoleFilter] = useState<string>('')
+  const [roleFilter, setRoleFilter] = useState<string>('__all__')
 
   const [inviteOpen, setInviteOpen] = useState(false)
+  const [inviteResult, setInviteResult] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
   const [selectedUserForRole, setSelectedUserForRole] = useState<User | null>(
     null
   )
@@ -79,7 +81,7 @@ export function AdminUsers() {
     page,
     limit,
     search: search || undefined,
-    roleCode: roleFilter || undefined,
+    roleCode: roleFilter === '__all__' ? undefined : roleFilter,
   }
 
   const { data, isLoading, error, refetch } = useUsers(params)
@@ -101,7 +103,7 @@ export function AdminUsers() {
       email: '',
       firstName: '',
       lastName: '',
-      roleId: '',
+      roleId: '__none__',
       message: '',
     },
   })
@@ -113,15 +115,25 @@ export function AdminUsers() {
   // Invite handler
   const onInviteSubmit = async (values: InviteForm) => {
     try {
-      await inviteMutation.mutateAsync({
+      const res = await inviteMutation.mutateAsync({
         email: values.email,
         message: values.message,
-        roleId: values.roleId || undefined,
+        roleId: values.roleId === '__none__' ? undefined : values.roleId,
       } as any)
-      toast.success('Invitation sent successfully')
-      setInviteOpen(false)
-      reset()
-      refetch()
+      const token = (res as any)?.data?.token
+      if (token) {
+        const url = `${window.location.origin}/accept-invite?token=${token}`
+        setInviteResult(url)
+        toast.success('Invitation sent', {
+          description: url,
+          duration: 10000,
+        })
+      } else {
+        toast.success('Invitation sent successfully')
+        setInviteOpen(false)
+        reset()
+        refetch()
+      }
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
@@ -157,104 +169,161 @@ export function AdminUsers() {
           </p>
         </div>
 
-        <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <Dialog
+          open={inviteOpen}
+          onOpenChange={(open) => {
+            setInviteOpen(open)
+            if (!open) {
+              setInviteResult(null)
+              reset()
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button onClick={() => setInviteOpen(true)}>
               <UserPlus className='mr-2 h-4 w-4' />
               Invite User
             </Button>
           </DialogTrigger>
-          <DialogContent className='sm:max-w-[480px]'>
-            <form onSubmit={handleSubmit(onInviteSubmit)}>
-              <DialogHeader>
-                <DialogTitle>Invite New User</DialogTitle>
-                <DialogDescription>
-                  Send an invitation email. The user will receive a link to
-                  complete registration.
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className='grid gap-4 py-4'>
-                <div className='grid gap-2'>
-                  <Label htmlFor='email'>Email *</Label>
-                  <Input id='email' type='email' {...register('email')} />
-                  {errors.email && (
-                    <p className='text-sm text-destructive'>
-                      {errors.email.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className='grid grid-cols-2 gap-4'>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='firstName'>First Name *</Label>
-                    <Input id='firstName' {...register('firstName')} />
-                    {errors.firstName && (
-                      <p className='text-sm text-destructive'>
-                        {errors.firstName.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='lastName'>Last Name *</Label>
-                    <Input id='lastName' {...register('lastName')} />
-                    {errors.lastName && (
-                      <p className='text-sm text-destructive'>
-                        {errors.lastName.message}
-                      </p>
-                    )}
+          <DialogContent className='sm:max-w-[560px]'>
+            {inviteResult ? (
+              <>
+                <DialogHeader>
+                  <DialogTitle>Invitation Sent</DialogTitle>
+                  <DialogDescription>
+                    Share this link with the user to complete registration.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className='py-4'>
+                  <Label className='mb-2 block text-sm font-medium'>
+                    Invitation Link
+                  </Label>
+                  <div className='flex items-center gap-2'>
+                    <code className='flex-1 break-all rounded-md border bg-muted px-3 py-2 text-sm'>
+                      {inviteResult}
+                    </code>
+                    <Button
+                      variant='outline'
+                      size='icon'
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(inviteResult)
+                        setCopied(true)
+                        setTimeout(() => setCopied(false), 2000)
+                      }}
+                    >
+                      {copied ? (
+                        <Check className='h-4 w-4 text-green-500' />
+                      ) : (
+                        <Copy className='h-4 w-4' />
+                      )}
+                    </Button>
                   </div>
                 </div>
-
-                <div className='grid gap-2'>
-                  <Label>Assign Role (optional)</Label>
-                  <Select
-                    onValueChange={(val) => setValue('roleId', val)}
-                    value={watch('roleId')}
+                <DialogFooter>
+                  <Button
+                    onClick={() => {
+                      setInviteOpen(false)
+                      setInviteResult(null)
+                      reset()
+                      refetch()
+                    }}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select a role' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value=''>No role</SelectItem>
-                      {roles.map((role) => (
-                        <SelectItem key={role.id} value={role.id}>
-                          {role.name || role.code || role.id}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    Done
+                  </Button>
+                </DialogFooter>
+              </>
+            ) : (
+              <form onSubmit={handleSubmit(onInviteSubmit)}>
+                <DialogHeader>
+                  <DialogTitle>Invite New User</DialogTitle>
+                  <DialogDescription>
+                    Send an invitation email. The user will receive a link to
+                    complete registration.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className='grid gap-4 py-4'>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='email'>Email *</Label>
+                    <Input id='email' type='email' {...register('email')} />
+                    {errors.email && (
+                      <p className='text-sm text-destructive'>
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className='grid grid-cols-2 gap-4'>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='firstName'>First Name *</Label>
+                      <Input id='firstName' {...register('firstName')} />
+                      {errors.firstName && (
+                        <p className='text-sm text-destructive'>
+                          {errors.firstName.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='lastName'>Last Name *</Label>
+                      <Input id='lastName' {...register('lastName')} />
+                      {errors.lastName && (
+                        <p className='text-sm text-destructive'>
+                          {errors.lastName.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className='grid gap-2'>
+                    <Label>Assign Role (optional)</Label>
+                    <Select
+                      onValueChange={(val) => setValue('roleId', val)}
+                      value={watch('roleId')}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select a role' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='__none__'>No role</SelectItem>
+                        {roles.map((role) => (
+                          <SelectItem key={role.roleId} value={role.roleId}>
+                            {role.roleName || role.roleCode || role.roleId}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className='grid gap-2'>
+                    <Label htmlFor='message'>Custom Message (optional)</Label>
+                    <Input
+                      id='message'
+                      {...register('message')}
+                      placeholder='Welcome to the team!'
+                    />
+                  </div>
                 </div>
 
-                <div className='grid gap-2'>
-                  <Label htmlFor='message'>Custom Message (optional)</Label>
-                  <Input
-                    id='message'
-                    {...register('message')}
-                    placeholder='Welcome to the team!'
-                  />
-                </div>
-              </div>
-
-              <DialogFooter>
-                <Button
-                  type='button'
-                  variant='outline'
-                  onClick={() => {
-                    setInviteOpen(false)
-                    reset()
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type='submit'
-                  disabled={isSubmitting || inviteMutation.isPending}
-                >
-                  {inviteMutation.isPending ? 'Sending...' : 'Send Invitation'}
-                </Button>
-              </DialogFooter>
-            </form>
+                <DialogFooter>
+                  <Button
+                    type='button'
+                    variant='outline'
+                    onClick={() => {
+                      setInviteOpen(false)
+                      reset()
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type='submit'
+                    disabled={isSubmitting || inviteMutation.isPending}
+                  >
+                    {inviteMutation.isPending ? 'Sending...' : 'Send Invitation'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            )}
           </DialogContent>
         </Dialog>
       </div>
@@ -285,10 +354,10 @@ export function AdminUsers() {
             <SelectValue placeholder='Filter by role' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value=''>All Roles</SelectItem>
+            <SelectItem value='__all__'>All Roles</SelectItem>
             {roles.map((r) => (
-              <SelectItem key={r.id} value={r.code || r.id}>
-                {r.name || r.code}
+              <SelectItem key={r.roleId} value={r.roleCode || r.roleId}>
+                {r.roleName || r.roleCode}
               </SelectItem>
             ))}
           </SelectContent>
@@ -345,16 +414,18 @@ export function AdminUsers() {
                         {user.email}
                       </TableCell>
                       <TableCell>
-                        {[user.firstName, user.lastName]
-                          .filter(Boolean)
-                          .join(' ') || '—'}
+                        {user.status === 'pending'
+                          ? '—'
+                          : [user.firstName, user.lastName]
+                              .filter(Boolean)
+                              .join(' ') || '—'}
                       </TableCell>
                       <TableCell>
                         <div className='flex flex-wrap gap-1'>
                           {user.roles && user.roles.length > 0 ? (
                             user.roles.map((role, idx) => (
                               <Badge key={idx} variant='secondary'>
-                                {role.name || role.code || 'Role'}
+                                {role.roleName || role.roleCode || 'Role'}
                               </Badge>
                             ))
                           ) : (
@@ -367,10 +438,21 @@ export function AdminUsers() {
                       <TableCell>
                         <Badge
                           variant={
-                            user.status === 'active' ? 'default' : 'outline'
+                            user.status === 'active'
+                              ? 'default'
+                              : user.status === 'pending'
+                                ? 'secondary'
+                                : 'outline'
+                          }
+                          className={
+                            user.status === 'pending'
+                              ? 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-100'
+                              : ''
                           }
                         >
-                          {user.status || 'unknown'}
+                          {user.status === 'pending'
+                            ? 'Invited'
+                            : user.status || 'unknown'}
                         </Badge>
                       </TableCell>
                       <TableCell className='text-right'>
@@ -381,12 +463,26 @@ export function AdminUsers() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align='end'>
-                            <DropdownMenuItem
-                              onClick={() => setSelectedUserForRole(user)}
-                            >
-                              <Shield className='mr-2 h-4 w-4' />
-                              Assign Role
-                            </DropdownMenuItem>
+                            {user.status === 'pending' ? (
+                              <DropdownMenuItem
+                                onClick={async () => {
+                                  if (!user.invitationToken) return
+                                  const url = `${window.location.origin}/accept-invite?token=${user.invitationToken}`
+                                  await navigator.clipboard.writeText(url)
+                                  toast.success('Invitation link copied')
+                                }}
+                              >
+                                <Copy className='mr-2 h-4 w-4' />
+                                Copy Invitation Link
+                              </DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuItem
+                                onClick={() => setSelectedUserForRole(user)}
+                              >
+                                <Shield className='mr-2 h-4 w-4' />
+                                Assign Role
+                              </DropdownMenuItem>
+                            )}
                             {/* Future: Deactivate, etc. */}
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -456,8 +552,8 @@ export function AdminUsers() {
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
-                    <SelectItem key={role.id} value={role.id}>
-                      {role.name || role.code || role.id}
+                    <SelectItem key={role.roleId} value={role.roleId}>
+                      {role.roleName || role.roleCode || role.roleId}
                     </SelectItem>
                   ))}
                 </SelectContent>

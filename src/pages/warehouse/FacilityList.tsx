@@ -46,6 +46,13 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -75,6 +82,13 @@ const facilitySchema = z.object({
 
 type FacilityForm = z.infer<typeof facilitySchema>
 
+const FACILITY_TYPE_OPTIONS = [
+  { value: 'WAREHOUSE', label: 'Warehouse' },
+  { value: 'DISTRIBUTION_CENTER', label: 'Distribution Center' },
+  { value: 'CROSS_DOCK', label: 'Cross Dock' },
+  { value: 'FULFILLMENT_CENTER', label: 'Fulfillment Center' },
+] as const
+
 export function FacilityList() {
   const [sorting, setSorting] = useState<SortingState>([])
   const navigate = useNavigate()
@@ -101,6 +115,8 @@ export function FacilityList() {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FacilityForm>({
     resolver: zodResolver(facilitySchema) as any,
@@ -303,11 +319,21 @@ export function FacilityList() {
                   </div>
                   <div className='grid gap-2'>
                     <Label htmlFor='facilityType'>Facility Type *</Label>
-                    <Input
-                      id='facilityType'
-                      {...register('facilityType')}
-                      placeholder='Warehouse, Distribution Center...'
-                    />
+                    <Select
+                      onValueChange={(val) => setValue('facilityType', val)}
+                      value={watch('facilityType')}
+                    >
+                      <SelectTrigger id='facilityType'>
+                        <SelectValue placeholder='Select facility type...' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {FACILITY_TYPE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     {errors.facilityType && (
                       <p className='text-sm text-destructive'>
                         {errors.facilityType.message}

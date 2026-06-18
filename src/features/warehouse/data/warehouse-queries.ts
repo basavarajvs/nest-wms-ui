@@ -121,7 +121,15 @@ export function useFacilities(search?: string) {
       return res as unknown
     },
     select: (data) => {
-      let facilities = safeArray<Facility>(data)
+      let facilities = safeArray<Record<string, unknown>>(data).map(
+        (item): Facility => ({
+          id: (item.id as string) ?? '',
+          facilityCode: (item.facilityCode as string) ?? '',
+          facilityName: (item.name as string) ?? (item.facilityName as string) ?? '',
+          facilityType: item.facilityType as string | undefined,
+          isActive: item.isActive as boolean | undefined,
+        })
+      )
       if (search) {
         const q = search.toLowerCase()
         facilities = facilities.filter(

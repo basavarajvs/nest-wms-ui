@@ -28,6 +28,8 @@ function safeTotal(data: unknown, fallback = 0): number {
     const obj = data as Record<string, unknown>
     if (typeof obj.total === 'number') return obj.total
     if (typeof obj.count === 'number') return obj.count
+    const meta = obj.meta as Record<string, unknown> | undefined
+    if (meta && typeof meta.total === 'number') return meta.total
     const arr = safeArray(obj)
     if (arr.length) return arr.length
   }
@@ -40,14 +42,15 @@ export interface User {
   firstName?: string
   lastName?: string
   status?: string
-  roles?: Array<{ id: string; code?: string; name?: string }>
+  invitationToken?: string
+  roles?: Array<{ roleId: string; roleCode?: string; roleName?: string }>
   createdAt?: string
 }
 
 export interface Role {
-  id: string
-  code?: string
-  name?: string
+  roleId: string
+  roleCode?: string
+  roleName?: string
   description?: string
 }
 
@@ -70,7 +73,7 @@ export function useRoles() {
   return useQuery({
     queryKey: ['saas', 'roles', 'list'],
     queryFn: async () => {
-      const res = await RoleController_findAll()
+      const res = await RoleController_findAll({ includeSystem: 'true' })
       return res as unknown
     },
     select: (data) => safeArray<Role>(data),

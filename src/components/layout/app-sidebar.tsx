@@ -37,7 +37,16 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarData.user} />
+        <NavUser
+          user={{
+            name: user
+              ? [user.firstName, user.lastName].filter(Boolean).join(' ') ||
+                user.email
+              : 'User',
+            email: user?.email ?? '',
+            avatar: '/avatars/shadcn.jpg',
+          }}
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

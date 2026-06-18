@@ -57,7 +57,15 @@ export function FacilityProvider({ children }: { children: ReactNode }) {
       setError(null)
       setIsLoading(true)
       const res = await WarehouseFacilityController_findAllWeb()
-      const list = safeArray<Facility>(res as unknown)
+      const list = safeArray<Record<string, unknown>>(res as unknown).map(
+        (item): Facility => ({
+          id: (item.id as string) ?? '',
+          facilityCode: (item.facilityCode as string) ?? '',
+          facilityName: (item.name as string) ?? (item.facilityName as string) ?? '',
+          facilityType: item.facilityType as string | undefined,
+          isActive: item.isActive as boolean | undefined,
+        })
+      )
       setFacilities(list)
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to load facilities'))

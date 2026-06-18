@@ -19,7 +19,10 @@ export function handleServerError(error: unknown) {
   }
 
   if (error instanceof AxiosError) {
-    const title = error.response?.data?.title
+    const data = error.response?.data as Record<string, unknown> | undefined
+    const title =
+      (data?.error as Record<string, unknown> | undefined)?.message ??
+      data?.title
     if (typeof title === 'string' && title.length > 0) {
       errMsg = title
     }

@@ -30,6 +30,7 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
+import { Route as authAcceptInviteRouteImport } from './routes/(auth)/accept-invite'
 import { Route as AuthenticatedWarehouseRouteRouteImport } from './routes/_authenticated/warehouse/route'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedReportsRouteRouteImport } from './routes/_authenticated/reports/route'
@@ -200,6 +201,11 @@ const authLoginRoute = authLoginRouteImport.update({
 const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
   id: '/(auth)/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authAcceptInviteRoute = authAcceptInviteRouteImport.update({
+  id: '/(auth)/accept-invite',
+  path: '/accept-invite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedWarehouseRouteRoute =
@@ -605,6 +611,7 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AuthenticatedReportsRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/warehouse': typeof AuthenticatedWarehouseRouteRouteWithChildren
+  '/accept-invite': typeof authAcceptInviteRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/otp': typeof authOtpRoute
@@ -687,6 +694,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/items': typeof AuthenticatedItemsRouteRouteWithChildren
   '/warehouse': typeof AuthenticatedWarehouseRouteRouteWithChildren
+  '/accept-invite': typeof authAcceptInviteRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/otp': typeof authOtpRoute
@@ -777,6 +785,7 @@ export interface FileRoutesById {
   '/_authenticated/reports': typeof AuthenticatedReportsRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/_authenticated/warehouse': typeof AuthenticatedWarehouseRouteRouteWithChildren
+  '/(auth)/accept-invite': typeof authAcceptInviteRoute
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/otp': typeof authOtpRoute
@@ -868,6 +877,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings'
     | '/warehouse'
+    | '/accept-invite'
     | '/forgot-password'
     | '/login'
     | '/otp'
@@ -950,6 +960,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/items'
     | '/warehouse'
+    | '/accept-invite'
     | '/forgot-password'
     | '/login'
     | '/otp'
@@ -1039,6 +1050,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports'
     | '/_authenticated/settings'
     | '/_authenticated/warehouse'
+    | '/(auth)/accept-invite'
     | '/(auth)/forgot-password'
     | '/(auth)/login'
     | '/(auth)/otp'
@@ -1121,6 +1133,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  authAcceptInviteRoute: typeof authAcceptInviteRoute
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authLoginRoute: typeof authLoginRoute
   authOtpRoute: typeof authOtpRoute
@@ -1281,6 +1294,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof authForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/accept-invite': {
+      id: '/(auth)/accept-invite'
+      path: '/accept-invite'
+      fullPath: '/accept-invite'
+      preLoaderRoute: typeof authAcceptInviteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/warehouse': {
@@ -2040,6 +2060,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  authAcceptInviteRoute: authAcceptInviteRoute,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authLoginRoute: authLoginRoute,
   authOtpRoute: authOtpRoute,
