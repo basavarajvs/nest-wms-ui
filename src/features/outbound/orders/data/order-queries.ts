@@ -37,9 +37,16 @@ export interface Order {
   orderNumber?: string
   clientCode?: string
   facilityId?: string
+  customerId?: string
   status?: string
   priority?: number
+  orderDate?: string
   requestedDeliveryDate?: string
+  currencyCode?: string
+  totalOrderValue?: number
+  confirmedDate?: string
+  shippedDate?: string
+  deliveredDate?: string
   createdAt?: string
   orderType?: string
   notes?: string

@@ -4,7 +4,11 @@ import {
   ProductsWebController_create,
   ProductsWebController_update,
   ProductsWebController_remove,
+  ProductsWebController_uploadImport,
+  ProductsWebController_getImportStatus,
+  getProductsWebControllerDownloadErrorCsvUrl,
 } from '@/lib/api/wms-api/wms-web/wms-web'
+import { AXIOS_INSTANCE } from '@/lib/httpClient'
 import type {
   CreateProductDto,
   UpdateProductDto,
@@ -40,6 +44,19 @@ export interface Product {
   description?: string
   baseUomId?: string
   categoryId?: string
+  productType?: string
+  weight?: number
+  length?: number
+  width?: number
+  height?: number
+  volume?: number
+  unitWeight?: number
+  storageRequirements?: string
+  hazardousClass?: string
+  storageConditions?: string
+  imageUrl?: string
+  manufacturer?: string
+  countryOfOrigin?: string
   trackLot?: boolean
   trackSerial?: boolean
   trackExpiry?: boolean
@@ -113,4 +130,51 @@ export function useDeleteProduct() {
       queryClient.invalidateQueries({ queryKey: ['wms', 'products'] })
     },
   })
+}
+
+export function useUploadImport() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await ProductsWebController_uploadImport({ body: formData })
+      return res as unknown
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'products'] })
+    },
+  })
+}
+
+export function useImportStatus(jobId: string | null) {
+  return useQuery({
+    queryKey: ['wms', 'products', 'import', 'status', jobId],
+    queryFn: async () => {
+      if (!jobId) return null
+      const res = await ProductsWebController_getImportStatus(jobId)
+      return (res ?? {}) as Record<string, unknown>
+    },
+    enabled: !!jobId,
+    refetchInterval: (query) => {
+      const data = query.state.data as Record<string, unknown> | undefined
+      const nested = data?.data as Record<string, unknown> | undefined
+      const status = String(data?.status || nested?.status || '').toUpperCase()
+      return status === 'PENDING' || status === 'PROCESSING' ? 2000 : false
+    },
+    staleTime: 0,
+  })
+}
+
+export async function downloadImportErrors(jobId: string): Promise<void> {
+  const url = getProductsWebControllerDownloadErrorCsvUrl(jobId)
+  const response = await AXIOS_INSTANCE.get(url, { responseType: 'blob' })
+  const blob = response.data as Blob
+  const link = document.createElement('a')
+  link.href = window.URL.createObjectURL(blob)
+  link.download = `import-errors-${jobId}.csv`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(link.href)
 }

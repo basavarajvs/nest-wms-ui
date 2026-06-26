@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useFacility } from '@/hooks/useFacility'
+import { ClientSelect } from '@/components/ClientSelect'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -43,6 +44,8 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
   SelectContent,
@@ -76,10 +79,23 @@ const createLocationSchema = z.object({
   locationCode: z.string().min(1, 'Location code is required'),
   locationType: z.string().min(1, 'Location type is required'),
   parentLocationId: z.string().optional(),
+  length: z.coerce.number().optional(),
+  width: z.coerce.number().optional(),
+  height: z.coerce.number().optional(),
+  maxWeight: z.coerce.number().optional(),
+  maxVolume: z.coerce.number().optional(),
+  isReserved: z.boolean().optional().default(false),
+  blockReason: z.string().optional(),
+  pickSequenceNumber: z.coerce.number().optional(),
+  travelDistanceFromDock: z.coerce.number().optional(),
+  barcodeValue: z.string().optional(),
+  clientId: z.string().optional(),
 })
 
 const updateLocationSchema = z.object({
   isActive: z.boolean(),
+  isBlocked: z.boolean().optional(),
+  blockReason: z.string().optional(),
   parentLocationId: z.string().optional(),
 })
 
@@ -137,12 +153,23 @@ export function LocationList() {
       locationCode: '',
       locationType: '',
       parentLocationId: '',
+      length: undefined,
+      width: undefined,
+      height: undefined,
+      maxWeight: undefined,
+      maxVolume: undefined,
+      isReserved: false,
+      blockReason: '',
+      pickSequenceNumber: undefined,
+      travelDistanceFromDock: undefined,
+      barcodeValue: '',
+      clientId: '',
     },
   })
 
   const updateForm = useForm<UpdateLocationForm>({
     resolver: zodResolver(updateLocationSchema) as any,
-    defaultValues: { isActive: true, parentLocationId: '' },
+    defaultValues: { isActive: true, isBlocked: false, blockReason: '', parentLocationId: '' },
   })
 
   const filteredZones = selectedFacility
@@ -267,6 +294,17 @@ export function LocationList() {
       locationCode: '',
       locationType: '',
       parentLocationId: parentId || '',
+      length: undefined,
+      width: undefined,
+      height: undefined,
+      maxWeight: undefined,
+      maxVolume: undefined,
+      isReserved: false,
+      blockReason: '',
+      pickSequenceNumber: undefined,
+      travelDistanceFromDock: undefined,
+      barcodeValue: '',
+      clientId: '',
     })
     setCreateOpen(true)
   }, [createForm, parentId])
@@ -276,6 +314,8 @@ export function LocationList() {
       setEditLocation(loc)
       updateForm.reset({
         isActive: loc.isActive !== false,
+        isBlocked: (loc as any).isBlocked === true,
+        blockReason: (loc as any).blockReason || '',
         parentLocationId: loc.parentLocationId || '',
       })
     },
@@ -319,6 +359,8 @@ export function LocationList() {
           id: editLocation.id,
           dto: {
             isActive: values.isActive,
+            isBlocked: values.isBlocked,
+            blockReason: values.blockReason || undefined,
             parentId: values.parentLocationId || undefined,
           } as any,
         })
@@ -603,6 +645,104 @@ export function LocationList() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className='grid grid-cols-3 gap-4'>
+                <div className='grid gap-2'>
+                  <Label>Length</Label>
+                  <Input
+                    type='number'
+                    step='0.01'
+                    {...createForm.register('length', { valueAsNumber: true })}
+                    placeholder='0.00'
+                  />
+                </div>
+                <div className='grid gap-2'>
+                  <Label>Width</Label>
+                  <Input
+                    type='number'
+                    step='0.01'
+                    {...createForm.register('width', { valueAsNumber: true })}
+                    placeholder='0.00'
+                  />
+                </div>
+                <div className='grid gap-2'>
+                  <Label>Height</Label>
+                  <Input
+                    type='number'
+                    step='0.01'
+                    {...createForm.register('height', { valueAsNumber: true })}
+                    placeholder='0.00'
+                  />
+                </div>
+              </div>
+              <div className='grid grid-cols-2 gap-4'>
+                <div className='grid gap-2'>
+                  <Label>Max Weight</Label>
+                  <Input
+                    type='number'
+                    step='0.01'
+                    {...createForm.register('maxWeight', { valueAsNumber: true })}
+                    placeholder='0.00'
+                  />
+                </div>
+                <div className='grid gap-2'>
+                  <Label>Max Volume</Label>
+                  <Input
+                    type='number'
+                    step='0.01'
+                    {...createForm.register('maxVolume', { valueAsNumber: true })}
+                    placeholder='0.00'
+                  />
+                </div>
+              </div>
+              <div className='grid grid-cols-2 gap-4'>
+                <div className='grid gap-2'>
+                  <Label>Pick Sequence</Label>
+                  <Input
+                    type='number'
+                    {...createForm.register('pickSequenceNumber', { valueAsNumber: true })}
+                    placeholder='0'
+                  />
+                </div>
+                <div className='grid gap-2'>
+                  <Label>Travel Distance (dock)</Label>
+                  <Input
+                    type='number'
+                    step='0.1'
+                    {...createForm.register('travelDistanceFromDock', { valueAsNumber: true })}
+                    placeholder='0.0'
+                  />
+                </div>
+              </div>
+              <div className='grid gap-2'>
+                <Label>Barcode</Label>
+                <Input
+                  {...createForm.register('barcodeValue')}
+                  placeholder='Scan or enter barcode'
+                />
+              </div>
+              <div className='grid gap-2'>
+                <Label>Client</Label>
+                <ClientSelect
+                  value={createForm.watch('clientId')}
+                  onValueChange={(v) => createForm.setValue('clientId', v)}
+                  placeholder='Select client (optional)'
+                />
+              </div>
+              <div className='flex items-center gap-2'>
+                <Switch
+                  checked={createForm.watch('isReserved')}
+                  onCheckedChange={(v) => createForm.setValue('isReserved', v)}
+                  id='isReserved'
+                />
+                <Label htmlFor='isReserved'>Reserved</Label>
+              </div>
+              <div className='grid gap-2'>
+                <Label>Block Reason</Label>
+                <Textarea
+                  {...createForm.register('blockReason')}
+                  placeholder='Reason if blocked...'
+                />
+              </div>
             </div>
             <DialogFooter>
               <Button
@@ -664,6 +804,23 @@ export function LocationList() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className='flex items-center gap-2'>
+                <input
+                  type='checkbox'
+                  {...updateForm.register('isBlocked')}
+                  id='isBlocked'
+                />
+                <Label htmlFor='isBlocked'>Blocked</Label>
+              </div>
+              {updateForm.watch('isBlocked') && (
+                <div className='grid gap-2'>
+                  <Label>Block Reason</Label>
+                  <Textarea
+                    {...updateForm.register('blockReason')}
+                    placeholder='Reason for blocking...'
+                  />
+                </div>
+              )}
               <div className='grid gap-2'>
                 <Label>Parent Location</Label>
                 <Select

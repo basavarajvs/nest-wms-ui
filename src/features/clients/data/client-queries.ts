@@ -13,6 +13,10 @@ import {
   ClientAddressWebController_create,
   ClientAddressWebController_update,
   ClientAddressWebController_delete,
+  ClientFacilityAssignmentWebController_findAll,
+  ClientFacilityAssignmentWebController_create,
+  ClientFacilityAssignmentWebController_update,
+  ClientFacilityAssignmentWebController_delete,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   CreateClientDto,
@@ -22,6 +26,9 @@ import type {
   CreateClientAddressDto,
   UpdateClientAddressDto,
   ClientWebControllerFindAllParams,
+  CreateClientFacilityAssignmentDto,
+  UpdateClientFacilityAssignmentDto,
+  ClientFacilityAssignmentWebControllerFindAllParams,
 } from '@/lib/types/wms-api'
 
 function safeArray<T>(data: unknown): T[] {
@@ -33,6 +40,7 @@ function safeArray<T>(data: unknown): T[] {
     if (Array.isArray(obj.clients)) return obj.clients as T[]
     if (Array.isArray(obj.contacts)) return obj.contacts as T[]
     if (Array.isArray(obj.addresses)) return obj.addresses as T[]
+    if (Array.isArray(obj.assignments)) return obj.assignments as T[]
   }
   return []
 }
@@ -221,3 +229,64 @@ export function useDeleteClientAddress() {
     },
   })
 }
+
+export interface ClientFacilityAssignment {
+  id: string
+  clientId: string
+  facilityId: string
+  effectiveAt?: string
+  expiresAt?: string
+  isActive?: boolean
+}
+
+export function useClientFacilityAssignments(params?: ClientFacilityAssignmentWebControllerFindAllParams) {
+  const stableKey = JSON.stringify(params)
+  return useQuery({
+    queryKey: ['wms', 'clients', 'assignments', stableKey],
+    queryFn: async () => {
+      const res = await ClientFacilityAssignmentWebController_findAll(params as ClientFacilityAssignmentWebControllerFindAllParams)
+      return res as unknown
+    },
+    select: (data) => ({
+      assignments: safeArray<ClientFacilityAssignment>(data),
+      total: safeTotal(data),
+    }),
+    enabled: !!params?.clientId,
+    staleTime: 1000 * 60 * 2,
+  })
+}
+
+export function useCreateClientFacilityAssignment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (dto: CreateClientFacilityAssignmentDto) =>
+      ClientFacilityAssignmentWebController_create(dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'clients', 'assignments'] })
+    },
+  })
+}
+
+export function useUpdateClientFacilityAssignment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, dto }: { id: string; dto: UpdateClientFacilityAssignmentDto }) =>
+      ClientFacilityAssignmentWebController_update(id, dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'clients', 'assignments'] })
+    },
+  })
+}
+
+export function useDeleteClientFacilityAssignment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) =>
+      ClientFacilityAssignmentWebController_delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wms', 'clients', 'assignments'] })
+    },
+  })
+}
+
+

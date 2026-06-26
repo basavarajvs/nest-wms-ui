@@ -1,15 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  QualityWebController_listInspections,
-  QualityWebController_getInspection,
-  QualityWebController_createInspection,
+  QualityInspectionsWebController_findAll,
+  QualityInspectionsWebController_findById,
+  QualityInspectionsWebController_create,
   InboundWebController_startInspection,
   InboundWebController_completeInspection,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
-  QcInspectDto,
   CompleteInspectionDto,
-  QualityWebControllerListInspectionsParams,
+  QualityInspectionsWebControllerFindAllParams,
 } from '@/lib/types/wms-api'
 
 function safeArray<T>(data: unknown): T[] {
@@ -54,20 +53,18 @@ export interface QualityInspection {
 }
 
 export function useQualityInspections(
-  params?: Partial<QualityWebControllerListInspectionsParams>
+  params?: Partial<QualityInspectionsWebControllerFindAllParams>
 ) {
-  const queryParams: QualityWebControllerListInspectionsParams = {
+  const queryParams: QualityInspectionsWebControllerFindAllParams = {
     facilityId: params?.facilityId || '',
-    grnLineId: params?.grnLineId || '',
-    result: params?.result || '',
-    page: params?.page ?? 1,
-    limit: params?.limit ?? 20,
+    status: params?.status || '',
+    inspectionType: params?.inspectionType || '',
   }
   const stableKey = JSON.stringify(queryParams)
   return useQuery({
-    queryKey: ['wms', 'quality', 'inspections', stableKey],
+    queryKey: ['wms', 'quality', 'old-inspections', stableKey],
     queryFn: async () => {
-      const res = await QualityWebController_listInspections(queryParams)
+      const res = await QualityInspectionsWebController_findAll(queryParams)
       return res as unknown
     },
     select: (data) => ({
@@ -80,9 +77,9 @@ export function useQualityInspections(
 
 export function useQualityInspection(id: string) {
   return useQuery({
-    queryKey: ['wms', 'quality', 'inspections', id],
+    queryKey: ['wms', 'quality', 'old-inspections', id],
     queryFn: async () => {
-      const res = await QualityWebController_getInspection(id)
+      const res = await QualityInspectionsWebController_findById(id)
       return res as unknown
     },
     select: (data) => {
@@ -101,7 +98,7 @@ export function useStartInspection() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'grn'] })
-      queryClient.invalidateQueries({ queryKey: ['wms', 'quality', 'inspections'] })
+      queryClient.invalidateQueries({ queryKey: ['wms', 'quality', 'old-inspections'] })
     },
   })
 }
@@ -114,7 +111,7 @@ export function useCompleteInspection() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'inbound', 'grn'] })
-      queryClient.invalidateQueries({ queryKey: ['wms', 'quality', 'inspections'] })
+      queryClient.invalidateQueries({ queryKey: ['wms', 'quality', 'old-inspections'] })
     },
   })
 }
@@ -122,11 +119,11 @@ export function useCompleteInspection() {
 export function useInspectQc() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (dto: QcInspectDto) => {
-      return QualityWebController_createInspection(dto)
+    mutationFn: async (dto: any) => {
+      return QualityInspectionsWebController_create(dto)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wms', 'quality', 'inspections'] })
+      queryClient.invalidateQueries({ queryKey: ['wms', 'quality', 'old-inspections'] })
     },
   })
 }

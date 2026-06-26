@@ -73,7 +73,7 @@ export function StepperDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-[640px]' showCloseButton={false}>
+      <DialogContent className='sm:max-w-[60vw]' showCloseButton={false}>
         <DialogHeader>
           {title && <DialogTitle>{title}</DialogTitle>}
           {steps[currentStepIndex]?.description && (
@@ -169,16 +169,8 @@ export function StepperDialog({
                 Back
               </Button>
             )}
-            <Button
-              type='button'
-              onClick={handleNext}
-              disabled={loading}
-            >
-              {loading
-                ? 'Submitting...'
-                : isLastStep
-                  ? 'Submit'
-                  : 'Next'}
+            <Button type='button' onClick={handleNext} disabled={loading}>
+              {loading ? 'Submitting...' : isLastStep ? 'Submit' : 'Next'}
             </Button>
           </div>
         </DialogFooter>

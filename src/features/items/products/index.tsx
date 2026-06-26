@@ -2,7 +2,7 @@ import { useState } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Search, Edit, Trash2 } from 'lucide-react'
+import { Plus, Search, Edit, Trash2, Upload } from 'lucide-react'
 import { toast } from 'sonner'
 import {
   AlertDialog,
@@ -36,6 +36,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Table,
   TableBody,
   TableCell,
@@ -50,12 +57,26 @@ import {
   useDeleteProduct,
   type Product,
 } from './data/product-queries'
+import { ProductImportDialog } from './components/ProductImportDialog'
 
 // Simple validation schema (expand as needed)
 const productSchema = z.object({
   productCode: z.string().min(1, 'Product code is required'),
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
+  productType: z.string().optional(),
+  weight: z.coerce.number().optional(),
+  length: z.coerce.number().optional(),
+  width: z.coerce.number().optional(),
+  height: z.coerce.number().optional(),
+  volume: z.coerce.number().optional(),
+  unitWeight: z.coerce.number().optional(),
+  storageRequirements: z.string().optional(),
+  hazardousClass: z.string().optional(),
+  storageConditions: z.string().optional(),
+  imageUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
+  manufacturer: z.string().optional(),
+  countryOfOrigin: z.string().optional(),
   trackLot: z.boolean().optional().default(false),
   trackSerial: z.boolean().optional().default(false),
   trackExpiry: z.boolean().optional().default(false),
@@ -73,6 +94,7 @@ export function Products() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [importDialogOpen, setImportDialogOpen] = useState(false)
 
   const params = {
     page,
@@ -89,6 +111,8 @@ export function Products() {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ProductForm>({
     resolver: zodResolver(productSchema) as any,
@@ -96,6 +120,19 @@ export function Products() {
       productCode: '',
       name: '',
       description: '',
+      productType: '',
+      weight: undefined,
+      length: undefined,
+      width: undefined,
+      height: undefined,
+      volume: undefined,
+      unitWeight: undefined,
+      storageRequirements: '',
+      hazardousClass: '',
+      storageConditions: '',
+      imageUrl: '',
+      manufacturer: '',
+      countryOfOrigin: '',
       trackLot: false,
       trackSerial: false,
       trackExpiry: false,
@@ -116,6 +153,19 @@ export function Products() {
         productCode: product.productCode,
         name: product.name,
         description: product.description || '',
+        productType: (product as any).productType || '',
+        weight: (product as any).weight || undefined,
+        length: (product as any).length || undefined,
+        width: (product as any).width || undefined,
+        height: (product as any).height || undefined,
+        volume: (product as any).volume || undefined,
+        unitWeight: (product as any).unitWeight || undefined,
+        storageRequirements: (product as any).storageRequirements || '',
+        hazardousClass: (product as any).hazardousClass || '',
+        storageConditions: (product as any).storageConditions || '',
+        imageUrl: (product as any).imageUrl || '',
+        manufacturer: (product as any).manufacturer || '',
+        countryOfOrigin: (product as any).countryOfOrigin || '',
         trackLot: !!product.trackLot,
         trackSerial: !!product.trackSerial,
         trackExpiry: !!product.trackExpiry,
@@ -128,6 +178,19 @@ export function Products() {
         productCode: '',
         name: '',
         description: '',
+        productType: '',
+        weight: undefined,
+        length: undefined,
+        width: undefined,
+        height: undefined,
+        volume: undefined,
+        unitWeight: undefined,
+        storageRequirements: '',
+        hazardousClass: '',
+        storageConditions: '',
+        imageUrl: '',
+        manufacturer: '',
+        countryOfOrigin: '',
         trackLot: false,
         trackSerial: false,
         trackExpiry: false,
@@ -183,6 +246,16 @@ export function Products() {
           </p>
         </div>
 
+        <Button variant='outline' onClick={() => setImportDialogOpen(true)}>
+          <Upload className='mr-2 h-4 w-4' />
+          Import
+        </Button>
+
+        <ProductImportDialog
+          open={importDialogOpen}
+          onOpenChange={setImportDialogOpen}
+        />
+
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => openDialog()}>
@@ -231,6 +304,85 @@ export function Products() {
                 <div className='grid gap-2'>
                   <Label htmlFor='description'>Description</Label>
                   <Input id='description' {...register('description')} />
+                </div>
+
+                <div className='grid grid-cols-2 gap-4'>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='productType'>Product Type</Label>
+                    <Select
+                      onValueChange={(val) => setValue('productType', val)}
+                      value={watch('productType')}
+                    >
+                      <SelectTrigger id='productType'>
+                        <SelectValue placeholder='Select type...' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='FINISHED_GOOD'>Finished Good</SelectItem>
+                        <SelectItem value='RAW_MATERIAL'>Raw Material</SelectItem>
+                        <SelectItem value='WIP'>Work In Progress</SelectItem>
+                        <SelectItem value='CONSUMABLE'>Consumable</SelectItem>
+                        <SelectItem value='PACKAGING'>Packaging</SelectItem>
+                        <SelectItem value='RETURNABLE'>Returnable</SelectItem>
+                        <SelectItem value='SERVICE'>Service</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='manufacturer'>Manufacturer</Label>
+                    <Input id='manufacturer' {...register('manufacturer')} />
+                  </div>
+                </div>
+                <div className='grid grid-cols-3 gap-4'>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='weight'>Weight</Label>
+                    <Input id='weight' type='number' step='0.01' {...register('weight', { valueAsNumber: true })} />
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='unitWeight'>Unit Weight</Label>
+                    <Input id='unitWeight' type='number' step='0.01' {...register('unitWeight', { valueAsNumber: true })} />
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='volume'>Volume</Label>
+                    <Input id='volume' type='number' step='0.01' {...register('volume', { valueAsNumber: true })} />
+                  </div>
+                </div>
+                <div className='grid grid-cols-3 gap-4'>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='length'>Length</Label>
+                    <Input id='length' type='number' step='0.01' {...register('length', { valueAsNumber: true })} />
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='width'>Width</Label>
+                    <Input id='width' type='number' step='0.01' {...register('width', { valueAsNumber: true })} />
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='height'>Height</Label>
+                    <Input id='height' type='number' step='0.01' {...register('height', { valueAsNumber: true })} />
+                  </div>
+                </div>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='countryOfOrigin'>Country of Origin</Label>
+                    <Input id='countryOfOrigin' {...register('countryOfOrigin')} placeholder='e.g. US' />
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='imageUrl'>Image URL</Label>
+                    <Input id='imageUrl' {...register('imageUrl')} type='url' placeholder='https://...' />
+                  </div>
+                </div>
+                <div className='grid gap-2'>
+                  <Label htmlFor='storageRequirements'>Storage Requirements</Label>
+                  <Input id='storageRequirements' {...register('storageRequirements')} placeholder='e.g. Climate controlled' />
+                </div>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='hazardousClass'>Hazardous Class</Label>
+                    <Input id='hazardousClass' {...register('hazardousClass')} placeholder='e.g. Class 3' />
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='storageConditions'>Storage Conditions</Label>
+                    <Input id='storageConditions' {...register('storageConditions')} placeholder='e.g. 15-25°C' />
+                  </div>
                 </div>
 
                 <div className='grid grid-cols-3 gap-4'>

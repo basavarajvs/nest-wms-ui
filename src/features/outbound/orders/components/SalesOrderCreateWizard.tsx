@@ -24,9 +24,16 @@ function emptyHeader(facilityId: string): WizardOrderHeader {
     clientId: '',
     clientCode: '',
     clientName: '',
+    customerId: '',
     orderType: '',
     priority: '3',
+    orderDate: '',
     requestedDeliveryDate: '',
+    currencyCode: 'USD',
+    totalOrderValue: '',
+    confirmedDate: '',
+    shippedDate: '',
+    deliveredDate: '',
     deliveryAddress: '',
     notes: '',
     facilityId,
@@ -132,12 +139,19 @@ export function SalesOrderCreateWizard({ open, onOpenChange }: SalesOrderCreateW
       const res = await createOrder.mutateAsync({
         facilityId,
         clientCode: header.clientCode,
+        customerId: header.customerId || undefined,
         orderType: header.orderType || undefined,
         priority: header.priority ? parseInt(header.priority, 10) : undefined,
+        orderDate: header.orderDate || undefined,
         requestedDeliveryDate: header.requestedDeliveryDate || undefined,
+        currencyCode: header.currencyCode || undefined,
+        totalOrderValue: header.totalOrderValue ? parseFloat(header.totalOrderValue) : undefined,
+        confirmedDate: header.confirmedDate || undefined,
+        shippedDate: header.shippedDate || undefined,
+        deliveredDate: header.deliveredDate || undefined,
         deliveryAddress: header.deliveryAddress ? { address: header.deliveryAddress } : undefined,
         notes: header.notes || undefined,
-      })
+      } as any)
 
       let orderId = ''
       if (res && typeof res === 'object') {

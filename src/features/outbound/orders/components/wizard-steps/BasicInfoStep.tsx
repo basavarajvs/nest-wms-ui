@@ -18,9 +18,16 @@ export interface WizardOrderHeader {
   clientId: string
   clientCode: string
   clientName: string
+  customerId: string
   orderType: string
   priority: string
+  orderDate: string
   requestedDeliveryDate: string
+  currencyCode: string
+  totalOrderValue: string
+  confirmedDate: string
+  shippedDate: string
+  deliveredDate: string
   deliveryAddress: string
   notes: string
 }
@@ -35,6 +42,18 @@ const ORDER_TYPE_OPTIONS = [
   { value: 'RUSH', label: 'Rush' },
   { value: 'REPLENISHMENT', label: 'Replenishment' },
   { value: 'TRANSFER', label: 'Transfer' },
+]
+
+const CURRENCY_OPTIONS = [
+  { value: 'USD', label: 'USD - US Dollar' },
+  { value: 'EUR', label: 'EUR - Euro' },
+  { value: 'GBP', label: 'GBP - British Pound' },
+  { value: 'JPY', label: 'JPY - Japanese Yen' },
+  { value: 'CNY', label: 'CNY - Chinese Yuan' },
+  { value: 'CAD', label: 'CAD - Canadian Dollar' },
+  { value: 'AUD', label: 'AUD - Australian Dollar' },
+  { value: 'INR', label: 'INR - Indian Rupee' },
+  { value: 'SGD', label: 'SGD - Singapore Dollar' },
 ]
 
 const PRIORITY_OPTIONS = [
@@ -85,6 +104,15 @@ export function BasicInfoStep({ data, onChange }: BasicInfoStepProps) {
           placeholder="Search client..."
         />
       </div>
+      <div className="grid gap-2">
+        <Label htmlFor="customerId">Customer ID</Label>
+        <Input
+          id="customerId"
+          value={data.customerId}
+          onChange={(e) => onChange('customerId', e.target.value)}
+          placeholder="Optional customer identifier"
+        />
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="grid gap-2">
           <Label htmlFor="orderType">Order Type</Label>
@@ -123,14 +151,57 @@ export function BasicInfoStep({ data, onChange }: BasicInfoStepProps) {
           </Select>
         </div>
       </div>
-      <div className="grid gap-2">
-        <Label htmlFor="requestedDeliveryDate">Requested Delivery Date</Label>
-        <Input
-          id="requestedDeliveryDate"
-          type="date"
-          value={data.requestedDeliveryDate}
-          onChange={(e) => onChange('requestedDeliveryDate', e.target.value)}
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="orderDate">Order Date</Label>
+          <Input
+            id="orderDate"
+            type="date"
+            value={data.orderDate}
+            onChange={(e) => onChange('orderDate', e.target.value)}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="requestedDeliveryDate">Requested Delivery Date</Label>
+          <Input
+            id="requestedDeliveryDate"
+            type="date"
+            value={data.requestedDeliveryDate}
+            onChange={(e) => onChange('requestedDeliveryDate', e.target.value)}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="currencyCode">Currency</Label>
+          <Select
+            value={data.currencyCode}
+            onValueChange={(val) => onChange('currencyCode', val)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select currency" />
+            </SelectTrigger>
+            <SelectContent>
+              {CURRENCY_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="totalOrderValue">Total Order Value</Label>
+          <Input
+            id="totalOrderValue"
+            type="number"
+            step="0.01"
+            value={data.totalOrderValue}
+            onChange={(e) => onChange('totalOrderValue', e.target.value)}
+            placeholder="Auto-calculated"
+            disabled
+          />
+        </div>
       </div>
       <div className="grid gap-2">
         <Label htmlFor="deliveryAddress">Delivery Address</Label>
@@ -151,6 +222,38 @@ export function BasicInfoStep({ data, onChange }: BasicInfoStepProps) {
           rows={3}
           placeholder="Additional notes..."
         />
+      </div>
+      <div className="rounded-md border p-3">
+        <p className="mb-2 text-sm font-medium">Milestone Dates</p>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="confirmedDate">Confirmed Date</Label>
+            <Input
+              id="confirmedDate"
+              type="date"
+              value={data.confirmedDate}
+              onChange={(e) => onChange('confirmedDate', e.target.value)}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="shippedDate">Shipped Date</Label>
+            <Input
+              id="shippedDate"
+              type="date"
+              value={data.shippedDate}
+              onChange={(e) => onChange('shippedDate', e.target.value)}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="deliveredDate">Delivered Date</Label>
+            <Input
+              id="deliveredDate"
+              type="date"
+              value={data.deliveredDate}
+              onChange={(e) => onChange('deliveredDate', e.target.value)}
+            />
+          </div>
+        </div>
       </div>
     </div>
   )

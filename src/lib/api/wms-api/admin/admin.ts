@@ -30,12 +30,27 @@ import type {
   WmsStateMachineControllerListParams
 } from '../../../types/wms-api';
 
-import { customInstance } from '../../../http/httpClient';
+import { customInstance } from '../../../http/httpClient.js';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
+
+const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
+  const result = { queryKey } as T & { queryKey: K };
+  for (const key of Object.keys(query)) {
+    // The explicit queryKey always wins, matching the previous
+    // `{ ...query, queryKey }` spread where it was set last.
+    if (key === 'queryKey') continue;
+    Object.defineProperty(result, key, {
+      enumerable: true,
+      configurable: true,
+      get: () => (query as Record<string, unknown>)[key],
+    });
+  }
+  return result;
+};
 
 export type SystemSettingController_listResponse200 = {
   data: void
@@ -67,6 +82,7 @@ export const SystemSettingController_list = async ( options?: RequestInit): Prom
 
   }
 );}
+
 
 
 
@@ -142,6 +158,7 @@ export const SystemSettingController_get = async (key: string, options?: Request
 
   }
 );}
+
 
 
 
@@ -261,7 +278,7 @@ export function useSystemSettingControllerUpsert<TData = Awaited<ReturnType<type
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -343,7 +360,7 @@ export function useSystemSettingControllerDelete<TData = Awaited<ReturnType<type
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -388,6 +405,7 @@ export const WmsStateMachineController_list = async (params: WmsStateMachineCont
 
   }
 );}
+
 
 
 
@@ -507,7 +525,7 @@ export function useWmsStateMachineControllerCreate<TData = Awaited<ReturnType<ty
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -545,6 +563,7 @@ export const WmsStateMachineController_get = async (key: string, options?: Reque
 
   }
 );}
+
 
 
 
@@ -664,7 +683,7 @@ export function useWmsStateMachineControllerUpdate<TData = Awaited<ReturnType<ty
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -746,7 +765,7 @@ export function useWmsStateMachineControllerValidate<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -832,7 +851,7 @@ export function useWmsStateMachineControllerTestTransition<TData = Awaited<Retur
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -919,7 +938,7 @@ export function useWmsStateMachineControllerRollback<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -957,6 +976,7 @@ export const WmsRuleController_list = async ( options?: RequestInit): Promise<Wm
 
   }
 );}
+
 
 
 
@@ -1076,7 +1096,7 @@ export function useWmsRuleControllerCreate<TData = Awaited<ReturnType<typeof Wms
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1114,6 +1134,7 @@ export const WmsRuleController_get = async (key: string, options?: RequestInit):
 
   }
 );}
+
 
 
 
@@ -1233,7 +1254,7 @@ export function useWmsRuleControllerUpdate<TData = Awaited<ReturnType<typeof Wms
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1319,7 +1340,7 @@ export function useWmsRuleControllerEvaluate<TData = Awaited<ReturnType<typeof W
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1406,7 +1427,7 @@ export function useWmsRuleControllerRollback<TData = Awaited<ReturnType<typeof W
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1444,6 +1465,7 @@ export const WmsBpmnController_list = async ( options?: RequestInit): Promise<Wm
 
   }
 );}
+
 
 
 
@@ -1563,7 +1585,7 @@ export function useWmsBpmnControllerCreate<TData = Awaited<ReturnType<typeof Wms
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1601,6 +1623,7 @@ export const WmsBpmnController_get = async (key: string, options?: RequestInit):
 
   }
 );}
+
 
 
 
@@ -1720,7 +1743,7 @@ export function useWmsBpmnControllerUpdate<TData = Awaited<ReturnType<typeof Wms
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1802,7 +1825,7 @@ export function useWmsBpmnControllerParse<TData = Awaited<ReturnType<typeof WmsB
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1888,7 +1911,7 @@ export function useWmsBpmnControllerSimulate<TData = Awaited<ReturnType<typeof W
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1975,7 +1998,7 @@ export function useWmsBpmnControllerRollback<TData = Awaited<ReturnType<typeof W
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -2020,6 +2043,7 @@ export const ExecutionController_list = async (params?: ExecutionControllerListP
 
   }
 );}
+
 
 
 
@@ -2095,6 +2119,7 @@ export const ExecutionController_get = async (id: string, options?: RequestInit)
 
   }
 );}
+
 
 
 

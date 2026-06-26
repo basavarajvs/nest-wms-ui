@@ -6,12 +6,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type InventoryWebControllerGetStockParams = {
+export type CountMetricsWebControllerGetAggregateMetricsParams = {
 facilityId?: string;
-productId?: string;
-locationId?: string;
-lotId?: string;
-productSku?: string;
-productName?: string;
-lowStock?: boolean;
 };

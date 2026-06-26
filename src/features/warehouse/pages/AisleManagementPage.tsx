@@ -113,11 +113,17 @@ export function AisleManagementPage({ facilityId }: AisleManagementPageProps) {
         accessorKey: 'code',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Code' />,
         cell: ({ row }) => <span className='font-medium font-mono'>{row.getValue('code')}</span>,
+        size: 100,
+        minSize: 80,
+        maxSize: 130,
       },
       {
         accessorKey: 'zoneName',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Zone' />,
         cell: ({ row }) => <span className='text-muted-foreground'>{row.original.zoneName || row.original.zoneId || '—'}</span>,
+        size: 180,
+        minSize: 150,
+        maxSize: 250,
       },
       {
         accessorKey: 'isActive',
@@ -127,6 +133,9 @@ export function AisleManagementPage({ facilityId }: AisleManagementPageProps) {
             {row.getValue('isActive') !== false ? 'Active' : 'Inactive'}
           </Badge>
         ),
+        size: 100,
+        minSize: 80,
+        maxSize: 130,
       },
       {
         id: 'actions',
@@ -144,6 +153,9 @@ export function AisleManagementPage({ facilityId }: AisleManagementPageProps) {
             </div>
           )
         },
+        size: 100,
+        minSize: 80,
+        maxSize: 130,
       },
     ],
     []

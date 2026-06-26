@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import {
   type ColumnDef,
   type SortingState,
@@ -9,10 +10,9 @@ import {
   useReactTable,
   flexRender,
 } from '@tanstack/react-table'
-import { useNavigate, useRouter } from '@tanstack/react-router'
-import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { useFacility } from '@/hooks/useFacility'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -87,6 +87,9 @@ export function StockList() {
             </div>
           </div>
         ),
+        size: 220,
+        minSize: 180,
+        maxSize: 300,
       },
       {
         accessorKey: 'locationId',
@@ -103,6 +106,9 @@ export function StockList() {
             )}
           </div>
         ),
+        size: 160,
+        minSize: 130,
+        maxSize: 200,
       },
       {
         accessorKey: 'onHand',
@@ -114,6 +120,9 @@ export function StockList() {
             {row.getValue('onHand') ?? '—'}
           </span>
         ),
+        size: 90,
+        minSize: 70,
+        maxSize: 110,
       },
       {
         accessorKey: 'allocated',
@@ -125,6 +134,9 @@ export function StockList() {
             {row.getValue('allocated') ?? '—'}
           </span>
         ),
+        size: 90,
+        minSize: 70,
+        maxSize: 110,
       },
       {
         accessorKey: 'reserved',
@@ -136,6 +148,9 @@ export function StockList() {
             {row.getValue('reserved') ?? '—'}
           </span>
         ),
+        size: 90,
+        minSize: 70,
+        maxSize: 110,
       },
       {
         id: 'available',
@@ -153,6 +168,9 @@ export function StockList() {
             <span className='text-right font-mono'>{available ?? '—'}</span>
           )
         },
+        size: 90,
+        minSize: 70,
+        maxSize: 110,
       },
       {
         accessorKey: 'status',
@@ -176,6 +194,9 @@ export function StockList() {
             </Badge>
           )
         },
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
       },
     ],
     []

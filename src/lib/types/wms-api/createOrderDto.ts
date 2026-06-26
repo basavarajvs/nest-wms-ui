@@ -9,6 +9,7 @@ import type { CreateOrderDtoDeliveryAddress } from './createOrderDtoDeliveryAddr
 
 export interface CreateOrderDto {
   clientCode: string;
+  customerId?: string;
   deliveryAddress?: CreateOrderDtoDeliveryAddress;
   facilityId: string;
   notes?: string;

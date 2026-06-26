@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import {
   type ColumnDef,
   type SortingState,
@@ -12,8 +13,6 @@ import {
   useReactTable,
   flexRender,
 } from '@tanstack/react-table'
-import { useNavigate, useRouter } from '@tanstack/react-router'
-import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
   Plus,
   Edit,
@@ -23,6 +22,7 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -466,6 +466,9 @@ export function PurchaseOrders() {
             </Button>
           )
         },
+        size: 40,
+        minSize: 40,
+        maxSize: 50,
       },
       {
         accessorKey: 'poNumber',
@@ -475,18 +478,27 @@ export function PurchaseOrders() {
         cell: ({ row }) => (
           <span className='font-medium'>{row.getValue('poNumber')}</span>
         ),
+        size: 130,
+        minSize: 110,
+        maxSize: 160,
       },
       {
         accessorKey: 'facilityId',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title='Facility' />
         ),
+        size: 120,
+        minSize: 100,
+        maxSize: 140,
       },
       {
         accessorKey: 'vendorId',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title='Vendor' />
         ),
+        size: 150,
+        minSize: 120,
+        maxSize: 200,
       },
       {
         accessorKey: 'orderDate',
@@ -497,6 +509,9 @@ export function PurchaseOrders() {
           const date = row.getValue('orderDate') as string | undefined
           return date ? new Date(date).toLocaleDateString() : '—'
         },
+        size: 120,
+        minSize: 100,
+        maxSize: 140,
       },
       {
         accessorKey: 'status',
@@ -504,6 +519,9 @@ export function PurchaseOrders() {
           <DataTableColumnHeader column={column} title='Status' />
         ),
         cell: ({ row }) => <StatusBadge status={row.getValue('status')} />,
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
       },
       {
         id: 'actions',
@@ -529,6 +547,9 @@ export function PurchaseOrders() {
             </div>
           )
         },
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
       },
     ],
     [expandedRows]

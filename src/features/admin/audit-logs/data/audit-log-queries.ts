@@ -4,6 +4,11 @@ import {
   AuditController_summary,
   AuditController_export,
 } from '@/lib/api/wms-saas-core-api/audit/audit'
+import {
+  AuditController_getEvent,
+  getAuditControllerQueryEventsUrl,
+} from '@/lib/api/wms-api/wms-web/wms-web'
+import { AXIOS_INSTANCE } from '@/lib/httpClient'
 import type { AuditControllerQueryParams } from '@/lib/types/wms-saas-core-api/auditControllerQueryParams'
 import type { AuditControllerExportParams } from '@/lib/types/wms-saas-core-api/auditControllerExportParams'
 
@@ -14,6 +19,7 @@ function safeArray<T>(data: unknown): T[] {
     if (Array.isArray(obj.items)) return obj.items as T[]
     if (Array.isArray(obj.data)) return obj.data as T[]
     if (Array.isArray(obj.entries)) return obj.entries as T[]
+    if (Array.isArray(obj.events)) return obj.events as T[]
   }
   return []
 }
@@ -82,5 +88,64 @@ export function useExportAuditLogs() {
       const res = await AuditController_export(params)
       return res as unknown
     },
+  })
+}
+
+export interface WarehouseEvent {
+  id: string
+  eventType: string
+  entityType: string
+  entityId: string
+  source: string
+  performedBy: string
+  occurredAt: string
+  eventData?: Record<string, unknown>
+  description?: string
+  createdAt?: string
+}
+
+export interface EventListParams {
+  eventType?: string
+  entityType?: string
+  source?: string
+  dateFrom?: string
+  dateTo?: string
+}
+
+export function useEventList(params: EventListParams) {
+  const stableKey = JSON.stringify(params)
+  return useQuery({
+    queryKey: ['wms', 'events', 'list', stableKey],
+    queryFn: async () => {
+      const baseUrl = getAuditControllerQueryEventsUrl()
+      const searchParams = new URLSearchParams()
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== '') {
+          searchParams.append(key, String(value))
+        }
+      })
+      const qs = searchParams.toString()
+      const url = qs ? `${baseUrl}?${qs}` : baseUrl
+      const response = await AXIOS_INSTANCE.get(url)
+      return response.data as unknown
+    },
+    select: (data) => ({
+      events: safeArray<WarehouseEvent>(data),
+      total: safeTotal(data, safeArray<WarehouseEvent>(data).length),
+    }),
+    staleTime: 1000 * 60 * 1,
+  })
+}
+
+export function useEvent(id: string | null) {
+  return useQuery({
+    queryKey: ['wms', 'events', 'detail', id],
+    queryFn: async () => {
+      if (!id) return null
+      const res = await AuditController_getEvent(id)
+      return (res ?? {}) as WarehouseEvent
+    },
+    enabled: !!id,
+    staleTime: 1000 * 60 * 2,
   })
 }

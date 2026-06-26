@@ -91,6 +91,17 @@ export interface Facility {
   facilityCode: string
   facilityName: string
   facilityType?: string
+  addressLine1?: string
+  addressLine2?: string
+  city?: string
+  state?: string
+  postalCode?: string
+  country?: string
+  contactName?: string
+  contactEmail?: string
+  contactPhone?: string
+  timezoneName?: string
+  description?: string
   isActive?: boolean
 }
 
@@ -99,6 +110,8 @@ export interface Zone {
   zoneCode: string
   zoneName: string
   zoneType?: string
+  description?: string
+  zoneColorHex?: string
   facilityId?: string | null
 }
 
@@ -110,6 +123,18 @@ export interface Location {
   zoneId?: string | null
   parentLocationId?: string | null
   capacity?: number
+  length?: number
+  width?: number
+  height?: number
+  maxWeight?: number
+  maxVolume?: number
+  isReserved?: boolean
+  isBlocked?: boolean
+  blockReason?: string
+  pickSequenceNumber?: number
+  travelDistanceFromDock?: number
+  barcodeValue?: string
+  clientId?: string
   isActive?: boolean
 }
 
@@ -127,6 +152,17 @@ export function useFacilities(search?: string) {
           facilityCode: (item.facilityCode as string) ?? '',
           facilityName: (item.name as string) ?? (item.facilityName as string) ?? '',
           facilityType: item.facilityType as string | undefined,
+          addressLine1: item.addressLine1 as string | undefined,
+          addressLine2: item.addressLine2 as string | undefined,
+          city: item.city as string | undefined,
+          state: item.state as string | undefined,
+          postalCode: item.postalCode as string | undefined,
+          country: item.country as string | undefined,
+          contactName: item.contactName as string | undefined,
+          contactEmail: item.contactEmail as string | undefined,
+          contactPhone: item.contactPhone as string | undefined,
+          timezoneName: item.timezoneName as string | undefined,
+          description: item.description as string | undefined,
           isActive: item.isActive as boolean | undefined,
         })
       )

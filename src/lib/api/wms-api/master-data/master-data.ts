@@ -33,12 +33,27 @@ import type {
   WarehouseZoneControllerFindAllWebParams
 } from '../../../types/wms-api';
 
-import { customInstance } from '../../../http/httpClient';
+import { customInstance } from '../../../http/httpClient.js';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
+
+const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
+  const result = { queryKey } as T & { queryKey: K };
+  for (const key of Object.keys(query)) {
+    // The explicit queryKey always wins, matching the previous
+    // `{ ...query, queryKey }` spread where it was set last.
+    if (key === 'queryKey') continue;
+    Object.defineProperty(result, key, {
+      enumerable: true,
+      configurable: true,
+      get: () => (query as Record<string, unknown>)[key],
+    });
+  }
+  return result;
+};
 
 export type StorageLocationController_findAllWebResponse200 = {
   data: void
@@ -70,6 +85,7 @@ export const StorageLocationController_findAllWeb = async ( options?: RequestIni
 
   }
 );}
+
 
 
 
@@ -189,7 +205,7 @@ export function useStorageLocationControllerCreateWeb<TData = Awaited<ReturnType
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -236,6 +252,7 @@ export const StorageLocationController_findByCodeWeb = async (code: string,
 
   }
 );}
+
 
 
 
@@ -359,7 +376,7 @@ export function useStorageLocationControllerUpdateWeb<TData = Awaited<ReturnType
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -397,6 +414,7 @@ export const StorageLocationController_getChildrenWeb = async (id: string, optio
 
   }
 );}
+
 
 
 
@@ -516,7 +534,7 @@ export function useStorageLocationControllerMigrateCodes<TData = Awaited<ReturnT
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -554,6 +572,7 @@ export const StorageLocationController_findAllRf = async ( options?: RequestInit
 
   }
 );}
+
 
 
 
@@ -638,6 +657,7 @@ export const StorageLocationController_findByCodeRf = async (code: string,
 
   }
 );}
+
 
 
 
@@ -757,7 +777,7 @@ export function useWarehouseFacilityControllerCreate<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -795,6 +815,7 @@ export const WarehouseFacilityController_findAllWeb = async ( options?: RequestI
 
   }
 );}
+
 
 
 
@@ -870,6 +891,7 @@ export const WarehouseFacilityController_findById = async (id: string, options?:
 
   }
 );}
+
 
 
 
@@ -993,7 +1015,7 @@ export function useWarehouseFacilityControllerUpdate<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1075,7 +1097,7 @@ export function useWarehouseFacilityControllerDelete<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1161,7 +1183,7 @@ export function useWarehouseFacilityControllerGenerateLocations<TData = Awaited<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1199,6 +1221,7 @@ export const WarehouseFacilityController_findAllRf = async ( options?: RequestIn
 
   }
 );}
+
 
 
 
@@ -1318,7 +1341,7 @@ export function useWarehouseZoneControllerCreate<TData = Awaited<ReturnType<type
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1363,6 +1386,7 @@ export const WarehouseZoneController_findAllWeb = async (params: WarehouseZoneCo
 
   }
 );}
+
 
 
 
@@ -1438,6 +1462,7 @@ export const WarehouseZoneController_findById = async (id: string, options?: Req
 
   }
 );}
+
 
 
 
@@ -1561,7 +1586,7 @@ export function useWarehouseZoneControllerUpdate<TData = Awaited<ReturnType<type
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1643,7 +1668,7 @@ export function useWarehouseZoneControllerDelete<TData = Awaited<ReturnType<type
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1688,6 +1713,7 @@ export const WarehouseZoneController_findAllRf = async (params: WarehouseZoneCon
 
   }
 );}
+
 
 
 

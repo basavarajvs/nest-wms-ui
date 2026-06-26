@@ -46,6 +46,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
   SelectContent,
@@ -77,16 +78,40 @@ const facilitySchema = z.object({
   facilityCode: z.string().min(1, 'Facility code is required'),
   name: z.string().min(1, 'Name is required'),
   facilityType: z.string().min(1, 'Type is required'),
+  addressLine1: z.string().optional(),
+  addressLine2: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  postalCode: z.string().optional(),
+  country: z.string().optional(),
+  contactName: z.string().optional(),
+  contactEmail: z.string().email('Invalid email').optional().or(z.literal('')),
+  contactPhone: z.string().optional(),
+  timezoneName: z.string().default('UTC'),
+  description: z.string().optional(),
   isActive: z.boolean().optional().default(true),
 })
 
 type FacilityForm = z.infer<typeof facilitySchema>
+
+const TIMEZONE_OPTIONS = [
+  'UTC', 'America/New_York', 'America/Chicago', 'America/Denver',
+  'America/Los_Angeles', 'America/Anchorage', 'Pacific/Honolulu',
+  'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Europe/Moscow',
+  'Asia/Dubai', 'Asia/Kolkata', 'Asia/Shanghai', 'Asia/Tokyo',
+  'Asia/Singapore', 'Australia/Sydney', 'Pacific/Auckland',
+] as const
 
 const FACILITY_TYPE_OPTIONS = [
   { value: 'WAREHOUSE', label: 'Warehouse' },
   { value: 'DISTRIBUTION_CENTER', label: 'Distribution Center' },
   { value: 'CROSS_DOCK', label: 'Cross Dock' },
   { value: 'FULFILLMENT_CENTER', label: 'Fulfillment Center' },
+  { value: 'MANUFACTURING_PLANT', label: 'Manufacturing Plant' },
+  { value: 'RETAIL_STORE', label: 'Retail Store' },
+  { value: 'COLD_STORAGE', label: 'Cold Storage' },
+  { value: 'HAZMAT_FACILITY', label: 'Hazmat Facility' },
+  { value: 'STORAGE_FACILITY', label: 'Storage Facility' },
 ] as const
 
 export function FacilityList() {
@@ -124,6 +149,17 @@ export function FacilityList() {
       facilityCode: '',
       name: '',
       facilityType: '',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: '',
+      contactName: '',
+      contactEmail: '',
+      contactPhone: '',
+      timezoneName: 'UTC',
+      description: '',
       isActive: true,
     },
   })
@@ -222,11 +258,28 @@ export function FacilityList() {
         facilityCode: facility.facilityCode,
         name: facility.facilityName,
         facilityType: facility.facilityType || '',
+        addressLine1: (facility as any).addressLine1 || '',
+        addressLine2: (facility as any).addressLine2 || '',
+        city: (facility as any).city || '',
+        state: (facility as any).state || '',
+        postalCode: (facility as any).postalCode || '',
+        country: (facility as any).country || '',
+        contactName: (facility as any).contactName || '',
+        contactEmail: (facility as any).contactEmail || '',
+        contactPhone: (facility as any).contactPhone || '',
+        timezoneName: (facility as any).timezoneName || 'UTC',
+        description: (facility as any).description || '',
         isActive: facility.isActive !== false,
       })
     } else {
       setEditingFacility(null)
-      reset({ facilityCode: '', name: '', facilityType: '', isActive: true })
+      reset({
+        facilityCode: '', name: '', facilityType: '',
+        addressLine1: '', addressLine2: '', city: '', state: '',
+        postalCode: '', country: '', contactName: '', contactEmail: '',
+        contactPhone: '', timezoneName: 'UTC', description: '',
+        isActive: true,
+      })
     }
     setDialogOpen(true)
   }
@@ -339,6 +392,75 @@ export function FacilityList() {
                         {errors.facilityType.message}
                       </p>
                     )}
+                  </div>
+                  <div className='grid grid-cols-2 gap-4'>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='addressLine1'>Address Line 1</Label>
+                      <Input id='addressLine1' {...register('addressLine1')} placeholder='Street address' />
+                    </div>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='addressLine2'>Address Line 2</Label>
+                      <Input id='addressLine2' {...register('addressLine2')} placeholder='Suite, unit, etc.' />
+                    </div>
+                  </div>
+                  <div className='grid grid-cols-3 gap-4'>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='city'>City</Label>
+                      <Input id='city' {...register('city')} />
+                    </div>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='state'>State/Province</Label>
+                      <Input id='state' {...register('state')} />
+                    </div>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='postalCode'>Postal Code</Label>
+                      <Input id='postalCode' {...register('postalCode')} />
+                    </div>
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='country'>Country</Label>
+                    <Input id='country' {...register('country')} placeholder='e.g. US' />
+                  </div>
+                  <div className='grid grid-cols-3 gap-4'>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='contactName'>Contact Name</Label>
+                      <Input id='contactName' {...register('contactName')} />
+                    </div>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='contactEmail'>Contact Email</Label>
+                      <Input id='contactEmail' {...register('contactEmail')} type='email' />
+                      {errors.contactEmail && (
+                        <p className='text-sm text-destructive'>{errors.contactEmail.message}</p>
+                      )}
+                    </div>
+                    <div className='grid gap-2'>
+                      <Label htmlFor='contactPhone'>Contact Phone</Label>
+                      <Input id='contactPhone' {...register('contactPhone')} />
+                    </div>
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='timezoneName'>Timezone</Label>
+                    <Select
+                      onValueChange={(val) => setValue('timezoneName', val)}
+                      value={watch('timezoneName')}
+                    >
+                      <SelectTrigger id='timezoneName'>
+                        <SelectValue placeholder='Select timezone...' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TIMEZONE_OPTIONS.map((tz) => (
+                          <SelectItem key={tz} value={tz}>{tz}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='description'>Description</Label>
+                    <Textarea
+                      id='description'
+                      {...register('description')}
+                      placeholder='Facility description...'
+                    />
                   </div>
                   <div className='flex items-center gap-2'>
                     <input

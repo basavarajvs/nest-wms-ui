@@ -6,10 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type QualityWebControllerListInspectionsParams = {
-grnLineId?: string;
-result?: string;
-facilityId?: string;
-page?: number;
-limit?: number;
+export type VasCatalogWebControllerListServicesParams = {
+category: string;
+isActive: string;
 };

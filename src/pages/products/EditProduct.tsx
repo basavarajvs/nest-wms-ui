@@ -57,6 +57,19 @@ const productSchema = z.object({
     .or(z.literal('')),
   baseUomId: z.string().min(1, 'Base UOM is required'),
   categoryId: z.string().optional().or(z.literal('')),
+  productType: z.string().optional().or(z.literal('')),
+  weight: z.coerce.number().optional(),
+  length: z.coerce.number().optional(),
+  width: z.coerce.number().optional(),
+  height: z.coerce.number().optional(),
+  volume: z.coerce.number().optional(),
+  unitWeight: z.coerce.number().optional(),
+  storageRequirements: z.string().optional().or(z.literal('')),
+  hazardousClass: z.string().optional().or(z.literal('')),
+  storageConditions: z.string().optional().or(z.literal('')),
+  imageUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
+  manufacturer: z.string().optional().or(z.literal('')),
+  countryOfOrigin: z.string().optional().or(z.literal('')),
   trackLot: z.boolean().optional().default(false),
   trackSerial: z.boolean().optional().default(false),
   trackExpiry: z.boolean().optional().default(false),
@@ -80,6 +93,19 @@ export function EditProduct() {
       description: '',
       baseUomId: 'EA',
       categoryId: '',
+      productType: '',
+      weight: undefined,
+      length: undefined,
+      width: undefined,
+      height: undefined,
+      volume: undefined,
+      unitWeight: undefined,
+      storageRequirements: '',
+      hazardousClass: '',
+      storageConditions: '',
+      imageUrl: '',
+      manufacturer: '',
+      countryOfOrigin: '',
       trackLot: false,
       trackSerial: false,
       trackExpiry: false,
@@ -96,6 +122,19 @@ export function EditProduct() {
         description: product.description || '',
         baseUomId: product.baseUomId || 'EA',
         categoryId: product.categoryId || '',
+        productType: product.productType || '',
+        weight: product.weight || undefined,
+        length: product.length || undefined,
+        width: product.width || undefined,
+        height: product.height || undefined,
+        volume: product.volume || undefined,
+        unitWeight: product.unitWeight || undefined,
+        storageRequirements: product.storageRequirements || '',
+        hazardousClass: product.hazardousClass || '',
+        storageConditions: product.storageConditions || '',
+        imageUrl: product.imageUrl || '',
+        manufacturer: product.manufacturer || '',
+        countryOfOrigin: product.countryOfOrigin || '',
         trackLot: !!product.trackLot,
         trackSerial: !!product.trackSerial,
         trackExpiry: !!product.trackExpiry,
@@ -113,6 +152,19 @@ export function EditProduct() {
           ...values,
           description: values.description || undefined,
           categoryId: values.categoryId || undefined,
+          productType: values.productType || undefined,
+          weight: values.weight || undefined,
+          length: values.length || undefined,
+          width: values.width || undefined,
+          height: values.height || undefined,
+          volume: values.volume || undefined,
+          unitWeight: values.unitWeight || undefined,
+          storageRequirements: values.storageRequirements || undefined,
+          hazardousClass: values.hazardousClass || undefined,
+          storageConditions: values.storageConditions || undefined,
+          imageUrl: values.imageUrl || undefined,
+          manufacturer: values.manufacturer || undefined,
+          countryOfOrigin: values.countryOfOrigin || undefined,
           velocityClass: values.velocityClass || undefined,
         }
         await updateMutation.mutateAsync({ id, dto })
@@ -254,6 +306,58 @@ export function EditProduct() {
                 />
                 <FormField
                   control={form.control}
+                  name="productType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Type</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || ''}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select type..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="FINISHED_GOOD">Finished Good</SelectItem>
+                          <SelectItem value="RAW_MATERIAL">Raw Material</SelectItem>
+                          <SelectItem value="WIP">Work In Progress</SelectItem>
+                          <SelectItem value="CONSUMABLE">Consumable</SelectItem>
+                          <SelectItem value="PACKAGING">Packaging</SelectItem>
+                          <SelectItem value="RETURNABLE">Returnable</SelectItem>
+                          <SelectItem value="SERVICE">Service</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="manufacturer"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Manufacturer</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="countryOfOrigin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Country of Origin</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. US" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="isActive"
                   render={({ field }) => (
                     <FormItem>
@@ -275,6 +379,148 @@ export function EditProduct() {
                       <FormDescription>
                         Inactive products are hidden from transactions
                       </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="weight"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Weight</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.valueAsNumber || undefined)} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="unitWeight"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Unit Weight</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.valueAsNumber || undefined)} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="volume"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Volume</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.valueAsNumber || undefined)} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="length"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Length</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.valueAsNumber || undefined)} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="width"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Width</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.valueAsNumber || undefined)} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="height"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Height</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" {...field} onChange={e => field.onChange(e.target.valueAsNumber || undefined)} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="storageRequirements"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Storage Requirements</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Climate controlled" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="hazardousClass"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hazardous Class</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Class 3" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="storageConditions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Storage Conditions</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 15-25°C" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Image URL</FormLabel>
+                      <FormControl>
+                        <Input type="url" placeholder="https://..." {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

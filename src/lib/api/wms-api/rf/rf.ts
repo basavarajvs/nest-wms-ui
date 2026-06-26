@@ -23,12 +23,27 @@ import type {
   LpnRfControllerProductQtyParams
 } from '../../../types/wms-api';
 
-import { customInstance } from '../../../http/httpClient';
+import { customInstance } from '../../../http/httpClient.js';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
+
+const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
+  const result = { queryKey } as T & { queryKey: K };
+  for (const key of Object.keys(query)) {
+    // The explicit queryKey always wins, matching the previous
+    // `{ ...query, queryKey }` spread where it was set last.
+    if (key === 'queryKey') continue;
+    Object.defineProperty(result, key, {
+      enumerable: true,
+      configurable: true,
+      get: () => (query as Record<string, unknown>)[key],
+    });
+  }
+  return result;
+};
 
 export type LpnRfController_inquiryResponse200 = {
   data: void
@@ -63,6 +78,7 @@ export const LpnRfController_inquiry = async (lpnNumber: string, options?: Reque
 
   }
 );}
+
 
 
 
@@ -191,7 +207,7 @@ export function useLpnRfControllerMove<TData = Awaited<ReturnType<typeof LpnRfCo
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -229,6 +245,7 @@ export const LpnRfController_findByLocation = async (locationId: string, options
 
   }
 );}
+
 
 
 
@@ -313,6 +330,7 @@ export const LpnRfController_productQty = async (productId: string,
 
   }
 );}
+
 
 
 

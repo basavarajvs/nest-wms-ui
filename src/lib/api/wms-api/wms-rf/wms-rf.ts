@@ -20,26 +20,47 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ClockInDto,
+  ClockOutDto,
   ConfirmPickDto,
   ConfirmPutawayDto,
+  CreateInspectionResultDto,
   CreateTransactionDto,
+  DockYardRfControllerGetUpcomingParams,
+  EquipmentRfControllerListAvailableParams,
   InventoryRfControllerLookupLotParams,
   PickRecoverDto,
   QcRfResultDto,
   ReceiveLpnTransferDto,
   RfReceiveDto,
+  ScanItemDto,
   ScanLpnToContainerDto,
   SealContainerDto,
   ShipmentLoadDto,
   SubmitCountLineDto
 } from '../../../types/wms-api';
 
-import { customInstance } from '../../../http/httpClient';
+import { customInstance } from '../../../http/httpClient.js';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
+
+const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
+  const result = { queryKey } as T & { queryKey: K };
+  for (const key of Object.keys(query)) {
+    // The explicit queryKey always wins, matching the previous
+    // `{ ...query, queryKey }` spread where it was set last.
+    if (key === 'queryKey') continue;
+    Object.defineProperty(result, key, {
+      enumerable: true,
+      configurable: true,
+      get: () => (query as Record<string, unknown>)[key],
+    });
+  }
+  return result;
+};
 
 export type RfSessionController_startResponse201 = {
   data: void
@@ -115,7 +136,7 @@ export function useRfSessionControllerStart<TData = Awaited<ReturnType<typeof Rf
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -197,7 +218,7 @@ export function useRfSessionControllerStep<TData = Awaited<ReturnType<typeof RfS
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -279,7 +300,7 @@ export function useRfSessionControllerResume<TData = Awaited<ReturnType<typeof R
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -361,7 +382,7 @@ export function useRfSessionControllerComplete<TData = Awaited<ReturnType<typeof
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -443,7 +464,7 @@ export function useRfSessionControllerExtend<TData = Awaited<ReturnType<typeof R
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -481,6 +502,7 @@ export const RfSessionController_get = async (id: string, options?: RequestInit)
 
   }
 );}
+
 
 
 
@@ -600,7 +622,7 @@ export function useNotificationRfControllerPoll<TData = Awaited<ReturnType<typeo
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -638,6 +660,7 @@ export const ProductsRfController_findByBarcode = async (code: string, options?:
 
   }
 );}
+
 
 
 
@@ -713,6 +736,7 @@ export const ProductsRfController_findById = async (id: string, options?: Reques
 
   }
 );}
+
 
 
 
@@ -832,7 +856,7 @@ export function useInventoryRfControllerScanLocation<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -914,7 +938,7 @@ export function useInventoryRfControllerPutaway<TData = Awaited<ReturnType<typeo
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -996,7 +1020,7 @@ export function useInventoryRfControllerPick<TData = Awaited<ReturnType<typeof I
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1078,7 +1102,7 @@ export function useInventoryRfControllerQuickAdjustment<TData = Awaited<ReturnTy
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1125,6 +1149,7 @@ export const InventoryRfController_lookupLot = async (lotNumber: string,
 
   }
 );}
+
 
 
 
@@ -1244,7 +1269,7 @@ export function useInboundRfControllerStartReceiving<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1326,7 +1351,7 @@ export function useInboundRfControllerReceiveScan<TData = Awaited<ReturnType<typ
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1408,7 +1433,7 @@ export function useInboundRfControllerCompleteReceiving<TData = Awaited<ReturnTy
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1490,7 +1515,7 @@ export function useInboundRfControllerQcScan<TData = Awaited<ReturnType<typeof I
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1572,7 +1597,7 @@ export function useInboundRfControllerQcResult<TData = Awaited<ReturnType<typeof
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1610,6 +1635,7 @@ export const InboundRfController_getNextPutaway = async ( options?: RequestInit)
 
   }
 );}
+
 
 
 
@@ -1729,7 +1755,7 @@ export function useInboundRfControllerConfirmPutaway<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1811,7 +1837,7 @@ export function useExceptionManagementRfControllerReportException<TData = Awaite
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -1849,6 +1875,7 @@ export const ExceptionManagementRfController_getMyReports = async ( options?: Re
 
   }
 );}
+
 
 
 
@@ -1928,6 +1955,7 @@ export const ExceptionManagementRfController_getException = async (id: string, o
 
 
 
+
 export const getExceptionManagementRfControllerGetExceptionMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof ExceptionManagementRfController_getException>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationOptions<Awaited<ReturnType<typeof ExceptionManagementRfController_getException>>, TError,{id: string}, TContext> => {
@@ -1999,6 +2027,7 @@ export const LoadingDocksRfController_getAvailableDocks = async ( options?: Requ
 
   }
 );}
+
 
 
 
@@ -2118,7 +2147,7 @@ export function useLoadingDocksRfControllerAssignDock<TData = Awaited<ReturnType
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -2200,7 +2229,187 @@ export function useLoadingDocksRfControllerReleaseDock<TData = Awaited<ReturnTyp
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type QualityInspectionsRfController_myTasksResponse201 = {
+  data: void
+  status: 201
+}
+
+export type QualityInspectionsRfController_myTasksResponseSuccess = (QualityInspectionsRfController_myTasksResponse201) & {
+  headers: Headers;
+};
+;
+
+export type QualityInspectionsRfController_myTasksResponse = (QualityInspectionsRfController_myTasksResponseSuccess)
+
+export const getQualityInspectionsRfControllerMyTasksUrl = () => {
+
+
+
+
+  return `/api/v1/wms/rf/quality/inspections/my-tasks`
+}
+
+/**
+ * @summary RF: List assigned inspections
+ */
+export const QualityInspectionsRfController_myTasks = async ( options?: RequestInit): Promise<QualityInspectionsRfController_myTasksResponse> => {
+
+  return customInstance<QualityInspectionsRfController_myTasksResponse>(getQualityInspectionsRfControllerMyTasksUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getQualityInspectionsRfControllerMyTasksQueryKey = () => {
+    return [
+    'POST', `/api/v1/wms/rf/quality/inspections/my-tasks`
+    ] as const;
+    }
+
+
+export const getQualityInspectionsRfControllerMyTasksQueryOptions = <TData = Awaited<ReturnType<typeof QualityInspectionsRfController_myTasks>>, TError = unknown>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof QualityInspectionsRfController_myTasks>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getQualityInspectionsRfControllerMyTasksQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof QualityInspectionsRfController_myTasks>>> = ({ signal }) => QualityInspectionsRfController_myTasks({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof QualityInspectionsRfController_myTasks>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type QualityInspectionsRfControllerMyTasksQueryResult = NonNullable<Awaited<ReturnType<typeof QualityInspectionsRfController_myTasks>>>
+export type QualityInspectionsRfControllerMyTasksQueryError = unknown
+
+
+/**
+ * @summary RF: List assigned inspections
+ */
+
+export function useQualityInspectionsRfControllerMyTasks<TData = Awaited<ReturnType<typeof QualityInspectionsRfController_myTasks>>, TError = unknown>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof QualityInspectionsRfController_myTasks>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getQualityInspectionsRfControllerMyTasksQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type QualityInspectionsRfController_recordResultResponse201 = {
+  data: void
+  status: 201
+}
+
+export type QualityInspectionsRfController_recordResultResponseSuccess = (QualityInspectionsRfController_recordResultResponse201) & {
+  headers: Headers;
+};
+;
+
+export type QualityInspectionsRfController_recordResultResponse = (QualityInspectionsRfController_recordResultResponseSuccess)
+
+export const getQualityInspectionsRfControllerRecordResultUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/rf/quality/inspections/${id}/record-result`
+}
+
+/**
+ * @summary RF: Record inspection result
+ */
+export const QualityInspectionsRfController_recordResult = async (id: string,
+    createInspectionResultDto: CreateInspectionResultDto, options?: RequestInit): Promise<QualityInspectionsRfController_recordResultResponse> => {
+
+  return customInstance<QualityInspectionsRfController_recordResultResponse>(getQualityInspectionsRfControllerRecordResultUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createInspectionResultDto)
+  }
+);}
+
+
+
+
+
+export const getQualityInspectionsRfControllerRecordResultQueryKey = (id: string,
+    createInspectionResultDto?: CreateInspectionResultDto,) => {
+    return [
+    'POST', `/api/v1/wms/rf/quality/inspections/${id}/record-result`, createInspectionResultDto
+    ] as const;
+    }
+
+
+export const getQualityInspectionsRfControllerRecordResultQueryOptions = <TData = Awaited<ReturnType<typeof QualityInspectionsRfController_recordResult>>, TError = unknown>(id: string,
+    createInspectionResultDto: CreateInspectionResultDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof QualityInspectionsRfController_recordResult>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getQualityInspectionsRfControllerRecordResultQueryKey(id,createInspectionResultDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof QualityInspectionsRfController_recordResult>>> = ({ signal }) => QualityInspectionsRfController_recordResult(id,createInspectionResultDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof QualityInspectionsRfController_recordResult>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type QualityInspectionsRfControllerRecordResultQueryResult = NonNullable<Awaited<ReturnType<typeof QualityInspectionsRfController_recordResult>>>
+export type QualityInspectionsRfControllerRecordResultQueryError = unknown
+
+
+/**
+ * @summary RF: Record inspection result
+ */
+
+export function useQualityInspectionsRfControllerRecordResult<TData = Awaited<ReturnType<typeof QualityInspectionsRfController_recordResult>>, TError = unknown>(
+ id: string,
+    createInspectionResultDto: CreateInspectionResultDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof QualityInspectionsRfController_recordResult>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getQualityInspectionsRfControllerRecordResultQueryOptions(id,createInspectionResultDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -2238,6 +2447,7 @@ export const VasExecutionRfController_getMyTasks = async ( options?: RequestInit
 
   }
 );}
+
 
 
 
@@ -2357,7 +2567,7 @@ export function useVasExecutionRfControllerStartTask<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -2439,7 +2649,265 @@ export function useVasExecutionRfControllerCompleteTask<TData = Awaited<ReturnTy
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type VasCatalogRfController_listWorkstationsResponse200 = {
+  data: void
+  status: 200
+}
+
+export type VasCatalogRfController_listWorkstationsResponseSuccess = (VasCatalogRfController_listWorkstationsResponse200) & {
+  headers: Headers;
+};
+;
+
+export type VasCatalogRfController_listWorkstationsResponse = (VasCatalogRfController_listWorkstationsResponseSuccess)
+
+export const getVasCatalogRfControllerListWorkstationsUrl = () => {
+
+
+
+
+  return `/api/v1/wms/rf/vas/workstations`
+}
+
+/**
+ * @summary RF: List available workstations
+ */
+export const VasCatalogRfController_listWorkstations = async ( options?: RequestInit): Promise<VasCatalogRfController_listWorkstationsResponse> => {
+
+  return customInstance<VasCatalogRfController_listWorkstationsResponse>(getVasCatalogRfControllerListWorkstationsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getVasCatalogRfControllerListWorkstationsMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof VasCatalogRfController_listWorkstations>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof VasCatalogRfController_listWorkstations>>, TError,void, TContext> => {
+
+const mutationKey = ['vasCatalogRfControllerListWorkstations'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof VasCatalogRfController_listWorkstations>>, void> = () => {
+
+
+          return  VasCatalogRfController_listWorkstations(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type VasCatalogRfControllerListWorkstationsMutationResult = NonNullable<Awaited<ReturnType<typeof VasCatalogRfController_listWorkstations>>>
+
+    export type VasCatalogRfControllerListWorkstationsMutationError = unknown
+
+    /**
+ * @summary RF: List available workstations
+ */
+export const useVasCatalogRfControllerListWorkstations = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof VasCatalogRfController_listWorkstations>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof VasCatalogRfController_listWorkstations>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getVasCatalogRfControllerListWorkstationsMutationOptions(options));
+    }
+    export type VasCatalogRfController_checkInResponse201 = {
+  data: void
+  status: 201
+}
+
+export type VasCatalogRfController_checkInResponseSuccess = (VasCatalogRfController_checkInResponse201) & {
+  headers: Headers;
+};
+;
+
+export type VasCatalogRfController_checkInResponse = (VasCatalogRfController_checkInResponseSuccess)
+
+export const getVasCatalogRfControllerCheckInUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/rf/vas/workstations/${id}/check-in`
+}
+
+/**
+ * @summary RF: Check in to a workstation
+ */
+export const VasCatalogRfController_checkIn = async (id: string, options?: RequestInit): Promise<VasCatalogRfController_checkInResponse> => {
+
+  return customInstance<VasCatalogRfController_checkInResponse>(getVasCatalogRfControllerCheckInUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getVasCatalogRfControllerCheckInQueryKey = (id: string,) => {
+    return [
+    'POST', `/api/v1/wms/rf/vas/workstations/${id}/check-in`
+    ] as const;
+    }
+
+
+export const getVasCatalogRfControllerCheckInQueryOptions = <TData = Awaited<ReturnType<typeof VasCatalogRfController_checkIn>>, TError = unknown>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof VasCatalogRfController_checkIn>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getVasCatalogRfControllerCheckInQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof VasCatalogRfController_checkIn>>> = ({ signal }) => VasCatalogRfController_checkIn(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof VasCatalogRfController_checkIn>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type VasCatalogRfControllerCheckInQueryResult = NonNullable<Awaited<ReturnType<typeof VasCatalogRfController_checkIn>>>
+export type VasCatalogRfControllerCheckInQueryError = unknown
+
+
+/**
+ * @summary RF: Check in to a workstation
+ */
+
+export function useVasCatalogRfControllerCheckIn<TData = Awaited<ReturnType<typeof VasCatalogRfController_checkIn>>, TError = unknown>(
+ id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof VasCatalogRfController_checkIn>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getVasCatalogRfControllerCheckInQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type VasCatalogRfController_checkOutResponse201 = {
+  data: void
+  status: 201
+}
+
+export type VasCatalogRfController_checkOutResponseSuccess = (VasCatalogRfController_checkOutResponse201) & {
+  headers: Headers;
+};
+;
+
+export type VasCatalogRfController_checkOutResponse = (VasCatalogRfController_checkOutResponseSuccess)
+
+export const getVasCatalogRfControllerCheckOutUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/rf/vas/workstations/${id}/check-out`
+}
+
+/**
+ * @summary RF: Check out of a workstation
+ */
+export const VasCatalogRfController_checkOut = async (id: string, options?: RequestInit): Promise<VasCatalogRfController_checkOutResponse> => {
+
+  return customInstance<VasCatalogRfController_checkOutResponse>(getVasCatalogRfControllerCheckOutUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getVasCatalogRfControllerCheckOutQueryKey = (id: string,) => {
+    return [
+    'POST', `/api/v1/wms/rf/vas/workstations/${id}/check-out`
+    ] as const;
+    }
+
+
+export const getVasCatalogRfControllerCheckOutQueryOptions = <TData = Awaited<ReturnType<typeof VasCatalogRfController_checkOut>>, TError = unknown>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof VasCatalogRfController_checkOut>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getVasCatalogRfControllerCheckOutQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof VasCatalogRfController_checkOut>>> = ({ signal }) => VasCatalogRfController_checkOut(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof VasCatalogRfController_checkOut>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type VasCatalogRfControllerCheckOutQueryResult = NonNullable<Awaited<ReturnType<typeof VasCatalogRfController_checkOut>>>
+export type VasCatalogRfControllerCheckOutQueryError = unknown
+
+
+/**
+ * @summary RF: Check out of a workstation
+ */
+
+export function useVasCatalogRfControllerCheckOut<TData = Awaited<ReturnType<typeof VasCatalogRfController_checkOut>>, TError = unknown>(
+ id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof VasCatalogRfController_checkOut>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getVasCatalogRfControllerCheckOutQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -2477,6 +2945,7 @@ export const OutboundRfController_getNextPick = async ( options?: RequestInit): 
 
   }
 );}
+
 
 
 
@@ -2596,7 +3065,7 @@ export function useOutboundRfControllerAssignTask<TData = Awaited<ReturnType<typ
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -2678,7 +3147,7 @@ export function useOutboundRfControllerScanLocation<TData = Awaited<ReturnType<t
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -2760,7 +3229,7 @@ export function useOutboundRfControllerScanProduct<TData = Awaited<ReturnType<ty
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -2842,7 +3311,7 @@ export function useOutboundRfControllerConfirmPick<TData = Awaited<ReturnType<ty
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -2924,7 +3393,7 @@ export function useOutboundRfControllerRecoverPick<TData = Awaited<ReturnType<ty
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3006,7 +3475,7 @@ export function useOutboundRfControllerStartPacking<TData = Awaited<ReturnType<t
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3088,7 +3557,7 @@ export function useOutboundRfControllerScanLpn<TData = Awaited<ReturnType<typeof
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3170,7 +3639,7 @@ export function useOutboundRfControllerSealContainer<TData = Awaited<ReturnType<
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3252,7 +3721,7 @@ export function useOutboundRfControllerLoadShipment<TData = Awaited<ReturnType<t
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3334,7 +3803,7 @@ export function useOutboundRfControllerDispatch<TData = Awaited<ReturnType<typeo
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3416,7 +3885,7 @@ export function useOutboundRfControllerPrintGenericLabel<TData = Awaited<ReturnT
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3454,6 +3923,7 @@ export const PackingStationsRfController_getAvailableStations = async ( options?
 
   }
 );}
+
 
 
 
@@ -3533,6 +4003,7 @@ export const PackingStationsRfController_getStation = async (stationCode: string
 
 
 
+
 export const getPackingStationsRfControllerGetStationMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof PackingStationsRfController_getStation>>, TError,{stationCode: string}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationOptions<Awaited<ReturnType<typeof PackingStationsRfController_getStation>>, TError,{stationCode: string}, TContext> => {
@@ -3574,7 +4045,255 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getPackingStationsRfControllerGetStationMutationOptions(options));
     }
-    export type TransferRfController_initiateResponse201 = {
+    export type PackingRfController_getMyActiveSessionResponse200 = {
+  data: void
+  status: 200
+}
+
+export type PackingRfController_getMyActiveSessionResponseSuccess = (PackingRfController_getMyActiveSessionResponse200) & {
+  headers: Headers;
+};
+;
+
+export type PackingRfController_getMyActiveSessionResponse = (PackingRfController_getMyActiveSessionResponseSuccess)
+
+export const getPackingRfControllerGetMyActiveSessionUrl = () => {
+
+
+
+
+  return `/api/v1/wms/rf/packing/sessions/my-active`
+}
+
+export const PackingRfController_getMyActiveSession = async ( options?: RequestInit): Promise<PackingRfController_getMyActiveSessionResponse> => {
+
+  return customInstance<PackingRfController_getMyActiveSessionResponse>(getPackingRfControllerGetMyActiveSessionUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPackingRfControllerGetMyActiveSessionMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof PackingRfController_getMyActiveSession>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof PackingRfController_getMyActiveSession>>, TError,void, TContext> => {
+
+const mutationKey = ['packingRfControllerGetMyActiveSession'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof PackingRfController_getMyActiveSession>>, void> = () => {
+
+
+          return  PackingRfController_getMyActiveSession(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PackingRfControllerGetMyActiveSessionMutationResult = NonNullable<Awaited<ReturnType<typeof PackingRfController_getMyActiveSession>>>
+
+    export type PackingRfControllerGetMyActiveSessionMutationError = unknown
+
+    export const usePackingRfControllerGetMyActiveSession = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof PackingRfController_getMyActiveSession>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof PackingRfController_getMyActiveSession>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getPackingRfControllerGetMyActiveSessionMutationOptions(options));
+    }
+    export type PackingRfController_scanItemResponse201 = {
+  data: void
+  status: 201
+}
+
+export type PackingRfController_scanItemResponseSuccess = (PackingRfController_scanItemResponse201) & {
+  headers: Headers;
+};
+;
+
+export type PackingRfController_scanItemResponse = (PackingRfController_scanItemResponseSuccess)
+
+export const getPackingRfControllerScanItemUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/rf/packing/sessions/${id}/scan-item`
+}
+
+export const PackingRfController_scanItem = async (id: string,
+    scanItemDto: ScanItemDto, options?: RequestInit): Promise<PackingRfController_scanItemResponse> => {
+
+  return customInstance<PackingRfController_scanItemResponse>(getPackingRfControllerScanItemUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(scanItemDto)
+  }
+);}
+
+
+
+
+
+export const getPackingRfControllerScanItemQueryKey = (id: string,
+    scanItemDto?: ScanItemDto,) => {
+    return [
+    'POST', `/api/v1/wms/rf/packing/sessions/${id}/scan-item`, scanItemDto
+    ] as const;
+    }
+
+
+export const getPackingRfControllerScanItemQueryOptions = <TData = Awaited<ReturnType<typeof PackingRfController_scanItem>>, TError = unknown>(id: string,
+    scanItemDto: ScanItemDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof PackingRfController_scanItem>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPackingRfControllerScanItemQueryKey(id,scanItemDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof PackingRfController_scanItem>>> = ({ signal }) => PackingRfController_scanItem(id,scanItemDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof PackingRfController_scanItem>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type PackingRfControllerScanItemQueryResult = NonNullable<Awaited<ReturnType<typeof PackingRfController_scanItem>>>
+export type PackingRfControllerScanItemQueryError = unknown
+
+
+
+export function usePackingRfControllerScanItem<TData = Awaited<ReturnType<typeof PackingRfController_scanItem>>, TError = unknown>(
+ id: string,
+    scanItemDto: ScanItemDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof PackingRfController_scanItem>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getPackingRfControllerScanItemQueryOptions(id,scanItemDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type PackingRfController_sealContainerResponse201 = {
+  data: void
+  status: 201
+}
+
+export type PackingRfController_sealContainerResponseSuccess = (PackingRfController_sealContainerResponse201) & {
+  headers: Headers;
+};
+;
+
+export type PackingRfController_sealContainerResponse = (PackingRfController_sealContainerResponseSuccess)
+
+export const getPackingRfControllerSealContainerUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/rf/packing/sessions/${id}/seal-container`
+}
+
+export const PackingRfController_sealContainer = async (id: string,
+    sealContainerDto: SealContainerDto, options?: RequestInit): Promise<PackingRfController_sealContainerResponse> => {
+
+  return customInstance<PackingRfController_sealContainerResponse>(getPackingRfControllerSealContainerUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(sealContainerDto)
+  }
+);}
+
+
+
+
+
+export const getPackingRfControllerSealContainerQueryKey = (id: string,
+    sealContainerDto?: SealContainerDto,) => {
+    return [
+    'POST', `/api/v1/wms/rf/packing/sessions/${id}/seal-container`, sealContainerDto
+    ] as const;
+    }
+
+
+export const getPackingRfControllerSealContainerQueryOptions = <TData = Awaited<ReturnType<typeof PackingRfController_sealContainer>>, TError = unknown>(id: string,
+    sealContainerDto: SealContainerDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof PackingRfController_sealContainer>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPackingRfControllerSealContainerQueryKey(id,sealContainerDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof PackingRfController_sealContainer>>> = ({ signal }) => PackingRfController_sealContainer(id,sealContainerDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof PackingRfController_sealContainer>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type PackingRfControllerSealContainerQueryResult = NonNullable<Awaited<ReturnType<typeof PackingRfController_sealContainer>>>
+export type PackingRfControllerSealContainerQueryError = unknown
+
+
+
+export function usePackingRfControllerSealContainer<TData = Awaited<ReturnType<typeof PackingRfController_sealContainer>>, TError = unknown>(
+ id: string,
+    sealContainerDto: SealContainerDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof PackingRfController_sealContainer>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getPackingRfControllerSealContainerQueryOptions(id,sealContainerDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type TransferRfController_initiateResponse201 = {
   data: void
   status: 201
 }
@@ -3648,7 +4367,7 @@ export function useTransferRfControllerInitiate<TData = Awaited<ReturnType<typeo
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3730,7 +4449,7 @@ export function useTransferRfControllerScanLpn<TData = Awaited<ReturnType<typeof
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3812,7 +4531,7 @@ export function useTransferRfControllerComplete<TData = Awaited<ReturnType<typeo
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3894,7 +4613,7 @@ export function useCountRfControllerStart<TData = Awaited<ReturnType<typeof Coun
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -3976,7 +4695,7 @@ export function useCountRfControllerScanLocation<TData = Awaited<ReturnType<type
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -4058,7 +4777,7 @@ export function useCountRfControllerEnterQty<TData = Awaited<ReturnType<typeof C
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -4140,7 +4859,7 @@ export function useCountRfControllerSubmitLine<TData = Awaited<ReturnType<typeof
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 
@@ -4222,7 +4941,865 @@ export function useCountRfControllerComplete<TData = Awaited<ReturnType<typeof C
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  return { ...query, queryKey: queryOptions.queryKey };
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type DockYardRfController_getUpcomingResponse200 = {
+  data: void
+  status: 200
+}
+
+export type DockYardRfController_getUpcomingResponseSuccess = (DockYardRfController_getUpcomingResponse200) & {
+  headers: Headers;
+};
+;
+
+export type DockYardRfController_getUpcomingResponse = (DockYardRfController_getUpcomingResponseSuccess)
+
+export const getDockYardRfControllerGetUpcomingUrl = (params: DockYardRfControllerGetUpcomingParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/wms/rf/dock-appointments/upcoming?${stringifiedParams}` : `/api/v1/wms/rf/dock-appointments/upcoming`
+}
+
+/**
+ * @summary Get today's upcoming appointments
+ */
+export const DockYardRfController_getUpcoming = async (params: DockYardRfControllerGetUpcomingParams, options?: RequestInit): Promise<DockYardRfController_getUpcomingResponse> => {
+
+  return customInstance<DockYardRfController_getUpcomingResponse>(getDockYardRfControllerGetUpcomingUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getDockYardRfControllerGetUpcomingMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof DockYardRfController_getUpcoming>>, TError,{params: DockYardRfControllerGetUpcomingParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof DockYardRfController_getUpcoming>>, TError,{params: DockYardRfControllerGetUpcomingParams}, TContext> => {
+
+const mutationKey = ['dockYardRfControllerGetUpcoming'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof DockYardRfController_getUpcoming>>, {params: DockYardRfControllerGetUpcomingParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  DockYardRfController_getUpcoming(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DockYardRfControllerGetUpcomingMutationResult = NonNullable<Awaited<ReturnType<typeof DockYardRfController_getUpcoming>>>
+
+    export type DockYardRfControllerGetUpcomingMutationError = unknown
+
+    /**
+ * @summary Get today's upcoming appointments
+ */
+export const useDockYardRfControllerGetUpcoming = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof DockYardRfController_getUpcoming>>, TError,{params: DockYardRfControllerGetUpcomingParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof DockYardRfController_getUpcoming>>,
+        TError,
+        {params: DockYardRfControllerGetUpcomingParams},
+        TContext
+      > => {
+      return useMutation(getDockYardRfControllerGetUpcomingMutationOptions(options));
+    }
+    export type LaborRfController_clockInResponse201 = {
+  data: void
+  status: 201
+}
+
+export type LaborRfController_clockInResponseSuccess = (LaborRfController_clockInResponse201) & {
+  headers: Headers;
+};
+;
+
+export type LaborRfController_clockInResponse = (LaborRfController_clockInResponseSuccess)
+
+export const getLaborRfControllerClockInUrl = () => {
+
+
+
+
+  return `/api/v1/wms/rf/labor/clock-in`
+}
+
+/**
+ * @summary Clock in via RF
+ */
+export const LaborRfController_clockIn = async (clockInDto: ClockInDto, options?: RequestInit): Promise<LaborRfController_clockInResponse> => {
+
+  return customInstance<LaborRfController_clockInResponse>(getLaborRfControllerClockInUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(clockInDto)
+  }
+);}
+
+
+
+
+
+export const getLaborRfControllerClockInQueryKey = (clockInDto?: ClockInDto,) => {
+    return [
+    'POST', `/api/v1/wms/rf/labor/clock-in`, clockInDto
+    ] as const;
+    }
+
+
+export const getLaborRfControllerClockInQueryOptions = <TData = Awaited<ReturnType<typeof LaborRfController_clockIn>>, TError = unknown>(clockInDto: ClockInDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LaborRfController_clockIn>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getLaborRfControllerClockInQueryKey(clockInDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof LaborRfController_clockIn>>> = ({ signal }) => LaborRfController_clockIn(clockInDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof LaborRfController_clockIn>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type LaborRfControllerClockInQueryResult = NonNullable<Awaited<ReturnType<typeof LaborRfController_clockIn>>>
+export type LaborRfControllerClockInQueryError = unknown
+
+
+/**
+ * @summary Clock in via RF
+ */
+
+export function useLaborRfControllerClockIn<TData = Awaited<ReturnType<typeof LaborRfController_clockIn>>, TError = unknown>(
+ clockInDto: ClockInDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LaborRfController_clockIn>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getLaborRfControllerClockInQueryOptions(clockInDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type LaborRfController_clockOutResponse201 = {
+  data: void
+  status: 201
+}
+
+export type LaborRfController_clockOutResponseSuccess = (LaborRfController_clockOutResponse201) & {
+  headers: Headers;
+};
+;
+
+export type LaborRfController_clockOutResponse = (LaborRfController_clockOutResponseSuccess)
+
+export const getLaborRfControllerClockOutUrl = () => {
+
+
+
+
+  return `/api/v1/wms/rf/labor/clock-out`
+}
+
+/**
+ * @summary Clock out via RF
+ */
+export const LaborRfController_clockOut = async (clockOutDto: ClockOutDto, options?: RequestInit): Promise<LaborRfController_clockOutResponse> => {
+
+  return customInstance<LaborRfController_clockOutResponse>(getLaborRfControllerClockOutUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(clockOutDto)
+  }
+);}
+
+
+
+
+
+export const getLaborRfControllerClockOutQueryKey = (clockOutDto?: ClockOutDto,) => {
+    return [
+    'POST', `/api/v1/wms/rf/labor/clock-out`, clockOutDto
+    ] as const;
+    }
+
+
+export const getLaborRfControllerClockOutQueryOptions = <TData = Awaited<ReturnType<typeof LaborRfController_clockOut>>, TError = unknown>(clockOutDto: ClockOutDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LaborRfController_clockOut>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getLaborRfControllerClockOutQueryKey(clockOutDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof LaborRfController_clockOut>>> = ({ signal }) => LaborRfController_clockOut(clockOutDto, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof LaborRfController_clockOut>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type LaborRfControllerClockOutQueryResult = NonNullable<Awaited<ReturnType<typeof LaborRfController_clockOut>>>
+export type LaborRfControllerClockOutQueryError = unknown
+
+
+/**
+ * @summary Clock out via RF
+ */
+
+export function useLaborRfControllerClockOut<TData = Awaited<ReturnType<typeof LaborRfController_clockOut>>, TError = unknown>(
+ clockOutDto: ClockOutDto, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof LaborRfController_clockOut>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getLaborRfControllerClockOutQueryOptions(clockOutDto,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type LaborRfController_myMetricsResponse200 = {
+  data: void
+  status: 200
+}
+
+export type LaborRfController_myMetricsResponseSuccess = (LaborRfController_myMetricsResponse200) & {
+  headers: Headers;
+};
+;
+
+export type LaborRfController_myMetricsResponse = (LaborRfController_myMetricsResponseSuccess)
+
+export const getLaborRfControllerMyMetricsUrl = () => {
+
+
+
+
+  return `/api/v1/wms/rf/labor/my-metrics`
+}
+
+/**
+ * @summary Get my today's metrics
+ */
+export const LaborRfController_myMetrics = async ( options?: RequestInit): Promise<LaborRfController_myMetricsResponse> => {
+
+  return customInstance<LaborRfController_myMetricsResponse>(getLaborRfControllerMyMetricsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getLaborRfControllerMyMetricsMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof LaborRfController_myMetrics>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof LaborRfController_myMetrics>>, TError,void, TContext> => {
+
+const mutationKey = ['laborRfControllerMyMetrics'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof LaborRfController_myMetrics>>, void> = () => {
+
+
+          return  LaborRfController_myMetrics(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LaborRfControllerMyMetricsMutationResult = NonNullable<Awaited<ReturnType<typeof LaborRfController_myMetrics>>>
+
+    export type LaborRfControllerMyMetricsMutationError = unknown
+
+    /**
+ * @summary Get my today's metrics
+ */
+export const useLaborRfControllerMyMetrics = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof LaborRfController_myMetrics>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof LaborRfController_myMetrics>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getLaborRfControllerMyMetricsMutationOptions(options));
+    }
+    export type EquipmentRfController_listAvailableResponse200 = {
+  data: void
+  status: 200
+}
+
+export type EquipmentRfController_listAvailableResponseSuccess = (EquipmentRfController_listAvailableResponse200) & {
+  headers: Headers;
+};
+;
+
+export type EquipmentRfController_listAvailableResponse = (EquipmentRfController_listAvailableResponseSuccess)
+
+export const getEquipmentRfControllerListAvailableUrl = (params: EquipmentRfControllerListAvailableParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/wms/rf/equipment/available?${stringifiedParams}` : `/api/v1/wms/rf/equipment/available`
+}
+
+/**
+ * @summary List available equipment
+ */
+export const EquipmentRfController_listAvailable = async (params: EquipmentRfControllerListAvailableParams, options?: RequestInit): Promise<EquipmentRfController_listAvailableResponse> => {
+
+  return customInstance<EquipmentRfController_listAvailableResponse>(getEquipmentRfControllerListAvailableUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getEquipmentRfControllerListAvailableMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof EquipmentRfController_listAvailable>>, TError,{params: EquipmentRfControllerListAvailableParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof EquipmentRfController_listAvailable>>, TError,{params: EquipmentRfControllerListAvailableParams}, TContext> => {
+
+const mutationKey = ['equipmentRfControllerListAvailable'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof EquipmentRfController_listAvailable>>, {params: EquipmentRfControllerListAvailableParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  EquipmentRfController_listAvailable(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type EquipmentRfControllerListAvailableMutationResult = NonNullable<Awaited<ReturnType<typeof EquipmentRfController_listAvailable>>>
+
+    export type EquipmentRfControllerListAvailableMutationError = unknown
+
+    /**
+ * @summary List available equipment
+ */
+export const useEquipmentRfControllerListAvailable = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof EquipmentRfController_listAvailable>>, TError,{params: EquipmentRfControllerListAvailableParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof EquipmentRfController_listAvailable>>,
+        TError,
+        {params: EquipmentRfControllerListAvailableParams},
+        TContext
+      > => {
+      return useMutation(getEquipmentRfControllerListAvailableMutationOptions(options));
+    }
+    export type EquipmentRfController_checkOutResponse201 = {
+  data: void
+  status: 201
+}
+
+export type EquipmentRfController_checkOutResponseSuccess = (EquipmentRfController_checkOutResponse201) & {
+  headers: Headers;
+};
+;
+
+export type EquipmentRfController_checkOutResponse = (EquipmentRfController_checkOutResponseSuccess)
+
+export const getEquipmentRfControllerCheckOutUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/rf/equipment/${id}/check-out`
+}
+
+/**
+ * @summary Check out equipment (set IN_USE)
+ */
+export const EquipmentRfController_checkOut = async (id: string, options?: RequestInit): Promise<EquipmentRfController_checkOutResponse> => {
+
+  return customInstance<EquipmentRfController_checkOutResponse>(getEquipmentRfControllerCheckOutUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getEquipmentRfControllerCheckOutQueryKey = (id: string,) => {
+    return [
+    'POST', `/api/v1/wms/rf/equipment/${id}/check-out`
+    ] as const;
+    }
+
+
+export const getEquipmentRfControllerCheckOutQueryOptions = <TData = Awaited<ReturnType<typeof EquipmentRfController_checkOut>>, TError = unknown>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof EquipmentRfController_checkOut>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getEquipmentRfControllerCheckOutQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof EquipmentRfController_checkOut>>> = ({ signal }) => EquipmentRfController_checkOut(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof EquipmentRfController_checkOut>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type EquipmentRfControllerCheckOutQueryResult = NonNullable<Awaited<ReturnType<typeof EquipmentRfController_checkOut>>>
+export type EquipmentRfControllerCheckOutQueryError = unknown
+
+
+/**
+ * @summary Check out equipment (set IN_USE)
+ */
+
+export function useEquipmentRfControllerCheckOut<TData = Awaited<ReturnType<typeof EquipmentRfController_checkOut>>, TError = unknown>(
+ id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof EquipmentRfController_checkOut>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getEquipmentRfControllerCheckOutQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type EquipmentRfController_checkInResponse201 = {
+  data: void
+  status: 201
+}
+
+export type EquipmentRfController_checkInResponseSuccess = (EquipmentRfController_checkInResponse201) & {
+  headers: Headers;
+};
+;
+
+export type EquipmentRfController_checkInResponse = (EquipmentRfController_checkInResponseSuccess)
+
+export const getEquipmentRfControllerCheckInUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/rf/equipment/${id}/check-in`
+}
+
+/**
+ * @summary Check in equipment (set AVAILABLE)
+ */
+export const EquipmentRfController_checkIn = async (id: string, options?: RequestInit): Promise<EquipmentRfController_checkInResponse> => {
+
+  return customInstance<EquipmentRfController_checkInResponse>(getEquipmentRfControllerCheckInUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getEquipmentRfControllerCheckInQueryKey = (id: string,) => {
+    return [
+    'POST', `/api/v1/wms/rf/equipment/${id}/check-in`
+    ] as const;
+    }
+
+
+export const getEquipmentRfControllerCheckInQueryOptions = <TData = Awaited<ReturnType<typeof EquipmentRfController_checkIn>>, TError = unknown>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof EquipmentRfController_checkIn>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getEquipmentRfControllerCheckInQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof EquipmentRfController_checkIn>>> = ({ signal }) => EquipmentRfController_checkIn(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof EquipmentRfController_checkIn>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type EquipmentRfControllerCheckInQueryResult = NonNullable<Awaited<ReturnType<typeof EquipmentRfController_checkIn>>>
+export type EquipmentRfControllerCheckInQueryError = unknown
+
+
+/**
+ * @summary Check in equipment (set AVAILABLE)
+ */
+
+export function useEquipmentRfControllerCheckIn<TData = Awaited<ReturnType<typeof EquipmentRfController_checkIn>>, TError = unknown>(
+ id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof EquipmentRfController_checkIn>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getEquipmentRfControllerCheckInQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type WorkOrdersRfController_getMyTasksResponse201 = {
+  data: void
+  status: 201
+}
+
+export type WorkOrdersRfController_getMyTasksResponseSuccess = (WorkOrdersRfController_getMyTasksResponse201) & {
+  headers: Headers;
+};
+;
+
+export type WorkOrdersRfController_getMyTasksResponse = (WorkOrdersRfController_getMyTasksResponseSuccess)
+
+export const getWorkOrdersRfControllerGetMyTasksUrl = () => {
+
+
+
+
+  return `/api/v1/wms/rf/work-orders/my-tasks`
+}
+
+export const WorkOrdersRfController_getMyTasks = async ( options?: RequestInit): Promise<WorkOrdersRfController_getMyTasksResponse> => {
+
+  return customInstance<WorkOrdersRfController_getMyTasksResponse>(getWorkOrdersRfControllerGetMyTasksUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getWorkOrdersRfControllerGetMyTasksQueryKey = () => {
+    return [
+    'POST', `/api/v1/wms/rf/work-orders/my-tasks`
+    ] as const;
+    }
+
+
+export const getWorkOrdersRfControllerGetMyTasksQueryOptions = <TData = Awaited<ReturnType<typeof WorkOrdersRfController_getMyTasks>>, TError = unknown>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WorkOrdersRfController_getMyTasks>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWorkOrdersRfControllerGetMyTasksQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WorkOrdersRfController_getMyTasks>>> = ({ signal }) => WorkOrdersRfController_getMyTasks({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WorkOrdersRfController_getMyTasks>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type WorkOrdersRfControllerGetMyTasksQueryResult = NonNullable<Awaited<ReturnType<typeof WorkOrdersRfController_getMyTasks>>>
+export type WorkOrdersRfControllerGetMyTasksQueryError = unknown
+
+
+
+export function useWorkOrdersRfControllerGetMyTasks<TData = Awaited<ReturnType<typeof WorkOrdersRfController_getMyTasks>>, TError = unknown>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WorkOrdersRfController_getMyTasks>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getWorkOrdersRfControllerGetMyTasksQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type WorkOrdersRfController_startOperationResponse201 = {
+  data: void
+  status: 201
+}
+
+export type WorkOrdersRfController_startOperationResponseSuccess = (WorkOrdersRfController_startOperationResponse201) & {
+  headers: Headers;
+};
+;
+
+export type WorkOrdersRfController_startOperationResponse = (WorkOrdersRfController_startOperationResponseSuccess)
+
+export const getWorkOrdersRfControllerStartOperationUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/rf/work-orders/${id}/start-operation`
+}
+
+export const WorkOrdersRfController_startOperation = async (id: string, options?: RequestInit): Promise<WorkOrdersRfController_startOperationResponse> => {
+
+  return customInstance<WorkOrdersRfController_startOperationResponse>(getWorkOrdersRfControllerStartOperationUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getWorkOrdersRfControllerStartOperationQueryKey = (id: string,) => {
+    return [
+    'POST', `/api/v1/wms/rf/work-orders/${id}/start-operation`
+    ] as const;
+    }
+
+
+export const getWorkOrdersRfControllerStartOperationQueryOptions = <TData = Awaited<ReturnType<typeof WorkOrdersRfController_startOperation>>, TError = unknown>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WorkOrdersRfController_startOperation>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWorkOrdersRfControllerStartOperationQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WorkOrdersRfController_startOperation>>> = ({ signal }) => WorkOrdersRfController_startOperation(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WorkOrdersRfController_startOperation>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type WorkOrdersRfControllerStartOperationQueryResult = NonNullable<Awaited<ReturnType<typeof WorkOrdersRfController_startOperation>>>
+export type WorkOrdersRfControllerStartOperationQueryError = unknown
+
+
+
+export function useWorkOrdersRfControllerStartOperation<TData = Awaited<ReturnType<typeof WorkOrdersRfController_startOperation>>, TError = unknown>(
+ id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WorkOrdersRfController_startOperation>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getWorkOrdersRfControllerStartOperationQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export type WorkOrdersRfController_completeOperationResponse201 = {
+  data: void
+  status: 201
+}
+
+export type WorkOrdersRfController_completeOperationResponseSuccess = (WorkOrdersRfController_completeOperationResponse201) & {
+  headers: Headers;
+};
+;
+
+export type WorkOrdersRfController_completeOperationResponse = (WorkOrdersRfController_completeOperationResponseSuccess)
+
+export const getWorkOrdersRfControllerCompleteOperationUrl = (id: string,) => {
+
+
+
+
+  return `/api/v1/wms/rf/work-orders/${id}/complete-operation`
+}
+
+export const WorkOrdersRfController_completeOperation = async (id: string, options?: RequestInit): Promise<WorkOrdersRfController_completeOperationResponse> => {
+
+  return customInstance<WorkOrdersRfController_completeOperationResponse>(getWorkOrdersRfControllerCompleteOperationUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getWorkOrdersRfControllerCompleteOperationQueryKey = (id: string,) => {
+    return [
+    'POST', `/api/v1/wms/rf/work-orders/${id}/complete-operation`
+    ] as const;
+    }
+
+
+export const getWorkOrdersRfControllerCompleteOperationQueryOptions = <TData = Awaited<ReturnType<typeof WorkOrdersRfController_completeOperation>>, TError = unknown>(id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WorkOrdersRfController_completeOperation>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWorkOrdersRfControllerCompleteOperationQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof WorkOrdersRfController_completeOperation>>> = ({ signal }) => WorkOrdersRfController_completeOperation(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof WorkOrdersRfController_completeOperation>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type WorkOrdersRfControllerCompleteOperationQueryResult = NonNullable<Awaited<ReturnType<typeof WorkOrdersRfController_completeOperation>>>
+export type WorkOrdersRfControllerCompleteOperationQueryError = unknown
+
+
+
+export function useWorkOrdersRfControllerCompleteOperation<TData = Awaited<ReturnType<typeof WorkOrdersRfController_completeOperation>>, TError = unknown>(
+ id: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof WorkOrdersRfController_completeOperation>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getWorkOrdersRfControllerCompleteOperationQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
 }
 
 

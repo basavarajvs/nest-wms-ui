@@ -19,4 +19,11 @@ export const UpdateZoneDtoZoneType = {
   QC: 'QC',
   HOLD: 'HOLD',
   YARD: 'YARD',
+  RACK: 'RACK',
+  COLD_STORAGE: 'COLD_STORAGE',
+  HAZMAT: 'HAZMAT',
+  QUALITY_HOLD: 'QUALITY_HOLD',
+  DAMAGE: 'DAMAGE',
+  TEMPORARY: 'TEMPORARY',
+  RETURNS: 'RETURNS',
 } as const;

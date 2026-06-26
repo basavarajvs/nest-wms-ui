@@ -4,9 +4,24 @@ import {
   ReportsController_getStatus,
   getReportsControllerDownloadCompletedUrl,
   getReportsControllerDownloadLiveUrl,
+  getReportsControllerGetTemplateUrl,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import { AXIOS_INSTANCE } from '@/lib/httpClient'
 import type { ReportRequestDto, ReportsControllerDownloadLiveParams } from '@/lib/types/wms-api'
+
+export const REPORT_TYPES = [
+  'STOCK_ON_HAND',
+  'MOVEMENT_HISTORY',
+  'VELOCITY_ABC',
+  'AGING_ANALYSIS',
+  'DAILY_KPI',
+  'LOCATION_UTILIZATION',
+] as const
+
+export const FORMATS = ['CSV', 'XLSX'] as const
+
+export type ReportType = (typeof REPORT_TYPES)[number]
+export type ReportFormat = (typeof FORMATS)[number]
 
 export interface ReportJob {
   jobId: string
@@ -123,3 +138,36 @@ export async function downloadLiveReport(params: ReportsControllerDownloadLivePa
   document.body.removeChild(link)
   window.URL.revokeObjectURL(link.href)
 }
+
+export async function downloadTemplate(reportType: string): Promise<void> {
+  const url = getReportsControllerGetTemplateUrl(reportType)
+  const response = await AXIOS_INSTANCE.get(url, { responseType: 'blob' })
+  const blob = response.data as Blob
+  const contentType = String(response.headers?.['content-type'] || '')
+  const ext = contentType.includes('excel') || contentType.includes('spreadsheet') ? 'xlsx' : 'csv'
+  const link = document.createElement('a')
+  link.href = window.URL.createObjectURL(blob)
+  link.download = `template-${reportType}.${ext}`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(link.href)
+}
+
+export function useDownloadReport() {
+  return useMutation({
+    mutationFn: async (jobId: string) => {
+      return downloadCompletedReport(jobId)
+    },
+  })
+}
+
+export function useDownloadLiveReport() {
+  return useMutation({
+    mutationFn: async (params: ReportsControllerDownloadLiveParams) => {
+      return downloadLiveReport(params)
+    },
+  })
+}
+
+

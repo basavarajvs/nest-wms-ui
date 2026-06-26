@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import {
   type ColumnDef,
   type SortingState,
@@ -12,8 +13,6 @@ import {
   useReactTable,
   flexRender,
 } from '@tanstack/react-table'
-import { useNavigate, useRouter } from '@tanstack/react-router'
-import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
   Plus,
   Edit,
@@ -24,6 +23,7 @@ import {
   X,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -361,6 +361,9 @@ export function Lpns() {
             )}
           </Button>
         ),
+        size: 40,
+        minSize: 40,
+        maxSize: 50,
       },
       {
         accessorKey: 'lpnNumber',
@@ -370,18 +373,27 @@ export function Lpns() {
         cell: ({ row }) => (
           <span className='font-medium'>{row.getValue('lpnNumber')}</span>
         ),
+        size: 140,
+        minSize: 120,
+        maxSize: 170,
       },
       {
         accessorKey: 'lpnType',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title='Type' />
         ),
+        size: 100,
+        minSize: 90,
+        maxSize: 130,
       },
       {
         accessorKey: 'locationId',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title='Location' />
         ),
+        size: 140,
+        minSize: 120,
+        maxSize: 170,
       },
       {
         accessorKey: 'productId',
@@ -389,6 +401,9 @@ export function Lpns() {
           <DataTableColumnHeader column={column} title='Product' />
         ),
         cell: ({ row }) => <span>{row.getValue('productId') || '—'}</span>,
+        size: 150,
+        minSize: 120,
+        maxSize: 200,
       },
       {
         accessorKey: 'quantity',
@@ -396,6 +411,9 @@ export function Lpns() {
           <DataTableColumnHeader column={column} title='Qty' />
         ),
         cell: ({ row }) => <span>{row.getValue('quantity') ?? '—'}</span>,
+        size: 90,
+        minSize: 70,
+        maxSize: 110,
       },
       {
         accessorKey: 'status',
@@ -474,6 +492,9 @@ export function Lpns() {
             </div>
           )
         },
+        size: 120,
+        minSize: 100,
+        maxSize: 140,
       },
     ],
     [expandedRows]
@@ -693,10 +714,7 @@ export function Lpns() {
         </Dialog>
       </div>
 
-      <DataTableToolbar
-        table={table}
-        searchPlaceholder='Search LPNs...'
-      />
+      <DataTableToolbar table={table} searchPlaceholder='Search LPNs...' />
 
       <Card>
         <CardHeader>

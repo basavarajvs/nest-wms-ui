@@ -5,6 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronDown, ChevronRight, Loader2, Plus, Search, Edit, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select'
+import {
+  useVasServiceList,
+} from '@/features/vas-catalog/data/vas-catalog-queries'
+import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
@@ -36,6 +42,7 @@ import {
 const vasSchema = z.object({
   taskType: z.string().min(1, 'Task type is required'),
   facilityId: z.string().min(1, 'Facility ID is required'),
+  serviceId: z.string().optional(),
   orderId: z.string().optional(),
   shipmentId: z.string().optional(),
   productId: z.string().optional(),
@@ -60,6 +67,8 @@ export function VasExecution() {
   const [eventDialogOpen, setEventDialogOpen] = useState(false)
 
   const { data, isLoading, error, refetch } = useVasTasks()
+  const { data: servicesData } = useVasServiceList({ isActive: 'true' })
+  const services = servicesData?.services || []
   const createMutation = useCreateVasTask()
   const updateMutation = useUpdateVasTask()
   const deleteMutation = useDeleteVasTask()
@@ -71,12 +80,14 @@ export function VasExecution() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<VasForm>({
     resolver: zodResolver(vasSchema) as any,
     defaultValues: {
       taskType: '',
       facilityId: '',
+      serviceId: '',
       orderId: '',
       shipmentId: '',
       productId: '',
@@ -104,6 +115,7 @@ export function VasExecution() {
       reset({
         taskType: task.taskType,
         facilityId: task.facilityId,
+        serviceId: task.serviceId || '',
         orderId: task.orderId || '',
         shipmentId: task.shipmentId || '',
         productId: task.productId || '',
@@ -193,6 +205,19 @@ export function VasExecution() {
                   <Label htmlFor='facilityId'>Facility ID *</Label>
                   <Input id='facilityId' {...register('facilityId')} />
                   {errors.facilityId && <p className='text-sm text-destructive'>{errors.facilityId.message}</p>}
+                </div>
+                <div className='grid gap-2'>
+                  <Label htmlFor='serviceId'>VAS Service</Label>
+                  <Select onValueChange={(v) => { register('serviceId').onChange({ target: { name: 'serviceId', value: v } }); setValue('serviceId', v) }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select a service...' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {services.map((s) => (
+                        <SelectItem key={s.id} value={s.id}>{s.serviceCode} – {s.serviceName}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className='grid gap-2'>
                   <Label htmlFor='orderId'>Order ID</Label>

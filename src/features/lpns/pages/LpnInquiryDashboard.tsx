@@ -7,7 +7,7 @@ import {
   useReactTable,
   flexRender,
 } from '@tanstack/react-table'
-import { Search, Barcode, Package, MapPin, Calendar, User, Layers, ArrowRight, Loader2 } from 'lucide-react'
+import { Search, Barcode, Package, MapPin, Calendar, User, Layers, ArrowRight, Loader2, History } from 'lucide-react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -38,6 +38,7 @@ import {
   type LpnMovement,
 } from '@/features/lpns/data/lpn-queries'
 import { LpnBarcodeDialog } from '@/features/lpns/components/LpnBarcodeDialog'
+import { LpnTransactionPanel } from '@/features/lpns/components/LpnTransactionPanel'
 
 const LPN_TYPE_BADGE: Record<string, string> = {
   PALLET: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
@@ -398,6 +399,22 @@ export function LpnInquiryDashboard() {
                       </Table>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+
+              {/* LPN Transaction History */}
+              <Card>
+                <CardHeader className='pb-3'>
+                  <CardTitle className='flex items-center gap-2 text-base'>
+                    <History className='h-4 w-4' />
+                    Transaction History
+                  </CardTitle>
+                  <CardDescription>
+                    Full audit trail of LPN-level stock movements and adjustments
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <LpnTransactionPanel lpnId={lpn?.id} />
                 </CardContent>
               </Card>
             </>

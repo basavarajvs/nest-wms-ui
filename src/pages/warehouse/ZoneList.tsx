@@ -47,6 +47,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -72,10 +73,31 @@ const zoneSchema = z.object({
   zoneCode: z.string().min(1, 'Zone code is required'),
   name: z.string().min(1, 'Name is required'),
   zoneType: z.string().optional(),
+  description: z.string().optional(),
+  zoneColorHex: z.string().optional(),
   isActive: z.boolean().optional().default(true),
 })
 
 type ZoneForm = z.infer<typeof zoneSchema>
+
+const ZONE_TYPE_OPTIONS = [
+  { value: 'BULK', label: 'Bulk' },
+  { value: 'PICKING', label: 'Picking' },
+  { value: 'RECEIVING', label: 'Receiving' },
+  { value: 'SHIPPING', label: 'Shipping' },
+  { value: 'PACKING', label: 'Packing' },
+  { value: 'STAGING', label: 'Staging' },
+  { value: 'QC', label: 'Quality Control' },
+  { value: 'HOLD', label: 'Hold' },
+  { value: 'YARD', label: 'Yard' },
+  { value: 'RACK', label: 'Rack' },
+  { value: 'COLD_STORAGE', label: 'Cold Storage' },
+  { value: 'HAZMAT', label: 'Hazmat' },
+  { value: 'QUALITY_HOLD', label: 'Quality Hold' },
+  { value: 'DAMAGE', label: 'Damage' },
+  { value: 'TEMPORARY', label: 'Temporary' },
+  { value: 'RETURNS', label: 'Returns' },
+] as const
 
 export function ZoneList() {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -107,10 +129,12 @@ export function ZoneList() {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ZoneForm>({
     resolver: zodResolver(zoneSchema) as any,
-    defaultValues: { zoneCode: '', name: '', zoneType: '', isActive: true },
+    defaultValues: { zoneCode: '', name: '', zoneType: '', description: '', zoneColorHex: '', isActive: true },
   })
 
   const getFacilityName = (id: string | null | undefined) => {
@@ -207,11 +231,13 @@ export function ZoneList() {
         zoneCode: zone.zoneCode,
         name: zone.zoneName,
         zoneType: zone.zoneType || '',
+        description: (zone as any).description || '',
+        zoneColorHex: (zone as any).zoneColorHex || '',
         isActive: true,
       })
     } else {
       setEditingZone(null)
-      reset({ zoneCode: '', name: '', zoneType: '', isActive: true })
+      reset({ zoneCode: '', name: '', zoneType: '', description: '', zoneColorHex: '', isActive: true })
     }
     setDialogOpen(true)
   }
@@ -307,11 +333,46 @@ export function ZoneList() {
                   </div>
                   <div className='grid gap-2'>
                     <Label htmlFor='zoneType'>Zone Type</Label>
-                    <Input
-                      id='zoneType'
-                      {...register('zoneType')}
-                      placeholder='Storage, Picking, Shipping...'
+                    <Select
+                      onValueChange={(val) => setValue('zoneType', val)}
+                      value={watch('zoneType')}
+                    >
+                      <SelectTrigger id='zoneType'>
+                        <SelectValue placeholder='Select zone type...' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ZONE_TYPE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='description'>Description</Label>
+                    <Textarea
+                      id='description'
+                      {...register('description')}
+                      placeholder='Zone description...'
                     />
+                  </div>
+                  <div className='grid gap-2'>
+                    <Label htmlFor='zoneColorHex'>Zone Color</Label>
+                    <div className='flex gap-2'>
+                      <Input
+                        id='zoneColorHex'
+                        {...register('zoneColorHex')}
+                        placeholder='#FF5733'
+                        className='flex-1'
+                      />
+                      {watch('zoneColorHex') && (
+                        <div
+                          className='h-9 w-9 rounded-md border'
+                          style={{ backgroundColor: watch('zoneColorHex') }}
+                        />
+                      )}
+                    </div>
                   </div>
                   {selectedFacility && (
                     <div className='rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground'>

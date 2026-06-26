@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Plus, RefreshCw, Download, FileText, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
-import type { ReportRequestDto, ReportsControllerDownloadLiveParams } from '@/lib/types/wms-api'
+import type { ReportsControllerDownloadLiveParams } from '@/lib/types/wms-api'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,16 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -41,45 +28,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { DatePicker } from '@/components/date-picker'
-import {
-  useRequestReport,
   useReportStatus,
   downloadCompletedReport,
   downloadLiveReport,
   getRecentJobs,
+  REPORT_TYPES,
   type ReportJob,
 } from './data/report-queries'
-
-const REPORT_TYPES = [
-  'STOCK_ON_HAND',
-  'MOVEMENT_HISTORY',
-  'VELOCITY_ABC',
-  'AGING_ANALYSIS',
-  'DAILY_KPI',
-  'LOCATION_UTILIZATION',
-] as const
-
-const FORMATS = ['CSV', 'XLSX'] as const
-
-const reportSchema = z.object({
-  reportType: z.enum(REPORT_TYPES),
-  format: z.enum(FORMATS).default('CSV'),
-  dateFrom: z.date().optional(),
-  dateTo: z.date().optional(),
-  facilityId: z.string().optional(),
-  productClass: z.string().optional(),
-  timezone: z.string().optional(),
-})
-
-type ReportForm = z.infer<typeof reportSchema>
+import { ReportRequestDialog } from './components/ReportRequestDialog'
 
 function StatusBadge({ status }: { status: string }) {
   const s = (status || '').toUpperCase()
@@ -98,7 +54,6 @@ export function Reports() {
   const limit = 10
 
   const [jobs, setJobs] = useState<ReportJob[]>(getRecentJobs())
-  const requestMutation = useRequestReport()
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -110,21 +65,6 @@ export function Reports() {
   useEffect(() => {
     setJobs(getRecentJobs())
   }, [])
-
-  const form = useForm<ReportForm>({
-    resolver: zodResolver(reportSchema),
-    defaultValues: {
-      reportType: 'STOCK_ON_HAND',
-      format: 'CSV',
-      facilityId: '',
-      productClass: '',
-      timezone: 'UTC',
-    },
-  })
-
-  const watchedReportType = form.watch('reportType')
-  const watchedDateFrom = form.watch('dateFrom')
-  const watchedDateTo = form.watch('dateTo')
 
   const filteredJobs = jobs
     .filter((j) => {
@@ -141,30 +81,6 @@ export function Reports() {
     ['PENDING', 'PROCESSING'].includes((j.status || '').toUpperCase())
   )
 
-  const onRequest = async (formData: ReportForm) => {
-    try {
-      const dto: ReportRequestDto = {
-        reportType: formData.reportType,
-        parameters: {
-          dateFrom: formData.dateFrom ? formData.dateFrom.toISOString() : undefined,
-          dateTo: formData.dateTo ? formData.dateTo.toISOString() : undefined,
-          facilityId: formData.facilityId || undefined,
-          productClass: formData.productClass || undefined,
-          timezone: formData.timezone || 'UTC',
-        },
-      }
-      const result = await requestMutation.mutateAsync(dto)
-      toast.success(`Report requested: ${formData.reportType} (job ${result.jobId})`)
-      setDialogOpen(false)
-      form.reset()
-      setJobs(getRecentJobs())
-      setPage(1)
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to request report'
-      toast.error(msg)
-    }
-  }
-
   const handleDownload = async (job: ReportJob) => {
     if (job.status.toUpperCase() !== 'COMPLETED') return
     try {
@@ -179,9 +95,9 @@ export function Reports() {
   const handleLiveDownload = async () => {
     try {
       const params: ReportsControllerDownloadLiveParams = {
-        reportType: watchedReportType || 'STOCK_ON_HAND',
-        dateFrom: watchedDateFrom?.toISOString() ?? '',
-        dateTo: watchedDateTo?.toISOString() ?? '',
+        reportType: 'STOCK_ON_HAND',
+        dateFrom: '',
+        dateTo: '',
         facilityId: '',
         zoneId: '',
         productClass: '',
@@ -215,156 +131,17 @@ export function Reports() {
           <Button variant='outline' onClick={refresh}>
             <RefreshCw className='mr-2 h-4 w-4' /> Refresh
           </Button>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className='mr-2 h-4 w-4' /> Request New Report
-              </Button>
-            </DialogTrigger>
-            <DialogContent className='max-w-lg'>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onRequest)} className='space-y-4'>
-                  <DialogHeader>
-                    <DialogTitle>Request New Report</DialogTitle>
-                    <DialogDescription>
-                      Submit a report generation job. Status polls automatically.
-                    </DialogDescription>
-                  </DialogHeader>
+          <Button onClick={() => setDialogOpen(true)}>
+            <Plus className='mr-2 h-4 w-4' /> Request New Report
+          </Button>
 
-                  <FormField
-                    control={form.control}
-                    name='reportType'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Report Type *</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder='Select report type' />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {REPORT_TYPES.map((t) => (
-                              <SelectItem key={t} value={t}>{t}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className='grid grid-cols-2 gap-4'>
-                    <FormField
-                      control={form.control}
-                      name='dateFrom'
-                      render={({ field }) => (
-                        <FormItem className='flex flex-col'>
-                          <FormLabel>Date From</FormLabel>
-                          <FormControl>
-                            <DatePicker selected={field.value} onSelect={field.onChange} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='dateTo'
-                      render={({ field }) => (
-                        <FormItem className='flex flex-col'>
-                          <FormLabel>Date To</FormLabel>
-                          <FormControl>
-                            <DatePicker selected={field.value} onSelect={field.onChange} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className='grid grid-cols-2 gap-4'>
-                    <FormField
-                      control={form.control}
-                      name='format'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Format</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {FORMATS.map((f) => (
-                                <SelectItem key={f} value={f}>{f}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='facilityId'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Facility ID</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder='optional' />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name='productClass'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Product Class</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder='optional (e.g. A, B, C)' />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name='timezone'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Timezone</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <DialogFooter>
-                    <Button type='button' variant='outline' onClick={() => setDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button type='submit' disabled={requestMutation.isPending}>
-                      {requestMutation.isPending ? 'Requesting...' : 'Request Report'}
-                    </Button>
-                  </DialogFooter>
-
-                  <div className='border-t pt-2 text-xs text-muted-foreground'>
-                    Live (immediate) download available below for supported types — no queuing.
-                  </div>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+          <ReportRequestDialog
+            open={dialogOpen}
+            onOpenChange={(open) => {
+              setDialogOpen(open)
+              if (!open) setJobs(getRecentJobs())
+            }}
+          />
         </div>
       </div>
 
@@ -374,7 +151,7 @@ export function Reports() {
             <FileText className='h-4 w-4' /> Live Report Download (no queue)
           </CardTitle>
           <CardDescription>
-            Direct streaming download for supported report types (uses current form values if open).
+            Direct streaming download for supported report types. Downloads immediately without queuing.
           </CardDescription>
         </CardHeader>
         <CardContent>

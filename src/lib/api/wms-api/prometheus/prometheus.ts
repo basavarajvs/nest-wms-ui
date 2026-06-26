@@ -14,7 +14,7 @@ import type {
   UseMutationResult
 } from '@tanstack/react-query';
 
-import { customInstance } from '../../../http/httpClient';
+import { customInstance } from '../../../http/httpClient.js';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -51,6 +51,7 @@ export const PrometheusController_index = async ( options?: RequestInit): Promis
 
   }
 );}
+
 
 
 

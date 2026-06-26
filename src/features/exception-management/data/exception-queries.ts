@@ -5,11 +5,18 @@ import {
   ExceptionManagementWebController_create,
   ExceptionManagementWebController_update,
   ExceptionManagementWebController_delete,
+  ExceptionManagementWebController_listComments,
+  ExceptionManagementWebController_addComment,
+  EscalationRuleController_findAll,
+  EscalationRuleController_create,
 } from '@/lib/api/wms-api/wms-web/wms-web'
 import type {
   CreateExceptionDto,
   UpdateExceptionDto,
   ExceptionManagementWebControllerFindAllParams,
+  CreateCommentDto,
+  CreateEscalationRuleDto,
+  EscalationRuleControllerFindAllParams,
 } from '@/lib/types/wms-api'
 
 function safeArray<T>(data: unknown): T[] {
@@ -19,6 +26,8 @@ function safeArray<T>(data: unknown): T[] {
     if (Array.isArray(obj.items)) return obj.items as T[]
     if (Array.isArray(obj.data)) return obj.data as T[]
     if (Array.isArray(obj.exceptions)) return obj.exceptions as T[]
+    if (Array.isArray(obj.comments)) return obj.comments as T[]
+    if (Array.isArray(obj.rules)) return obj.rules as T[]
   }
   return []
 }
@@ -104,5 +113,76 @@ export function useDeleteException() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wms', 'exceptions'] })
     },
+  })
+}
+
+export interface Comment {
+  id: string
+  body: string
+  isInternal: boolean
+  authorId?: string
+  authorName?: string
+  createdAt: string
+}
+
+export function useCommentList(exceptionId: string) {
+  return useQuery({
+    queryKey: ['wms', 'exceptions', 'comments', 'list', exceptionId],
+    queryFn: async ({ queryKey }) => {
+      const [, , , , id] = queryKey
+      const res = await ExceptionManagementWebController_listComments(id)
+      return res as unknown
+    },
+    select: (data) => ({ comments: safeArray<Comment>(data), total: safeTotal(data) }),
+    enabled: !!exceptionId,
+    staleTime: 1000 * 30,
+  })
+}
+
+export function useAddComment() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: CreateCommentDto }) =>
+      ExceptionManagementWebController_addComment(id, dto),
+    onSuccess: (_data, variables) => {
+      qc.invalidateQueries({ queryKey: ['wms', 'exceptions', 'comments', 'list', variables.id] })
+    },
+  })
+}
+
+export interface EscalationRule {
+  id: string
+  ruleName: string
+  exceptionType: string
+  facilityId: string
+  severityMinimum: string
+  unresolvedHours: number
+  escalateToUserId: string
+  isActive: boolean
+  notifyViaEmail?: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+export function useEscalationRuleList(params?: EscalationRuleControllerFindAllParams) {
+  const qp = { facilityId: params?.facilityId || '' }
+  return useQuery({
+    queryKey: ['wms', 'escalation-rules', 'list', qp],
+    queryFn: async ({ queryKey }) => {
+      const [, , , p] = queryKey
+      const res = await EscalationRuleController_findAll(p as EscalationRuleControllerFindAllParams)
+      return res as unknown
+    },
+    select: (data) => ({ rules: safeArray<EscalationRule>(data), total: safeTotal(data) }),
+    enabled: !!qp.facilityId,
+    staleTime: 1000 * 30,
+  })
+}
+
+export function useCreateEscalationRule() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (dto: CreateEscalationRuleDto) => EscalationRuleController_create(dto),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['wms', 'escalation-rules'] }),
   })
 }

@@ -2,7 +2,8 @@ import { useState } from 'react'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Search, Edit, Trash2 } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { Plus, Search, Edit, Trash2, MessageSquare, ArrowUpRight } from 'lucide-react'
 import { toast } from 'sonner'
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -31,6 +32,7 @@ import {
   useDeleteException,
   type Exception,
 } from './data/exception-queries'
+import { ExceptionCommentDialog } from './components/ExceptionCommentDialog'
 
 const exceptionSchema = z.object({
   exceptionType: z.string().min(1, 'Exception type is required'),
@@ -65,6 +67,7 @@ export function Exceptions() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingException, setEditingException] = useState<Exception | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [commentTarget, setCommentTarget] = useState<Exception | null>(null)
 
   const { data, isLoading, error, refetch } = useExceptions()
   const createMutation = useCreateException()
@@ -154,12 +157,18 @@ export function Exceptions() {
 
   return (
     <div className='space-y-6'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-2xl font-bold tracking-tight'>Exceptions</h1>
-          <p className='text-muted-foreground'>Manage warehouse exceptions</p>
-        </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <div className='flex items-center justify-between'>
+          <div>
+            <h1 className='text-2xl font-bold tracking-tight'>Exceptions</h1>
+            <p className='text-muted-foreground'>Manage warehouse exceptions</p>
+          </div>
+          <div className='flex items-center gap-2'>
+            <Button variant='outline' size='sm' asChild>
+              <Link to='/admin/escalation-rules'>
+                Escalation Rules <ArrowUpRight className='ml-1 h-3 w-3' />
+              </Link>
+            </Button>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => openDialog()}>
               <Plus className='mr-2 h-4 w-4' /> New Exception
@@ -296,7 +305,8 @@ export function Exceptions() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell className='space-x-2 text-right'>
+                      <TableCell className='space-x-1 text-right'>
+                        <Button variant='ghost' size='icon' onClick={() => setCommentTarget(exc)} title='Comments'><MessageSquare className='h-4 w-4' /></Button>
                         <Button variant='ghost' size='icon' onClick={() => openDialog(exc)}><Edit className='h-4 w-4' /></Button>
                         <Button variant='ghost' size='icon' onClick={() => setDeleteId(exc.id)}><Trash2 className='h-4 w-4 text-destructive' /></Button>
                       </TableCell>
@@ -328,6 +338,14 @@ export function Exceptions() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {commentTarget && (
+        <ExceptionCommentDialog
+          open={!!commentTarget}
+          onOpenChange={(o) => { if (!o) setCommentTarget(null) }}
+          exceptionId={commentTarget.id}
+          exceptionType={commentTarget.exceptionType}
+        />
+      )}
     </div>
   )
 }

@@ -264,13 +264,13 @@ export function InventoryReservations() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Qty</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Reference</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className='text-right'>Actions</TableHead>
+                    <TableHead className='w-[150px]'>Product</TableHead>
+                    <TableHead className='w-[140px]'>Location</TableHead>
+                    <TableHead className='w-[90px] text-right'>Qty</TableHead>
+                    <TableHead className='w-[120px]'>Type</TableHead>
+                    <TableHead className='w-[150px]'>Reference</TableHead>
+                    <TableHead className='w-[100px]'>Status</TableHead>
+                    <TableHead className='w-[130px] text-right'>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

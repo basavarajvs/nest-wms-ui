@@ -35,6 +35,10 @@ import {
   Settings2,
   ScrollText,
   History,
+  Activity,
+  Beaker,
+  ClipboardList,
+  Calculator,
 } from 'lucide-react'
 import type { SidebarData } from '../types'
 
@@ -75,7 +79,6 @@ export const sidebarData: SidebarData = {
             { title: 'Putaway Board', url: '/inbound/putaway-board', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Purchase Orders', url: '/inbound/purchase-orders', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Customer Returns', url: '/inbound/customer-returns', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
-            { title: 'Quality Dashboard', url: '/inbound/quality', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
           ],
         },
         {
@@ -86,10 +89,22 @@ export const sidebarData: SidebarData = {
             { title: 'Sales Orders', url: '/outbound/orders', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Allocations', url: '/outbound/allocations', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Picking Waves', url: '/outbound/waves', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+            { title: 'Picking Console', url: '/outbound/picking', roles: ['WAREHOUSE_USER', 'WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+            { title: 'Packing', url: '/outbound/packing', roles: ['WAREHOUSE_USER', 'WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Shipments', url: '/outbound/shipments', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Loads', url: '/outbound/loads', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Shipping Labels', url: '/outbound/shipping-labels', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'VAS Execution', url: '/outbound/vas-execution', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+            {
+              title: 'VAS Catalog',
+              icon: Wrench,
+              roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'],
+              items: [
+                { title: 'Services', url: '/outbound/vas-catalog/services', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+                { title: 'Client Rates', url: '/outbound/vas-catalog/client-rates', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+                { title: 'Workstations', url: '/outbound/vas-catalog/workstations', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+              ],
+            },
             { title: 'Carrier Rates', url: '/outbound/carrier-rates', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
           ],
         },
@@ -103,7 +118,9 @@ export const sidebarData: SidebarData = {
             { title: 'Holds', url: '/inventory/holds', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Policies', url: '/inventory/policies', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Transactions', url: '/inventory/transactions', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+            { title: 'LPN Transactions', url: '/inventory/lpn-transactions', icon: History, roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Reservations', url: '/inventory/reservations', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+            { title: 'Allocation Rules', url: '/inventory/allocation-rules', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Exceptions', url: '/inventory/exceptions', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'NCRs', url: '/inventory/ncr', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
           ],
@@ -121,6 +138,8 @@ export const sidebarData: SidebarData = {
           items: [
             { title: 'Cycle Counts', url: '/counts/cycle', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Schedule Counts', url: '/counts/schedule', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+            { title: 'Metrics', url: '/counts/metrics', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+            { title: 'Accuracy', url: '/counts/accuracy', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
           ],
         },
       ],
@@ -157,6 +176,49 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
+      title: 'Quality',
+      roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER', 'QUALITY_INSPECTOR'],
+      items: [
+        {
+          title: 'Inspections',
+          icon: Beaker,
+          url: '/quality/inspections',
+          roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER', 'QUALITY_INSPECTOR'],
+        },
+        {
+          title: 'Compliance Requirements',
+          icon: ClipboardList,
+          url: '/quality/compliance/requirements',
+          roles: ['WAREHOUSE_ADMIN'],
+        },
+        {
+          title: 'Compliance Audits',
+          icon: ClipboardCheck,
+          url: '/quality/compliance/audits',
+          roles: ['WAREHOUSE_ADMIN'],
+        },
+        {
+          title: 'Hazmat Materials',
+          icon: AlertTriangle,
+          url: '/quality/hazmat',
+          roles: ['WAREHOUSE_ADMIN'],
+        },
+      ],
+    },
+    {
+      title: 'Billing',
+      icon: Calculator,
+      roles: ['TENANT_ADMIN', 'WAREHOUSE_ADMIN'],
+      items: [
+        { title: 'Rate Master', url: '/billing/rates', roles: ['TENANT_ADMIN', 'WAREHOUSE_ADMIN'] },
+        { title: 'Client Rates', url: '/billing/client-rates', roles: ['TENANT_ADMIN', 'WAREHOUSE_ADMIN'] },
+        { title: 'Billing Cycles', url: '/billing/cycles', roles: ['TENANT_ADMIN', 'WAREHOUSE_ADMIN'] },
+        { title: 'Snapshots', url: '/billing/snapshots', roles: ['TENANT_ADMIN', 'WAREHOUSE_ADMIN'] },
+        { title: 'Charges', url: '/billing/charges', roles: ['TENANT_ADMIN', 'WAREHOUSE_ADMIN'] },
+        { title: 'Invoices', url: '/billing/invoices', roles: ['TENANT_ADMIN', 'WAREHOUSE_ADMIN'] },
+      ],
+    },
+    {
       title: 'Warehouse',
       items: [
         {
@@ -169,6 +231,8 @@ export const sidebarData: SidebarData = {
             { title: 'Locations', url: '/warehouse/locations', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Packing Stations', url: '/warehouse/packing-stations', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Loading Docks', url: '/warehouse/loading-docks', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+            { title: 'Dock Appointments', url: '/warehouse/dock-appointments', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+            { title: 'Yard Vehicles', url: '/warehouse/yard-vehicles', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Setup', url: '/warehouse/setup', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Aisles', url: '/warehouse/aisles', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
             { title: 'Bays', url: '/warehouse/bays', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
@@ -179,12 +243,46 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
+      title: 'Labor',
+      icon: Users,
+      roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'],
+      items: [
+        { title: 'Shifts', url: '/labor/shifts', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+        { title: 'Shift Assignments', url: '/labor/assignments', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+        { title: 'Time Logs', url: '/labor/time-logs', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+        { title: 'Performance', url: '/labor/performance', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+      ],
+    },
+    {
+      title: 'Equipment',
+      icon: Wrench,
+      roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'],
+      items: [
+        { title: 'Equipment List', url: '/equipment', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+        { title: 'Maintenance Records', url: '/equipment/maintenance', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'] },
+      ],
+    },
+    {
+      title: 'Work Orders',
+      icon: ClipboardCheck,
+      roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER', 'WAREHOUSE_USER'],
+      items: [
+        { title: 'Work Orders', url: '/work-orders', roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER', 'WAREHOUSE_USER'] },
+      ],
+    },
+    {
       title: 'Master Data',
       items: [
         {
           title: 'Clients',
           url: '/clients',
           icon: Briefcase,
+          roles: ['TENANT_ADMIN', 'WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'],
+        },
+        {
+          title: 'Customers',
+          url: '/customers',
+          icon: Users,
           roles: ['TENANT_ADMIN', 'WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'],
         },
         {
@@ -264,10 +362,22 @@ export const sidebarData: SidebarData = {
           roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'],
         },
         {
+          title: 'Escalation Rules',
+          url: '/admin/escalation-rules',
+          icon: AlertTriangle,
+          roles: ['WAREHOUSE_ADMIN'],
+        },
+        {
           title: 'Customization',
           url: '/admin/customization',
           icon: FileText,
           roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER', 'TENANT_ADMIN'],
+        },
+        {
+          title: 'Events',
+          url: '/admin/events',
+          icon: Activity,
+          roles: ['WAREHOUSE_ADMIN', 'WAREHOUSE_MANAGER'],
         },
         {
           title: 'Audit Logs',

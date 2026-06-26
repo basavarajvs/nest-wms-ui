@@ -9,6 +9,7 @@ import type { CreateVasTaskDtoStatus } from './createVasTaskDtoStatus.js';
 
 export interface CreateVasTaskDto {
   assignedToUserId?: string;
+  clientId?: string;
   facilityId: string;
   notes?: string;
   orderId?: string;
@@ -16,6 +17,7 @@ export interface CreateVasTaskDto {
   productId?: string;
   quantityRequired?: number;
   ratePerUnit?: number;
+  serviceId?: string;
   shipmentId?: string;
   status?: CreateVasTaskDtoStatus;
   taskType: string;

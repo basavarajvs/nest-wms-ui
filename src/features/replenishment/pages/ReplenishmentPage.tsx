@@ -162,6 +162,9 @@ export function ReplenishmentPage() {
             )}
           </div>
         ),
+        size: 220,
+        minSize: 180,
+        maxSize: 300,
       },
       {
         accessorKey: 'pickLocationName',
@@ -169,13 +172,19 @@ export function ReplenishmentPage() {
         cell: ({ row }) => (
           <span className='font-mono text-xs'>{row.original.pickLocationName || row.original.pickLocationId}</span>
         ),
+        size: 130,
+        minSize: 110,
+        maxSize: 160,
       },
       {
         accessorKey: 'currentQty',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Current Qty' />,
         cell: ({ row }) => (
-          <span className='font-mono text-sm'>{row.original.currentQty}</span>
+          <span className='text-right font-mono text-sm'>{row.original.currentQty}</span>
         ),
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
       },
       {
         id: 'minMax',
@@ -185,13 +194,19 @@ export function ReplenishmentPage() {
             {row.original.minQty} / {row.original.maxQty}
           </span>
         ),
+        size: 100,
+        minSize: 80,
+        maxSize: 130,
       },
       {
         accessorKey: 'suggestedQty',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Suggested' />,
         cell: ({ row }) => (
-          <span className='font-mono text-sm font-medium'>{row.original.suggestedQty}</span>
+          <span className='text-right font-mono text-sm font-medium'>{row.original.suggestedQty}</span>
         ),
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
       },
       {
         accessorKey: 'bulkLocationName',
@@ -199,6 +214,9 @@ export function ReplenishmentPage() {
         cell: ({ row }) => (
           <span className='font-mono text-xs'>{row.original.bulkLocationName || row.original.bulkLocationId}</span>
         ),
+        size: 130,
+        minSize: 110,
+        maxSize: 160,
       },
       {
         id: 'actions',
@@ -217,6 +235,9 @@ export function ReplenishmentPage() {
             Create Task
           </Button>
         ),
+        size: 130,
+        minSize: 110,
+        maxSize: 160,
       },
     ],
     [actionLoading, createTask.isPending, facilityId]
@@ -230,6 +251,9 @@ export function ReplenishmentPage() {
         cell: ({ row }) => (
           <span className='font-mono text-xs'>{row.original.id.substring(0, 12)}...</span>
         ),
+        size: 120,
+        minSize: 100,
+        maxSize: 140,
       },
       {
         accessorKey: 'productName',
@@ -242,6 +266,9 @@ export function ReplenishmentPage() {
             )}
           </div>
         ),
+        size: 200,
+        minSize: 160,
+        maxSize: 280,
       },
       {
         accessorKey: 'fromLocationName',
@@ -249,6 +276,9 @@ export function ReplenishmentPage() {
         cell: ({ row }) => (
           <span className='font-mono text-xs'>{row.original.fromLocationName || row.original.fromLocationId}</span>
         ),
+        size: 130,
+        minSize: 110,
+        maxSize: 160,
       },
       {
         accessorKey: 'toLocationName',
@@ -256,23 +286,35 @@ export function ReplenishmentPage() {
         cell: ({ row }) => (
           <span className='font-mono text-xs'>{row.original.toLocationName || row.original.toLocationId}</span>
         ),
+        size: 130,
+        minSize: 110,
+        maxSize: 160,
       },
       {
         accessorKey: 'requestedQuantity',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Qty' />,
         cell: ({ row }) => (
-          <span className='font-mono text-sm'>{row.original.requestedQuantity}</span>
+          <span className='text-right font-mono text-sm'>{row.original.requestedQuantity}</span>
         ),
+        size: 90,
+        minSize: 70,
+        maxSize: 120,
       },
       {
         accessorKey: 'priority',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Priority' />,
         cell: ({ row }) => <PriorityBadge priority={row.original.priority} />,
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
       },
       {
         accessorKey: 'status',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Status' />,
         cell: ({ row }) => <StatusBadge status={row.original.status} />,
+        size: 110,
+        minSize: 90,
+        maxSize: 130,
       },
       {
         id: 'actions',
@@ -303,6 +345,9 @@ export function ReplenishmentPage() {
             </Button>
           </div>
         ),
+        size: 200,
+        minSize: 170,
+        maxSize: 240,
       },
     ],
     [actionLoading, completeTask.isPending]
@@ -316,6 +361,9 @@ export function ReplenishmentPage() {
         cell: ({ row }) => (
           <span className='font-mono text-xs'>{row.original.id.substring(0, 12)}...</span>
         ),
+        size: 120,
+        minSize: 100,
+        maxSize: 140,
       },
       {
         accessorKey: 'productName',
@@ -328,6 +376,9 @@ export function ReplenishmentPage() {
             )}
           </div>
         ),
+        size: 200,
+        minSize: 160,
+        maxSize: 280,
       },
       {
         accessorKey: 'fromLocationName',
@@ -335,6 +386,9 @@ export function ReplenishmentPage() {
         cell: ({ row }) => (
           <span className='font-mono text-xs'>{row.original.fromLocationName || row.original.fromLocationId}</span>
         ),
+        size: 130,
+        minSize: 110,
+        maxSize: 160,
       },
       {
         accessorKey: 'toLocationName',
@@ -342,18 +396,27 @@ export function ReplenishmentPage() {
         cell: ({ row }) => (
           <span className='font-mono text-xs'>{row.original.toLocationName || row.original.toLocationId}</span>
         ),
+        size: 130,
+        minSize: 110,
+        maxSize: 160,
       },
       {
         accessorKey: 'requestedQuantity',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Qty' />,
         cell: ({ row }) => (
-          <span className='font-mono text-sm'>{row.original.requestedQuantity}</span>
+          <span className='text-right font-mono text-sm'>{row.original.requestedQuantity}</span>
         ),
+        size: 90,
+        minSize: 70,
+        maxSize: 120,
       },
       {
         accessorKey: 'status',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Status' />,
         cell: ({ row }) => <StatusBadge status={row.original.status} />,
+        size: 110,
+        minSize: 90,
+        maxSize: 130,
       },
       {
         accessorKey: 'completedAt',
@@ -363,6 +426,9 @@ export function ReplenishmentPage() {
             {row.original.completedAt ? new Date(row.original.completedAt).toLocaleDateString() : '—'}
           </span>
         ),
+        size: 110,
+        minSize: 90,
+        maxSize: 140,
       },
     ],
     []
