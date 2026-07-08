@@ -1,0 +1,41 @@
+export const TIMEZONE_OPTIONS = [
+  { value: 'America/New_York', label: '(US) Eastern Time – America/New_York' },
+  { value: 'America/Chicago', label: '(US) Central Time – America/Chicago' },
+  { value: 'America/Denver', label: '(US) Mountain Time – America/Denver' },
+  { value: 'America/Los_Angeles', label: '(US) Pacific Time – America/Los_Angeles' },
+  { value: 'America/Anchorage', label: '(US) Alaska Time – America/Anchorage' },
+  { value: 'Pacific/Honolulu', label: '(US) Hawaii-Aleutian Time – Pacific/Honolulu' },
+  { value: 'America/Phoenix', label: '(US) Arizona Time – America/Phoenix' },
+  { value: 'Asia/Kolkata', label: '(IN) India Standard Time – Asia/Kolkata' },
+  { value: 'Asia/Shanghai', label: '(CN) China Standard Time – Asia/Shanghai' },
+  { value: 'Asia/Urumqi', label: '(CN) Xinjiang Time – Asia/Urumqi' },
+  { value: 'Asia/Dubai', label: '(AE) Gulf Standard Time – Asia/Dubai' },
+  { value: 'Asia/Riyadh', label: '(SA) Arabia Standard Time – Asia/Riyadh' },
+  { value: 'Asia/Kuwait', label: '(KW) Arabia Standard Time – Asia/Kuwait' },
+  { value: 'Asia/Qatar', label: '(QA) Arabia Standard Time – Asia/Qatar' },
+  { value: 'Asia/Bahrain', label: '(BH) Arabia Standard Time – Asia/Bahrain' },
+  { value: 'Asia/Muscat', label: '(OM) Gulf Standard Time – Asia/Muscat' },
+  { value: 'Asia/Jerusalem', label: '(IL) Israel Standard Time – Asia/Jerusalem' },
+  { value: 'Asia/Beirut', label: '(LB) Eastern European Time – Asia/Beirut' },
+  { value: 'Australia/Sydney', label: '(AU) Australian Eastern Time – Australia/Sydney' },
+  { value: 'Australia/Melbourne', label: '(AU) Australian Eastern Time – Australia/Melbourne' },
+  { value: 'Australia/Brisbane', label: '(AU) Australian Eastern Standard Time – Australia/Brisbane' },
+  { value: 'Australia/Perth', label: '(AU) Australian Western Time – Australia/Perth' },
+  { value: 'Australia/Adelaide', label: '(AU) Australian Central Time – Australia/Adelaide' },
+  { value: 'Australia/Darwin', label: '(AU) Australian Central Standard Time – Australia/Darwin' },
+  { value: 'Asia/Tokyo', label: '(JP) Japan Standard Time – Asia/Tokyo' },
+  { value: 'Asia/Singapore', label: '(SG) Singapore Time – Asia/Singapore' },
+  { value: 'Africa/Cairo', label: '(EG) Eastern European Time – Africa/Cairo' },
+  { value: 'Africa/Lagos', label: '(NG) West Africa Time – Africa/Lagos' },
+  { value: 'Africa/Johannesburg', label: '(ZA) South Africa Standard Time – Africa/Johannesburg' },
+  { value: 'Africa/Nairobi', label: '(KE) East Africa Time – Africa/Nairobi' },
+  { value: 'Africa/Accra', label: '(GH) Greenwich Mean Time – Africa/Accra' },
+  { value: 'Africa/Casablanca', label: '(MA) Western European Time – Africa/Casablanca' },
+  { value: 'Africa/Addis_Ababa', label: '(ET) East Africa Time – Africa/Addis_Ababa' },
+] as const
+
+export type Timezone = (typeof TIMEZONE_OPTIONS)[number]['value']
+
+export const TIMEZONE_LABELS: Record<Timezone, string> = Object.fromEntries(
+  TIMEZONE_OPTIONS.map((opt) => [opt.value, opt.label]),
+) as Record<Timezone, string>
