@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import {
   FacilityController_findAll,
   FacilityController_findById,
@@ -90,7 +90,7 @@ export function useCreateFacility() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Facility created')
+      showSuccess('Facility created')
     },
     onError: (error) => handleServerError(error),
   })
@@ -123,7 +123,7 @@ export function useUpdateFacility() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Facility updated')
+      showSuccess('Facility updated')
     },
     onError: (error) => handleServerError(error),
   })
@@ -137,7 +137,7 @@ export function useDeleteFacility() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Facility deleted')
+      showSuccess('Facility deleted')
     },
     onError: (error) => handleServerError(error),
   })

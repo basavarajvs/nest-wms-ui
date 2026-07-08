@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import { useFacilityStore } from '@/stores/facility-store'
 import {
   AsnController_findAll,
@@ -68,7 +68,7 @@ export function useCreateAsn() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('ASN created')
+      showSuccess('ASN created')
     },
     onError: (error) => handleServerError(error),
   })
@@ -83,7 +83,7 @@ export function useUpdateAsn() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('ASN updated')
+      showSuccess('ASN updated')
     },
     onError: (error) => handleServerError(error),
   })
@@ -97,7 +97,7 @@ export function useDeleteAsn() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('ASN deleted')
+      showSuccess('ASN deleted')
     },
     onError: (error) => handleServerError(error),
   })

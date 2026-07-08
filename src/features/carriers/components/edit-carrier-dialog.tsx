@@ -65,6 +65,7 @@ export function EditCarrierDialog({
         onSubmit={handleSubmit}
         defaultValues={defaultValues}
         isSubmitting={updateMutation.isPending}
+        disabledFields={['carrier_code']}
       />
     </CreateEntityDialog>
   )

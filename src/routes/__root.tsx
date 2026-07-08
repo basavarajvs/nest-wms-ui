@@ -1,6 +1,7 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { NavigationProgress } from '@/components/layout/navigation-progress'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import type { QueryClient } from '@tanstack/react-query'
@@ -24,6 +25,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootComponent() {
   return (
     <TooltipProvider>
+      <NavigationProgress />
       <Outlet />
       <Toaster richColors closeButton />
       {import.meta.env.DEV && (

@@ -65,6 +65,7 @@ export function EditUomDialog({
         onSubmit={handleSubmit}
         defaultValues={defaultValues}
         isSubmitting={updateMutation.isPending}
+        disabledFields={['uom_code']}
       />
     </CreateEntityDialog>
   )

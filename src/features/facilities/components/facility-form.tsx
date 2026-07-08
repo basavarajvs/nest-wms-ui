@@ -30,6 +30,7 @@ interface FacilityFormProps {
   onSubmit: (values: CreateFacilityFormValues) => void
   defaultValues?: Partial<CreateFacilityFormValues>
   isSubmitting?: boolean
+  disabledFields?: string[]
 }
 
 const defaultFormValues: CreateFacilityFormValues = {
@@ -54,7 +55,10 @@ export function FacilityForm({
   onSubmit,
   defaultValues,
   isSubmitting,
+  disabledFields,
 }: FacilityFormProps) {
+  const disabledSet = new Set(disabledFields ?? [])
+  const isDisabled = (name: string) => disabledSet.has(name) || !!isSubmitting
   const form = useForm<CreateFacilityFormValues>({
     resolver: zodResolver(createFacilitySchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -75,7 +79,7 @@ export function FacilityForm({
               <FormItem>
                 <FormLabel>Code *</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. WH-001" {...field} />
+                  <Input placeholder="e.g. WH-001" {...field} disabled={isDisabled('facility_code')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -88,7 +92,7 @@ export function FacilityForm({
               <FormItem>
                 <FormLabel>Name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Facility name" {...field} />
+                  <Input placeholder="Facility name" {...field} disabled={isDisabled('facility_name')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -105,6 +109,7 @@ export function FacilityForm({
                 <Select
                   onValueChange={field.onChange}
                   value={field.value || undefined}
+                  disabled={isDisabled('facility_type')}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full overflow-hidden">
@@ -132,6 +137,7 @@ export function FacilityForm({
                 <Select
                   onValueChange={field.onChange}
                   value={field.value || undefined}
+                  disabled={isDisabled('timezone_name')}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full overflow-hidden">
@@ -163,6 +169,7 @@ export function FacilityForm({
                   className="resize-none"
                   rows={2}
                   {...field}
+                  disabled={isDisabled('description')}
                 />
               </FormControl>
               <FormMessage />
@@ -178,7 +185,7 @@ export function FacilityForm({
               <FormItem>
                 <FormLabel>Address Line 1</FormLabel>
                 <FormControl>
-                  <Input placeholder="Street address" {...field} />
+                  <Input placeholder="Street address" {...field} disabled={isDisabled('address_line1')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -192,7 +199,7 @@ export function FacilityForm({
                 <FormItem>
                   <FormLabel>Address Line 2</FormLabel>
                   <FormControl>
-                    <Input placeholder="Apt, suite, etc." {...field} />
+                    <Input placeholder="Apt, suite, etc." {...field} disabled={isDisabled('address_line2')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -205,7 +212,7 @@ export function FacilityForm({
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input placeholder="City" {...field} />
+                    <Input placeholder="City" {...field} disabled={isDisabled('city')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -220,7 +227,7 @@ export function FacilityForm({
                 <FormItem>
                   <FormLabel>State/Province</FormLabel>
                   <FormControl>
-                    <Input placeholder="State" {...field} />
+                    <Input placeholder="State" {...field} disabled={isDisabled('state_province')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -233,7 +240,7 @@ export function FacilityForm({
                 <FormItem>
                   <FormLabel>Postal Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="ZIP code" {...field} />
+                    <Input placeholder="ZIP code" {...field} disabled={isDisabled('postal_code')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -248,6 +255,7 @@ export function FacilityForm({
                   <Select
                     onValueChange={field.onChange}
                     value={field.value || undefined}
+                    disabled={isDisabled('country_code')}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full overflow-hidden">
@@ -278,7 +286,7 @@ export function FacilityForm({
                 <FormItem>
                   <FormLabel>Contact Person</FormLabel>
                   <FormControl>
-                    <Input placeholder="Name" {...field} />
+                    <Input placeholder="Name" {...field} disabled={isDisabled('contact_person')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -291,7 +299,7 @@ export function FacilityForm({
                 <FormItem>
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input placeholder="Phone number" {...field} />
+                    <Input placeholder="Phone number" {...field} disabled={isDisabled('contact_phone')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -304,7 +312,7 @@ export function FacilityForm({
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Email address" type="email" {...field} />
+                    <Input placeholder="Email address" type="email" {...field} disabled={isDisabled('contact_email')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -322,6 +330,7 @@ export function FacilityForm({
                 <Switch
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  disabled={isDisabled('is_active')}
                 />
               </FormControl>
               <FormMessage />

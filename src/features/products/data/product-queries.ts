@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import {
   ProductController_findAll,
   ProductController_findById,
@@ -64,7 +64,7 @@ export function useCreateProduct() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productKeys.all })
-      toast.success('Product created successfully')
+      showSuccess('Product created successfully')
     },
     onError: (error) => handleServerError(error),
   })
@@ -83,7 +83,7 @@ export function useUpdateProduct() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productKeys.all })
-      toast.success('Product updated successfully')
+      showSuccess('Product updated successfully')
     },
     onError: (error) => handleServerError(error),
   })
@@ -97,7 +97,7 @@ export function useDeleteProduct() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productKeys.all })
-      toast.success('Product deleted successfully')
+      showSuccess('Product deleted successfully')
     },
     onError: (error) => handleServerError(error),
   })

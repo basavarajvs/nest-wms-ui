@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import { useFacilityStore } from '@/stores/facility-store'
 import {
   ReceivingInspectionController_findAll,
@@ -62,7 +62,7 @@ export function useApproveInspection() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Inspection approved')
+      showSuccess('Inspection approved')
     },
     onError: (error) => handleServerError(error),
   })
@@ -77,7 +77,7 @@ export function useRejectInspection() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Inspection rejected')
+      showSuccess('Inspection rejected')
     },
     onError: (error) => handleServerError(error),
   })

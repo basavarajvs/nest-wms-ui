@@ -65,6 +65,7 @@ export function EditBrandDialog({
         onSubmit={handleSubmit}
         defaultValues={defaultValues}
         isSubmitting={updateMutation.isPending}
+        disabledFields={['brand_code']}
       />
     </CreateEntityDialog>
   )

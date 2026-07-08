@@ -20,6 +20,7 @@ interface UomFormProps {
   onSubmit: (values: CreateUomFormValues) => void
   defaultValues?: Partial<CreateUomFormValues>
   isSubmitting?: boolean
+  disabledFields?: string[]
 }
 
 const defaultFormValues: CreateUomFormValues = {
@@ -33,7 +34,10 @@ export function UomForm({
   onSubmit,
   defaultValues,
   isSubmitting,
+  disabledFields,
 }: UomFormProps) {
+  const disabledSet = new Set(disabledFields ?? [])
+  const isDisabled = (name: string) => disabledSet.has(name) || !!isSubmitting
   const form = useForm<CreateUomFormValues>({
     resolver: zodResolver(createUomSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -54,7 +58,7 @@ export function UomForm({
               <FormItem>
                 <FormLabel>Code *</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. EA" {...field} />
+                  <Input placeholder="e.g. EA" {...field} disabled={isDisabled('uom_code')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -67,7 +71,7 @@ export function UomForm({
               <FormItem>
                 <FormLabel>Name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Unit of measure name" {...field} />
+                  <Input placeholder="Unit of measure name" {...field} disabled={isDisabled('uom_name')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -86,6 +90,7 @@ export function UomForm({
                   className="resize-none"
                   rows={3}
                   {...field}
+                  disabled={isDisabled('description')}
                 />
               </FormControl>
               <FormMessage />
@@ -102,6 +107,7 @@ export function UomForm({
                 <Switch
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  disabled={isDisabled('is_active')}
                 />
               </FormControl>
               <FormMessage />

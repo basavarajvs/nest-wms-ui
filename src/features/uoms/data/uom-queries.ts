@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import {
   UomController_findAll,
   UomController_findById,
@@ -58,7 +58,7 @@ export function useCreateUom() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('UOM created')
+      showSuccess('UOM created')
     },
     onError: (error) => handleServerError(error),
   })
@@ -82,7 +82,7 @@ export function useUpdateUom() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('UOM updated')
+      showSuccess('UOM updated')
     },
     onError: (error) => handleServerError(error),
   })
@@ -96,7 +96,7 @@ export function useDeleteUom() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('UOM deleted')
+      showSuccess('UOM deleted')
     },
     onError: (error) => handleServerError(error),
   })

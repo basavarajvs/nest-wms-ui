@@ -20,6 +20,7 @@ interface CarrierFormProps {
   onSubmit: (values: CreateCarrierFormValues) => void
   defaultValues?: Partial<CreateCarrierFormValues>
   isSubmitting?: boolean
+  disabledFields?: string[]
 }
 
 const defaultFormValues: CreateCarrierFormValues = {
@@ -33,7 +34,10 @@ export function CarrierForm({
   onSubmit,
   defaultValues,
   isSubmitting,
+  disabledFields,
 }: CarrierFormProps) {
+  const disabledSet = new Set(disabledFields ?? [])
+  const isDisabled = (name: string) => disabledSet.has(name) || !!isSubmitting
   const form = useForm<CreateCarrierFormValues>({
     resolver: zodResolver(createCarrierSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -54,7 +58,7 @@ export function CarrierForm({
               <FormItem>
                 <FormLabel>Code *</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. CARR-001" {...field} />
+                  <Input placeholder="e.g. CARR-001" {...field} disabled={isDisabled('carrier_code')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -67,7 +71,7 @@ export function CarrierForm({
               <FormItem>
                 <FormLabel>Name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Carrier name" {...field} />
+                  <Input placeholder="Carrier name" {...field} disabled={isDisabled('carrier_name')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -86,6 +90,7 @@ export function CarrierForm({
                   className="resize-none"
                   rows={3}
                   {...field}
+                  disabled={isDisabled('description')}
                 />
               </FormControl>
               <FormMessage />
@@ -102,6 +107,7 @@ export function CarrierForm({
                 <Switch
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  disabled={isDisabled('is_active')}
                 />
               </FormControl>
               <FormMessage />

@@ -28,6 +28,7 @@ interface CategoryFormProps {
   onSubmit: (values: CreateCategoryFormValues) => void
   defaultValues?: Partial<CreateCategoryFormValues>
   isSubmitting?: boolean
+  disabledFields?: string[]
   excludeId?: number
 }
 
@@ -43,8 +44,11 @@ export function CategoryForm({
   onSubmit,
   defaultValues,
   isSubmitting,
+  disabledFields,
   excludeId,
 }: CategoryFormProps) {
+  const disabledSet = new Set(disabledFields ?? [])
+  const isDisabled = (name: string) => disabledSet.has(name) || !!isSubmitting
   const form = useForm<CreateCategoryFormValues>({
     resolver: zodResolver(createCategorySchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -71,7 +75,7 @@ export function CategoryForm({
               <FormItem>
                 <FormLabel>Code *</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. CAT-001" {...field} />
+                  <Input placeholder="e.g. CAT-001" {...field} disabled={isDisabled('category_code')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,7 +88,7 @@ export function CategoryForm({
               <FormItem>
                 <FormLabel>Name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Category name" {...field} />
+                  <Input placeholder="Category name" {...field} disabled={isDisabled('category_name')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -103,6 +107,7 @@ export function CategoryForm({
                   className="resize-none"
                   rows={3}
                   {...field}
+                  disabled={isDisabled('description')}
                 />
               </FormControl>
               <FormMessage />
@@ -115,7 +120,7 @@ export function CategoryForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Parent Category</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select onValueChange={field.onChange} value={field.value} disabled={isDisabled('parent_category_id')}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="None (top-level)" />
@@ -143,6 +148,7 @@ export function CategoryForm({
                 <Switch
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  disabled={isDisabled('is_active')}
                 />
               </FormControl>
               <FormMessage />

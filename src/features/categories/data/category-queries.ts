@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import {
   CategoryController_findAll,
   CategoryController_findById,
@@ -61,7 +61,7 @@ export function useCreateCategory() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Category created')
+      showSuccess('Category created')
     },
     onError: (error) => handleServerError(error),
   })
@@ -86,7 +86,7 @@ export function useUpdateCategory() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Category updated')
+      showSuccess('Category updated')
     },
     onError: (error) => handleServerError(error),
   })
@@ -100,7 +100,7 @@ export function useDeleteCategory() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Category deleted')
+      showSuccess('Category deleted')
     },
     onError: (error) => handleServerError(error),
   })

@@ -65,6 +65,7 @@ export function EditClientDialog({
         onSubmit={handleSubmit}
         defaultValues={defaultValues}
         isSubmitting={updateMutation.isPending}
+        disabledFields={['client_code']}
       />
     </CreateEntityDialog>
   )

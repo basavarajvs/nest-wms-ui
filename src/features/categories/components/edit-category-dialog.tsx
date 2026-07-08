@@ -71,6 +71,7 @@ export function EditCategoryDialog({
         onSubmit={handleSubmit}
         defaultValues={defaultValues}
         isSubmitting={updateMutation.isPending}
+        disabledFields={['category_code']}
         excludeId={category.category_id}
       />
     </CreateEntityDialog>

@@ -88,6 +88,7 @@ export function EditFacilityDialog({
         onSubmit={handleSubmit}
         defaultValues={defaultValues}
         isSubmitting={updateMutation.isPending}
+        disabledFields={['facility_code']}
       />
     </CreateEntityDialog>
   )

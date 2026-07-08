@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import {
   BrandController_findAll,
   BrandController_findById,
@@ -58,7 +58,7 @@ export function useCreateBrand() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Brand created')
+      showSuccess('Brand created')
     },
     onError: (error) => handleServerError(error),
   })
@@ -82,7 +82,7 @@ export function useUpdateBrand() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Brand updated')
+      showSuccess('Brand updated')
     },
     onError: (error) => handleServerError(error),
   })
@@ -96,7 +96,7 @@ export function useDeleteBrand() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Brand deleted')
+      showSuccess('Brand deleted')
     },
     onError: (error) => handleServerError(error),
   })

@@ -1,11 +1,14 @@
-import { toast } from 'sonner'
+import { showError } from '@/lib/toast'
 
 interface ServerError {
   response?: {
     data?: {
-      message?: string
-      detail?: string
+      type?: string
       title?: string
+      status?: number
+      detail?: string
+      instance?: string
+      message?: string
       errors?: Record<string, string[]>
     }
     status?: number
@@ -15,21 +18,20 @@ interface ServerError {
 
 export function handleServerError(error: unknown): void {
   const serverError = error as ServerError
-  const message =
-    serverError?.response?.data?.message ||
-    serverError?.response?.data?.detail ||
-    serverError?.response?.data?.title ||
-    serverError?.message ||
-    'An unexpected error occurred'
+  const data = serverError?.response?.data
 
-  toast.error(message)
+  const title = data?.title || ''
+  const detail = data?.detail || data?.message || serverError?.message || ''
+  const fallback = 'An unexpected error occurred'
 
-  const errors = serverError?.response?.data?.errors
+  const message = [title, detail].filter(Boolean).join(': ') || fallback
+
+  showError(message)
+
+  const errors = data?.errors
   if (errors) {
     Object.entries(errors).forEach(([field, messages]) => {
-      messages.forEach((msg) => {
-        toast.error(`${field}: ${msg}`)
-      })
+      messages.forEach((msg) => showError(`${field}: ${msg}`))
     })
   }
 }

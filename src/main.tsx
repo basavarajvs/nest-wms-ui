@@ -4,6 +4,7 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from '@/context/theme-context'
 import { AuthProvider, useAuth } from '@/context/auth-context'
+import { ErrorBoundary } from '@/components/common/error-boundary'
 import { queryClient } from '@/lib/queryClient'
 import { routeTree } from '@/routeTree.gen'
 import '@/styles/globals.css'
@@ -29,13 +30,15 @@ function InnerApp() {
 function App() {
   return (
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <AuthProvider>
-            <InnerApp />
-          </AuthProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <AuthProvider>
+              <InnerApp />
+            </AuthProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </ErrorBoundary>
     </StrictMode>
   )
 }

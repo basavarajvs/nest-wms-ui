@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import {
   ClientController_findAll,
   ClientController_findById,
@@ -67,7 +67,7 @@ export function useCreateClient() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Client created')
+      showSuccess('Client created')
     },
     onError: (error) => handleServerError(error),
   })
@@ -91,7 +91,7 @@ export function useUpdateClient() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Client updated')
+      showSuccess('Client updated')
     },
     onError: (error) => handleServerError(error),
   })
@@ -105,7 +105,7 @@ export function useDeleteClient() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Client deleted')
+      showSuccess('Client deleted')
     },
     onError: (error) => handleServerError(error),
   })

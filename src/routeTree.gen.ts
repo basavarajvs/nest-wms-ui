@@ -15,6 +15,8 @@ import { Route as AuthenticatedSplatRouteImport } from './routes/_authenticated/
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as AuthenticatedWarehouseFacilitiesRouteImport } from './routes/_authenticated/warehouse/facilities'
 import { Route as AuthenticatedQualityInspectionsRouteImport } from './routes/_authenticated/quality/inspections'
+import { Route as AuthenticatedOutboundWavesRouteImport } from './routes/_authenticated/outbound/waves'
+import { Route as AuthenticatedOutboundOrdersRouteImport } from './routes/_authenticated/outbound/orders'
 import { Route as AuthenticatedMasterDataVendorsRouteImport } from './routes/_authenticated/master-data/vendors'
 import { Route as AuthenticatedMasterDataUomsRouteImport } from './routes/_authenticated/master-data/uoms'
 import { Route as AuthenticatedMasterDataProductsRouteImport } from './routes/_authenticated/master-data/products'
@@ -22,6 +24,7 @@ import { Route as AuthenticatedMasterDataClientsRouteImport } from './routes/_au
 import { Route as AuthenticatedMasterDataCategoriesRouteImport } from './routes/_authenticated/master-data/categories'
 import { Route as AuthenticatedMasterDataCarriersRouteImport } from './routes/_authenticated/master-data/carriers'
 import { Route as AuthenticatedMasterDataBrandsRouteImport } from './routes/_authenticated/master-data/brands'
+import { Route as AuthenticatedInventoryOnHandRouteImport } from './routes/_authenticated/inventory/on-hand'
 import { Route as AuthenticatedInboundReceiveAsnRouteImport } from './routes/_authenticated/inbound/receive-asn'
 import { Route as AuthenticatedInboundGrnsRouteImport } from './routes/_authenticated/inbound/grns'
 import { Route as AuthenticatedInboundAsnsRouteImport } from './routes/_authenticated/inbound/asns'
@@ -55,6 +58,18 @@ const AuthenticatedQualityInspectionsRoute =
   AuthenticatedQualityInspectionsRouteImport.update({
     id: '/quality/inspections',
     path: '/quality/inspections',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOutboundWavesRoute =
+  AuthenticatedOutboundWavesRouteImport.update({
+    id: '/outbound/waves',
+    path: '/outbound/waves',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOutboundOrdersRoute =
+  AuthenticatedOutboundOrdersRouteImport.update({
+    id: '/outbound/orders',
+    path: '/outbound/orders',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedMasterDataVendorsRoute =
@@ -99,6 +114,12 @@ const AuthenticatedMasterDataBrandsRoute =
     path: '/master-data/brands',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedInventoryOnHandRoute =
+  AuthenticatedInventoryOnHandRouteImport.update({
+    id: '/inventory/on-hand',
+    path: '/inventory/on-hand',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedInboundReceiveAsnRoute =
   AuthenticatedInboundReceiveAsnRouteImport.update({
     id: '/inbound/receive-asn',
@@ -125,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/inbound/asns': typeof AuthenticatedInboundAsnsRoute
   '/inbound/grns': typeof AuthenticatedInboundGrnsRoute
   '/inbound/receive-asn': typeof AuthenticatedInboundReceiveAsnRoute
+  '/inventory/on-hand': typeof AuthenticatedInventoryOnHandRoute
   '/master-data/brands': typeof AuthenticatedMasterDataBrandsRoute
   '/master-data/carriers': typeof AuthenticatedMasterDataCarriersRoute
   '/master-data/categories': typeof AuthenticatedMasterDataCategoriesRoute
@@ -132,6 +154,8 @@ export interface FileRoutesByFullPath {
   '/master-data/products': typeof AuthenticatedMasterDataProductsRoute
   '/master-data/uoms': typeof AuthenticatedMasterDataUomsRoute
   '/master-data/vendors': typeof AuthenticatedMasterDataVendorsRoute
+  '/outbound/orders': typeof AuthenticatedOutboundOrdersRoute
+  '/outbound/waves': typeof AuthenticatedOutboundWavesRoute
   '/quality/inspections': typeof AuthenticatedQualityInspectionsRoute
   '/warehouse/facilities': typeof AuthenticatedWarehouseFacilitiesRoute
 }
@@ -142,6 +166,7 @@ export interface FileRoutesByTo {
   '/inbound/asns': typeof AuthenticatedInboundAsnsRoute
   '/inbound/grns': typeof AuthenticatedInboundGrnsRoute
   '/inbound/receive-asn': typeof AuthenticatedInboundReceiveAsnRoute
+  '/inventory/on-hand': typeof AuthenticatedInventoryOnHandRoute
   '/master-data/brands': typeof AuthenticatedMasterDataBrandsRoute
   '/master-data/carriers': typeof AuthenticatedMasterDataCarriersRoute
   '/master-data/categories': typeof AuthenticatedMasterDataCategoriesRoute
@@ -149,6 +174,8 @@ export interface FileRoutesByTo {
   '/master-data/products': typeof AuthenticatedMasterDataProductsRoute
   '/master-data/uoms': typeof AuthenticatedMasterDataUomsRoute
   '/master-data/vendors': typeof AuthenticatedMasterDataVendorsRoute
+  '/outbound/orders': typeof AuthenticatedOutboundOrdersRoute
+  '/outbound/waves': typeof AuthenticatedOutboundWavesRoute
   '/quality/inspections': typeof AuthenticatedQualityInspectionsRoute
   '/warehouse/facilities': typeof AuthenticatedWarehouseFacilitiesRoute
 }
@@ -161,6 +188,7 @@ export interface FileRoutesById {
   '/_authenticated/inbound/asns': typeof AuthenticatedInboundAsnsRoute
   '/_authenticated/inbound/grns': typeof AuthenticatedInboundGrnsRoute
   '/_authenticated/inbound/receive-asn': typeof AuthenticatedInboundReceiveAsnRoute
+  '/_authenticated/inventory/on-hand': typeof AuthenticatedInventoryOnHandRoute
   '/_authenticated/master-data/brands': typeof AuthenticatedMasterDataBrandsRoute
   '/_authenticated/master-data/carriers': typeof AuthenticatedMasterDataCarriersRoute
   '/_authenticated/master-data/categories': typeof AuthenticatedMasterDataCategoriesRoute
@@ -168,6 +196,8 @@ export interface FileRoutesById {
   '/_authenticated/master-data/products': typeof AuthenticatedMasterDataProductsRoute
   '/_authenticated/master-data/uoms': typeof AuthenticatedMasterDataUomsRoute
   '/_authenticated/master-data/vendors': typeof AuthenticatedMasterDataVendorsRoute
+  '/_authenticated/outbound/orders': typeof AuthenticatedOutboundOrdersRoute
+  '/_authenticated/outbound/waves': typeof AuthenticatedOutboundWavesRoute
   '/_authenticated/quality/inspections': typeof AuthenticatedQualityInspectionsRoute
   '/_authenticated/warehouse/facilities': typeof AuthenticatedWarehouseFacilitiesRoute
 }
@@ -180,6 +210,7 @@ export interface FileRouteTypes {
     | '/inbound/asns'
     | '/inbound/grns'
     | '/inbound/receive-asn'
+    | '/inventory/on-hand'
     | '/master-data/brands'
     | '/master-data/carriers'
     | '/master-data/categories'
@@ -187,6 +218,8 @@ export interface FileRouteTypes {
     | '/master-data/products'
     | '/master-data/uoms'
     | '/master-data/vendors'
+    | '/outbound/orders'
+    | '/outbound/waves'
     | '/quality/inspections'
     | '/warehouse/facilities'
   fileRoutesByTo: FileRoutesByTo
@@ -197,6 +230,7 @@ export interface FileRouteTypes {
     | '/inbound/asns'
     | '/inbound/grns'
     | '/inbound/receive-asn'
+    | '/inventory/on-hand'
     | '/master-data/brands'
     | '/master-data/carriers'
     | '/master-data/categories'
@@ -204,6 +238,8 @@ export interface FileRouteTypes {
     | '/master-data/products'
     | '/master-data/uoms'
     | '/master-data/vendors'
+    | '/outbound/orders'
+    | '/outbound/waves'
     | '/quality/inspections'
     | '/warehouse/facilities'
   id:
@@ -215,6 +251,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inbound/asns'
     | '/_authenticated/inbound/grns'
     | '/_authenticated/inbound/receive-asn'
+    | '/_authenticated/inventory/on-hand'
     | '/_authenticated/master-data/brands'
     | '/_authenticated/master-data/carriers'
     | '/_authenticated/master-data/categories'
@@ -222,6 +259,8 @@ export interface FileRouteTypes {
     | '/_authenticated/master-data/products'
     | '/_authenticated/master-data/uoms'
     | '/_authenticated/master-data/vendors'
+    | '/_authenticated/outbound/orders'
+    | '/_authenticated/outbound/waves'
     | '/_authenticated/quality/inspections'
     | '/_authenticated/warehouse/facilities'
   fileRoutesById: FileRoutesById
@@ -275,6 +314,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedQualityInspectionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/outbound/waves': {
+      id: '/_authenticated/outbound/waves'
+      path: '/outbound/waves'
+      fullPath: '/outbound/waves'
+      preLoaderRoute: typeof AuthenticatedOutboundWavesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/outbound/orders': {
+      id: '/_authenticated/outbound/orders'
+      path: '/outbound/orders'
+      fullPath: '/outbound/orders'
+      preLoaderRoute: typeof AuthenticatedOutboundOrdersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/master-data/vendors': {
       id: '/_authenticated/master-data/vendors'
       path: '/master-data/vendors'
@@ -324,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMasterDataBrandsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/inventory/on-hand': {
+      id: '/_authenticated/inventory/on-hand'
+      path: '/inventory/on-hand'
+      fullPath: '/inventory/on-hand'
+      preLoaderRoute: typeof AuthenticatedInventoryOnHandRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/inbound/receive-asn': {
       id: '/_authenticated/inbound/receive-asn'
       path: '/inbound/receive-asn'
@@ -354,6 +414,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInboundAsnsRoute: typeof AuthenticatedInboundAsnsRoute
   AuthenticatedInboundGrnsRoute: typeof AuthenticatedInboundGrnsRoute
   AuthenticatedInboundReceiveAsnRoute: typeof AuthenticatedInboundReceiveAsnRoute
+  AuthenticatedInventoryOnHandRoute: typeof AuthenticatedInventoryOnHandRoute
   AuthenticatedMasterDataBrandsRoute: typeof AuthenticatedMasterDataBrandsRoute
   AuthenticatedMasterDataCarriersRoute: typeof AuthenticatedMasterDataCarriersRoute
   AuthenticatedMasterDataCategoriesRoute: typeof AuthenticatedMasterDataCategoriesRoute
@@ -361,6 +422,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMasterDataProductsRoute: typeof AuthenticatedMasterDataProductsRoute
   AuthenticatedMasterDataUomsRoute: typeof AuthenticatedMasterDataUomsRoute
   AuthenticatedMasterDataVendorsRoute: typeof AuthenticatedMasterDataVendorsRoute
+  AuthenticatedOutboundOrdersRoute: typeof AuthenticatedOutboundOrdersRoute
+  AuthenticatedOutboundWavesRoute: typeof AuthenticatedOutboundWavesRoute
   AuthenticatedQualityInspectionsRoute: typeof AuthenticatedQualityInspectionsRoute
   AuthenticatedWarehouseFacilitiesRoute: typeof AuthenticatedWarehouseFacilitiesRoute
 }
@@ -371,6 +434,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInboundAsnsRoute: AuthenticatedInboundAsnsRoute,
   AuthenticatedInboundGrnsRoute: AuthenticatedInboundGrnsRoute,
   AuthenticatedInboundReceiveAsnRoute: AuthenticatedInboundReceiveAsnRoute,
+  AuthenticatedInventoryOnHandRoute: AuthenticatedInventoryOnHandRoute,
   AuthenticatedMasterDataBrandsRoute: AuthenticatedMasterDataBrandsRoute,
   AuthenticatedMasterDataCarriersRoute: AuthenticatedMasterDataCarriersRoute,
   AuthenticatedMasterDataCategoriesRoute:
@@ -379,6 +443,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMasterDataProductsRoute: AuthenticatedMasterDataProductsRoute,
   AuthenticatedMasterDataUomsRoute: AuthenticatedMasterDataUomsRoute,
   AuthenticatedMasterDataVendorsRoute: AuthenticatedMasterDataVendorsRoute,
+  AuthenticatedOutboundOrdersRoute: AuthenticatedOutboundOrdersRoute,
+  AuthenticatedOutboundWavesRoute: AuthenticatedOutboundWavesRoute,
   AuthenticatedQualityInspectionsRoute: AuthenticatedQualityInspectionsRoute,
   AuthenticatedWarehouseFacilitiesRoute: AuthenticatedWarehouseFacilitiesRoute,
 }

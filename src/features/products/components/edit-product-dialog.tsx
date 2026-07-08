@@ -77,6 +77,7 @@ export function EditProductDialog({
         onSubmit={handleSubmit}
         defaultValues={defaultValues}
         isSubmitting={updateMutation.isPending}
+        disabledFields={['product_code']}
       />
     </CreateEntityDialog>
   )

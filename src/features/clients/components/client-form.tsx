@@ -20,6 +20,7 @@ interface ClientFormProps {
   onSubmit: (values: CreateClientFormValues) => void
   defaultValues?: Partial<CreateClientFormValues>
   isSubmitting?: boolean
+  disabledFields?: string[]
 }
 
 const defaultFormValues: CreateClientFormValues = {
@@ -33,7 +34,10 @@ export function ClientForm({
   onSubmit,
   defaultValues,
   isSubmitting,
+  disabledFields,
 }: ClientFormProps) {
+  const disabledSet = new Set(disabledFields ?? [])
+  const isDisabled = (name: string) => disabledSet.has(name) || !!isSubmitting
   const form = useForm<CreateClientFormValues>({
     resolver: zodResolver(createClientSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -54,7 +58,7 @@ export function ClientForm({
               <FormItem>
                 <FormLabel>Code *</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. CL-001" {...field} />
+                  <Input placeholder="e.g. CL-001" {...field} disabled={isDisabled('client_code')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -67,7 +71,7 @@ export function ClientForm({
               <FormItem>
                 <FormLabel>Name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Client name" {...field} />
+                  <Input placeholder="Client name" {...field} disabled={isDisabled('client_name')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -86,6 +90,7 @@ export function ClientForm({
                   className="resize-none"
                   rows={3}
                   {...field}
+                  disabled={isDisabled('description')}
                 />
               </FormControl>
               <FormMessage />
@@ -102,6 +107,7 @@ export function ClientForm({
                 <Switch
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  disabled={isDisabled('is_active')}
                 />
               </FormControl>
               <FormMessage />

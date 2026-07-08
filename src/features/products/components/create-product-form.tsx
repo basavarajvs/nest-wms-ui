@@ -32,6 +32,7 @@ interface CreateProductFormProps {
   onSubmit: (values: CreateProductFormValues) => void
   defaultValues?: Partial<CreateProductFormValues>
   isSubmitting?: boolean
+  disabledFields?: string[]
 }
 
 const defaultFormValues: CreateProductFormValues = {
@@ -48,7 +49,10 @@ export function CreateProductForm({
   onSubmit,
   defaultValues,
   isSubmitting,
+  disabledFields,
 }: CreateProductFormProps) {
+  const disabledSet = new Set(disabledFields ?? [])
+  const isDisabled = (name: string) => disabledSet.has(name) || !!isSubmitting
   const form = useForm<CreateProductFormValues>({
     resolver: zodResolver(createProductSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -73,7 +77,7 @@ export function CreateProductForm({
               <FormItem>
                 <FormLabel>Product Code *</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. PROD-001" {...field} />
+                  <Input placeholder="e.g. PROD-001" {...field} disabled={isDisabled('product_code')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -86,7 +90,7 @@ export function CreateProductForm({
               <FormItem>
                 <FormLabel>Product Name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Product name" {...field} />
+                  <Input placeholder="Product name" {...field} disabled={isDisabled('product_name')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -105,6 +109,7 @@ export function CreateProductForm({
                   className="resize-none"
                   rows={3}
                   {...field}
+                  disabled={isDisabled('description')}
                 />
               </FormControl>
               <FormMessage />
@@ -121,6 +126,7 @@ export function CreateProductForm({
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}
+                  disabled={isDisabled('brand_id')}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -158,6 +164,7 @@ export function CreateProductForm({
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}
+                  disabled={isDisabled('category_id')}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -195,6 +202,7 @@ export function CreateProductForm({
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}
+                  disabled={isDisabled('primary_uom_id')}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -234,6 +242,7 @@ export function CreateProductForm({
                 <Switch
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  disabled={isDisabled('is_active')}
                 />
               </FormControl>
               <FormMessage />

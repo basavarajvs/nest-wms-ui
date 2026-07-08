@@ -65,6 +65,7 @@ export function EditVendorDialog({
         onSubmit={handleSubmit}
         defaultValues={defaultValues}
         isSubmitting={updateMutation.isPending}
+        disabledFields={['vendor_code']}
       />
     </CreateEntityDialog>
   )

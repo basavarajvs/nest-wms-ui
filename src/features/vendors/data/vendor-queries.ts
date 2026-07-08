@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import {
   VendorController_findAll,
   VendorController_findById,
@@ -67,7 +67,7 @@ export function useCreateVendor() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Vendor created')
+      showSuccess('Vendor created')
     },
     onError: (error) => handleServerError(error),
   })
@@ -91,7 +91,7 @@ export function useUpdateVendor() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Vendor updated')
+      showSuccess('Vendor updated')
     },
     onError: (error) => handleServerError(error),
   })
@@ -105,7 +105,7 @@ export function useDeleteVendor() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Vendor deleted')
+      showSuccess('Vendor deleted')
     },
     onError: (error) => handleServerError(error),
   })

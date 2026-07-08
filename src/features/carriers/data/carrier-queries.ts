@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+import { showSuccess } from '@/lib/toast'
 import {
   CarrierController_findAll,
   CarrierController_findById,
@@ -67,7 +67,7 @@ export function useCreateCarrier() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Carrier created')
+      showSuccess('Carrier created')
     },
     onError: (error) => handleServerError(error),
   })
@@ -91,7 +91,7 @@ export function useUpdateCarrier() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Carrier updated')
+      showSuccess('Carrier updated')
     },
     onError: (error) => handleServerError(error),
   })
@@ -105,7 +105,7 @@ export function useDeleteCarrier() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.all })
-      toast.success('Carrier deleted')
+      showSuccess('Carrier deleted')
     },
     onError: (error) => handleServerError(error),
   })
